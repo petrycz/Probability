@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>Probability, from First Principles</title>
+<style>
+  :root{--bg:#0d1420;--grid:#172233;--panel:#131d2c;--panel2:#182437;--ink:#e9eef6;
+    --muted:#8095ab;--muted2:#5d6f85;--accent:#7ab8ff;--good:#3fb98f;--good2:#1e4a3d;--bad:#e2664f;--bad2:#4a2620;
+    --gold:#e8b84b;--line:#243347;--rad:15px;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:26px 26px;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;}
+  .wrap{max-width:640px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 14px calc(24px + env(safe-area-inset-bottom));}
+  header{position:sticky;top:0;z-index:10;padding:calc(12px + env(safe-area-inset-top)) 0 9px;background:linear-gradient(var(--bg) 80%,transparent);}
+  .htop{display:flex;align-items:center;gap:10px;margin-bottom:9px;min-height:24px;}
+  .back{color:var(--accent);font-size:14px;cursor:pointer;font-weight:500;padding:4px 2px;}
+  .kick{font-weight:600;font-size:12px;letter-spacing:.3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .kick.course{color:var(--accent);text-transform:uppercase;letter-spacing:.7px;font-size:11px;}
+  .step{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted);}
+  .pbar{height:5px;border-radius:4px;background:var(--panel);overflow:hidden;border:1px solid var(--line);}
+  .pbar i{display:block;height:100%;background:var(--accent);transition:width .3s;}
+  main{flex:1;}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--rad);padding:18px 15px;box-shadow:0 16px 38px -26px rgba(0,0,0,.8);animation:in .3s cubic-bezier(.2,.7,.2,1);margin-top:6px;}
+  @keyframes in{from{opacity:0;transform:translateY(9px);}to{opacity:1;transform:none;}}
+  h1{font-weight:800;font-size:22px;letter-spacing:-.4px;margin:2px 2px 6px;line-height:1.2;}
+  h2{font-weight:750;font-size:19px;letter-spacing:-.3px;margin:0 0 11px;line-height:1.28;}
+  .lede{color:var(--muted);font-size:14px;line-height:1.55;margin:0 2px 15px;}
+  p{font-size:15.5px;line-height:1.62;color:#d6e0ee;margin:0 0 13px;}
+  p.small{font-size:13.5px;color:var(--muted);}
+  em{color:var(--ink);font-style:italic;} b,strong{color:var(--ink);font-weight:650;}
+  .mono{font-family:var(--mono);color:var(--accent);font-size:.94em;}
+  .cy{color:var(--accent);} .gld{color:var(--gold);} .grn{color:var(--good);} .rd{color:var(--bad);}
+  .eqbox{font-family:var(--mono);font-size:14.5px;line-height:1.8;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;color:#dbe6f4;overflow-x:auto;}
+  .eqbox .hl{color:var(--gold);}
+  .mathrow{text-align:center;margin:14px 0;font-family:var(--mono);font-size:15px;overflow-x:auto;white-space:nowrap;}
+  sub,sup{font-size:.72em;}
+  canvas{width:100%;height:auto;display:block;border-radius:12px;background:#0a111b;border:1px solid var(--line);touch-action:none;}
+  .readout{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+  .rdc{flex:1;min-width:78px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;}
+  .rdc .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+  .rdc .v{font-family:var(--mono);font-weight:700;font-size:16px;margin-top:2px;}
+  .ctrls{display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap;}
+  .slabel{font-family:var(--mono);font-size:13px;color:var(--muted);min-width:74px;}
+  input[type=range]{flex:1;min-width:140px;accent-color:var(--accent);height:30px;}
+  .task{background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.28);border-radius:11px;padding:12px 13px;margin:14px 0;font-size:14.5px;line-height:1.55;color:#f0e2c2;}
+  .task b{color:var(--gold);font-size:11px;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px;}
+  .defn{background:rgba(122,184,255,.07);border:1px solid rgba(122,184,255,.30);border-radius:11px;padding:12px 14px;margin:13px 0;font-size:14.5px;line-height:1.6;color:#dbe6f4;}
+  .defn .dt{color:var(--accent);font-size:11px;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:6px;font-weight:700;}
+  .defn+.defn{margin-top:9px;}
+  .entry{display:flex;gap:9px;align-items:center;margin-top:12px;}
+  .entry input{flex:1;background:var(--panel2);border:1.5px solid var(--line);border-radius:11px;color:var(--ink);font-family:var(--mono);font-size:16px;padding:12px 13px;outline:none;min-width:0;}
+  .entry input:focus{border-color:var(--accent);}
+  .miniout{margin-top:9px;font-size:13.5px;line-height:1.5;} .miniout.ok{color:var(--good);} .miniout.no{color:var(--bad);}
+  .choices{display:grid;grid-template-columns:1fr;gap:9px;margin-top:13px;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 2px;}
+  .segb{font-family:var(--mono);font-size:13px;font-weight:600;padding:9px 12px;border-radius:9px;background:var(--panel2);border:1.5px solid var(--line);color:var(--muted);cursor:pointer;}
+  .segb.on{border-color:var(--accent);color:var(--accent);background:#0e2530;}
+  .ucircle{position:relative;}
+  .choice{background:var(--panel2);border:1.5px solid var(--line);border-radius:11px;padding:13px;cursor:pointer;font-size:14px;line-height:1.4;transition:.12s;}
+  .choice .cm{font-family:var(--mono);}
+  .choice.correct{border-color:var(--good);background:var(--good2);color:#c7f4e3;} .choice.wrong{border-color:var(--bad);background:var(--bad2);color:#f6cdc4;} .choice.dim{opacity:.45;} .choice.locked{cursor:default;}
+  .code{background:#0a1019;border:1px solid var(--line);border-radius:11px;margin:13px 0;overflow:hidden;}
+  .code .ch{font-family:var(--mono);font-size:11px;color:var(--muted);padding:7px 12px;border-bottom:1px solid var(--line);background:#0c131e;letter-spacing:.4px;}
+  .code pre{margin:0;padding:12px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:#cfe0f2;-webkit-overflow-scrolling:touch;}
+  .prob{border:1px solid var(--line);border-radius:11px;padding:13px 14px;margin:13px 0;background:var(--panel2);}
+  .prob .ph{font-weight:700;font-size:13px;color:var(--accent);letter-spacing:.3px;margin-bottom:7px;}
+  .prob .lvl{float:right;font-size:10px;color:var(--muted2);border:1px solid var(--line);border-radius:20px;padding:1px 7px;letter-spacing:.4px;}
+  details{margin-top:10px;border-top:1px dashed var(--line);padding-top:9px;}
+  summary{cursor:pointer;color:var(--gold);font-size:13px;font-weight:600;list-style:none;}
+  summary::-webkit-details-marker{display:none;} summary::before{content:'▸ ';}
+  details[open] summary::before{content:'▾ ';}
+  .sol{font-size:14px;line-height:1.6;color:#d0dcea;margin-top:9px;} .sol p{font-size:14px;margin:0 0 9px;}
+  .reveal{margin-top:15px;border-left:3px solid var(--good);background:rgba(63,185,143,.07);border-radius:0 11px 11px 0;padding:12px 14px;animation:in .3s ease;}
+  .reveal .rh{font-weight:750;font-size:13px;color:var(--good);margin-bottom:6px;}
+  .reveal p{font-size:14px;color:#d7e6df;margin:0 0 8px;} .reveal p:last-child{margin:0;}
+  .reveal .note{font-family:var(--mono);font-size:13px;color:var(--accent);}
+  .flash{position:fixed;left:50%;top:calc(16% + env(safe-area-inset-top));transform:translateX(-50%);background:var(--good);color:#06231a;font-weight:750;font-size:14px;padding:9px 16px;border-radius:999px;opacity:0;pointer-events:none;z-index:50;}
+  .flash.show{animation:flash 1.1s ease;}
+  @keyframes flash{0%{opacity:0;transform:translate(-50%,6px);}15%{opacity:1;transform:translate(-50%,0);}80%{opacity:1;}100%{opacity:0;transform:translate(-50%,-8px);}}
+  footer{position:sticky;bottom:0;padding:11px 0 calc(6px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 32%);display:flex;gap:10px;align-items:center;}
+  .btn{font-weight:650;font-size:15px;border:none;border-radius:11px;padding:14px 18px;cursor:pointer;transition:.1s;font-family:var(--sans);}
+  .btn:active{transform:scale(.98);}
+  .btn.primary{flex:1;background:var(--accent);color:#08131b;} .btn.primary:disabled{background:var(--panel2);color:var(--muted2);cursor:default;}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);}
+  .btn.hint{background:transparent;color:var(--gold);border:1px solid var(--line);}
+  .hintbox{font-size:13.5px;line-height:1.55;color:#f0e2c2;background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.25);border-radius:10px;padding:11px 13px;margin-top:12px;display:none;}
+  .hintbox.show{display:block;}
+  .mcard{cursor:pointer;transition:border-color .15s,transform .08s;} .mcard.lock{opacity:.55;cursor:default;}
+  .mtop{display:flex;align-items:center;gap:9px;} .mnum{font-family:var(--mono);font-size:12px;color:var(--muted2);}
+  .mstat{margin-left:auto;font-weight:650;font-size:11px;padding:3px 9px;border-radius:999px;}
+  .mstat.done{color:var(--good);background:var(--good2);} .mstat.todo{color:var(--accent);background:rgba(122,184,255,.14);} .mstat.soon{color:var(--muted2);background:#141e2c;}
+  .mtitle{font-weight:750;font-size:17px;margin:8px 0 5px;} .msub{color:var(--muted);font-size:13.5px;line-height:1.5;}
+  .rvlink{color:var(--gold);cursor:pointer;font-size:12px;white-space:nowrap;}
+  a.rvlink{text-decoration:none;}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;}}
+  .katex{font-size:1.03em;}
+  .eqbox .katex-display{margin:0;}
+  .eqbox .katex-display>.katex{white-space:normal;}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="htop"><span class="back" id="backBtn" style="display:none">‹ Menu</span><span class="kick course" id="kick">Probability, from First Principles</span><span class="step" id="stepLbl"></span></div>
+    <div class="pbar" id="pbarWrap" style="display:none"><i id="pfill" style="width:0%"></i></div>
+  </header>
+  <main><div id="stage"></div><div class="hintbox" id="hintbox"></div></main>
+  <footer id="footer" style="display:none"><button class="btn ghost" id="prevBtn" style="display:none">Back</button><button class="btn hint" id="hintBtn">Hint</button><button class="btn primary" id="contBtn" disabled>Continue</button></footer>
+</div>
+<div class="flash" id="flash">✓</div><script>
+"use strict";
+const stage=document.getElementById('stage'),hintBtn=document.getElementById('hintBtn'),contBtn=document.getElementById('contBtn'),
+      hintbox=document.getElementById('hintbox'),flashEl=document.getElementById('flash'),footer=document.getElementById('footer');
+let view='menu',curM=0,beat=0,unlocked=false,hints=[],hintIdx=0,recallReturn=null;
+const completed={};
+const MODULES=[
+ {id:'p0',title:'Outcomes, Events & Counting',sub:'Sample spaces and events, the three axioms, equally likely outcomes, permutations and combinations, and inclusion–exclusion.',ready:true,
+  outro:`A probability is a share of one unit of mass, assigned to events — sets of outcomes — under three axioms. When the outcomes are equally likely, probability reduces to counting, and permutations, combinations, and inclusion–exclusion do the counting.`,
+  beats:[p0_recall]},
+ {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:false,outro:'',beats:[]},
+ {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
+ {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
+ {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
+ {id:'p5',title:'Limit Theorems & Monte Carlo',sub:'Markov, Chebyshev, and Hoeffding; the law of large numbers; the central limit theorem; Monte Carlo and importance sampling; fat tails.',ready:false,outro:'',beats:[]},
+ {id:'p6',title:'Information Theory',sub:'Entropy, cross-entropy, KL divergence, mutual information, and perplexity — and softmax with cross-entropy as the loss of a language model.',ready:false,outro:'',beats:[]},
+ {id:'p7',title:'Random Walks & Poisson Processes',sub:'Gambler’s ruin and the $(q/p)^z$ catch-up probability, Poisson arrivals, and the attacker calculation from the Bitcoin paper.',ready:false,outro:'',beats:[]},
+ {id:'p8',title:'Markov Chains & Hidden Markov Models',sub:'Transition matrices, stationary distributions as eigenvectors, regime models, the forward algorithm and Viterbi, and expected value in MDPs.',ready:false,outro:'',beats:[]},
+ {id:'p9',title:'Filtering: Bayes, Kalman & Particle Filters',sub:'Tracking a hidden state through noisy measurements: the Bayes filter, the Kalman filter, and particle filters.',ready:false,outro:'',beats:[]},
+ {id:'p10',title:'Bayesian Networks',sub:'Factorizing a joint distribution over a graph, d-separation, variable elimination, and sampling-based inference.',ready:false,outro:'',beats:[]},
+ {id:'p11',title:'Estimation',sub:'Maximum likelihood, MAP and priors as regularization, conjugate updating and Thompson sampling, and least squares as Gaussian MLE.',ready:false,outro:'',beats:[]},
+ {id:'p12',title:'Latent Variables & Variational Inference',sub:'Mixture models and EM, the ELBO, the reparameterization trick, and the score-function gradient.',ready:false,outro:'',beats:[]},
+ {id:'p13',title:'Statistical Inference',sub:'Sampling distributions, confidence intervals, hypothesis tests and p-values, the t-test, and the statistics of a Sharpe ratio.',ready:false,outro:'',beats:[]},
+ {id:'a1',addon:'A1',title:'Regression in Depth',sub:'Least squares as projection, standard errors, $R^2$, and out-of-sample validation.',ready:false,outro:'',beats:[]},
+ {id:'a2',addon:'A2',title:'Time Series & Cointegration',sub:'Stationarity, autocorrelation, AR(1) and mean-reversion half-life, the ADF test, and cointegration for pairs trading.',ready:false,outro:'',beats:[]},
+ {id:'a3',addon:'A3',title:'Trading Performance & Kelly',sub:'Log versus simple returns, drawdowns, Kelly sizing as log-growth maximization, and bootstrap backtests.',ready:false,outro:'',beats:[]},
+ {id:'a4',addon:'A4',title:'Monte Carlo in Depth',sub:'Markov chain Monte Carlo: Metropolis–Hastings, Gibbs sampling, and Hamiltonian Monte Carlo.',ready:false,outro:'',beats:[]},
+];
+function setHints(a){hints=a||[];hintIdx=0;hintBtn.style.display=hints.length?'block':'none';}
+function unlock(){if(unlocked)return;unlocked=true;contBtn.disabled=false;}
+function flash(t){flashEl.textContent=t||'✓';flashEl.className='flash show';setTimeout(()=>flashEl.className='flash',1100);}
+function addReveal(html){const r=document.createElement('div');r.className='reveal';r.innerHTML=html;stage.querySelector('.card').appendChild(r);renderMath(r);unlock();}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function scrollTop(){try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){}}
+function renderMath(el){try{if(window.renderMathInElement)renderMathInElement(el||stage,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});}catch(e){}}
+const SAVE_KEY='prob_fp_v1';
+function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({view,curM,beat,completed}));}catch(e){}}
+function loadState(){try{return JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){return null;}}
+/* URL-hash position (survives refresh even when storage is blocked) */
+function setHash(){try{const h=view==='module'?('#m'+curM+'b'+beat):'';if((location.hash||'')!==h)history.replaceState(null,'',h||location.pathname+location.search);}catch(e){}}
+function parseHash(){const m=/^#m(\d+)b(\d+)$/.exec(location.hash||'');return m?{curM:+m[1],beat:+m[2]}:null;}
+
+function renderMenu(){
+  view='menu';footer.style.display='none';hintbox.className='hintbox';hintbox.innerHTML='';
+  document.getElementById('backBtn').style.display='none';document.getElementById('pbarWrap').style.display='none';
+  document.getElementById('kick').className='kick course';document.getElementById('kick').textContent='Probability, from First Principles';
+  document.getElementById('stepLbl').textContent='';
+  let html=`<div class="card"><h1>Probability, from First Principles</h1><p class="lede">A self-contained probability course, built on the calculus and linear-algebra courses: every rule is derived, and every distribution is built, sampled, and watched on screen. It runs from counting and conditioning through random variables, limit theorems, and information theory, into stochastic processes, estimation, and inference — the probability behind modern machine learning, the Bitcoin paper, and quantitative trading. Guided discovery, real proofs, worked problems.</p></div>`;
+  MODULES.forEach((m,i)=>{const done=completed[m.id];const st=done?['done','✓ Done']:(m.ready?['todo','Start']:['soon','Soon']);
+    html+=`<div class="card mcard${m.ready?'':' lock'}" data-i="${i}"><div class="mtop"><span class="mnum">${m.addon?'Add-on '+m.addon:'Module '+(i+1)}</span><span class="mstat ${st[0]}">${st[1]}</span></div>
+      <div class="mtitle">${m.title}</div><div class="msub">${m.sub}</div></div>`;});
+  stage.innerHTML=html;
+  stage.querySelectorAll('.mcard').forEach(c=>{const i=parseInt(c.dataset.i);if(MODULES[i].ready)c.onclick=()=>openModule(i);});
+  scrollTop();renderMath();saveState();setHash();
+}
+function openModuleAt(i,b){curM=i;beat=b;view='module';footer.style.display='flex';contBtn.style.display='';hintBtn.style.display='';
+  document.getElementById('backBtn').style.display='block';document.getElementById('pbarWrap').style.display='block';
+  document.getElementById('kick').className='kick';renderBeat();}
+function openModule(i){openModuleAt(i,0);}
+function renderBeat(){
+  unlocked=false;contBtn.disabled=true;hintbox.className='hintbox';hintbox.innerHTML='';setHints([]);stage.innerHTML='';
+  const M=MODULES[curM];M.beats[beat]();
+  document.getElementById('kick').textContent=M.title;
+  document.getElementById('stepLbl').textContent=(beat+1)+' / '+M.beats.length;
+  document.getElementById('pfill').style.width=Math.round((beat+1)/M.beats.length*100)+'%';
+  contBtn.textContent=beat===M.beats.length-1?'Finish':'Continue';document.getElementById('prevBtn').style.display=(beat>0||recallReturn)?'block':'none';scrollTop();renderMath();saveState();setHash();
+}
+hintBtn.onclick=()=>{if(hintIdx<hints.length){hintbox.innerHTML=hints[hintIdx];hintbox.className='hintbox show';hintIdx++;if(hintIdx>=hints.length)unlock();}};
+contBtn.onclick=()=>{const M=MODULES[curM];if(beat<M.beats.length-1){beat++;renderBeat();}else finish();};
+document.getElementById('backBtn').onclick=renderMenu;
+document.getElementById('prevBtn').onclick=()=>{if(recallReturn){curM=recallReturn.mod;beat=recallReturn.beat;recallReturn=null;renderBeat();return;}if(beat>0){beat--;renderBeat();}};
+function finish(){const M=MODULES[curM];completed[M.id]=true;const next=(curM+1<MODULES.length&&MODULES[curM+1].ready)?MODULES[curM+1]:null;
+  footer.style.display='none';document.getElementById('pfill').style.width='100%';
+  stage.innerHTML=`<div class="card" style="text-align:center;padding:30px 18px"><div style="font-size:40px">✦</div><h2 style="margin-top:8px">Module complete</h2><p>${M.outro}</p>
+    <div style="display:flex;gap:10px;margin-top:14px">${next?`<button class="btn primary" id="nx">Next →</button>`:''}<button class="btn ghost" id="mn" style="${next?'':'flex:1'}">Back to menu</button></div></div>`;
+  const nx=document.getElementById('nx');if(nx)nx.onclick=()=>openModule(curM+1);document.getElementById('mn').onclick=renderMenu;scrollTop();renderMath();saveState();}
+
+/* ============ function-plotting engine ============ */
+function plot(cv,o){const ctx=cv.getContext&&cv.getContext('2d');const W=cv.width,H=cv.height;
+  const xmin=o.xmin,xmax=o.xmax,ymin=o.ymin,ymax=o.ymax;
+  const px=x=>(x-xmin)/(xmax-xmin)*W, py=y=>H-(y-ymin)/(ymax-ymin)*H;
+  const mx=X=>xmin+X/W*(xmax-xmin), my=Y=>ymin+(H-Y)/H*(ymax-ymin);
+  function grid(){if(!ctx)return;ctx.clearRect(0,0,W,H);ctx.strokeStyle='#16202f';ctx.lineWidth=1;
+    for(let x=Math.ceil(xmin);x<=xmax;x++){ctx.beginPath();ctx.moveTo(px(x),0);ctx.lineTo(px(x),H);ctx.stroke();}
+    for(let y=Math.ceil(ymin);y<=ymax;y++){ctx.beginPath();ctx.moveTo(0,py(y));ctx.lineTo(W,py(y));ctx.stroke();}
+    ctx.strokeStyle='#2b3a4f';ctx.lineWidth=1.5;
+    if(ymin<0&&ymax>0){ctx.beginPath();ctx.moveTo(0,py(0));ctx.lineTo(W,py(0));ctx.stroke();}
+    if(xmin<0&&xmax>0){ctx.beginPath();ctx.moveTo(px(0),0);ctx.lineTo(px(0),H);ctx.stroke();}}
+  function curve(f,color,lw){if(!ctx)return;ctx.strokeStyle=color;ctx.lineWidth=lw||2.5;let prevY=null,started=false;const span=ymax-ymin;ctx.beginPath();
+    const N=500;for(let i=0;i<=N;i++){const x=xmin+(xmax-xmin)*i/N;let y;try{y=f(x);}catch(e){y=NaN;}
+      if(!isFinite(y)||y>ymax+span*3||y<ymin-span*3){started=false;prevY=y;continue;}
+      if(prevY!=null&&isFinite(prevY)&&Math.abs(y-prevY)>span*1.4){started=false;}
+      const X=px(x),Y=py(y);if(!started){ctx.moveTo(X,Y);started=true;}else ctx.lineTo(X,Y);prevY=y;}
+    ctx.stroke();}
+  function point(x,y,color,r,hollow){if(!ctx)return;ctx.lineWidth=2.5;ctx.strokeStyle=color;
+    ctx.beginPath();ctx.arc(px(x),py(y),r||5,0,7);if(hollow){ctx.fillStyle='#0a111b';ctx.fill();ctx.stroke();}else{ctx.fillStyle=color;ctx.fill();}}
+  function vline(x,color,dash){if(!ctx)return;ctx.strokeStyle=color;ctx.lineWidth=1.5;if(dash)ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(px(x),0);ctx.lineTo(px(x),H);ctx.stroke();ctx.setLineDash([]);}
+  function hline(y,color,dash){if(!ctx)return;ctx.strokeStyle=color;ctx.lineWidth=1.5;if(dash)ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(0,py(y));ctx.lineTo(W,py(y));ctx.stroke();ctx.setLineDash([]);}
+  function bandY(y0,y1,color){if(!ctx)return;ctx.fillStyle=color;ctx.fillRect(0,py(y1),W,py(y0)-py(y1));}
+  function bandX(x0,x1,color){if(!ctx)return;ctx.fillStyle=color;ctx.fillRect(px(x0),0,px(x1)-px(x0),H);}
+  function label(x,y,s,color){if(!ctx)return;ctx.fillStyle=color||'#9fb0c4';ctx.font='600 13px '+getComputedStyle(document.body).fontFamily;ctx.fillText(s,px(x),py(y));}
+  return {ctx,W,H,px,py,mx,my,grid,curve,point,vline,hline,bandY,bandX,label,xmin,xmax,ymin,ymax};
+}
+function xdrag(cv,pl,onX){let dragging=false;cv.style.touchAction='none';
+  function set(e){const r=cv.getBoundingClientRect();const X=(e.clientX-r.left)*(cv.width/Math.max(1,r.width));onX(Math.max(pl.xmin,Math.min(pl.xmax,pl.mx(X))));}
+  cv.addEventListener('pointerdown',e=>{dragging=true;try{cv.setPointerCapture(e.pointerId);}catch(x){}set(e);e.preventDefault();});
+  cv.addEventListener('pointermove',e=>{if(dragging){e.preventDefault();set(e);}});
+  const end=()=>dragging=false;cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);}
+function numChk(host,ans,onok,fmt){const inp=host.querySelector('input'),mo=host.querySelector('.miniout'),btn=host.querySelector('button');
+  function go(){const raw=(inp.value||'').trim();const got=(fmt||(s=>parseFloat(s)))(raw);
+    let ok=Array.isArray(ans)?(Array.isArray(got)&&ans.every((a,i)=>Math.abs(got[i]-a)<1e-6)):Math.abs(got-ans)<1e-6;
+    if(ok){mo.className='miniout ok';mo.textContent='✓ Correct.';flash();inp.disabled=true;btn.style.display='none';onok();}
+    else{mo.className='miniout no';mo.textContent='Not yet — check it and try again.';}}
+  btn.onclick=go;inp.addEventListener('keydown',e=>{if(e.key==='Enter')go();});}
+function mcChoices(host,opts,onDone){shuffle(opts);let done=false;host.innerHTML=opts.map((o,i)=>`<div class="choice" data-i="${i}">${o[0]}</div>`).join('');
+  host.querySelectorAll('.choice').forEach(el=>el.onclick=()=>{if(done)return;const i=+el.dataset.i,ok=opts[i][1]==='y';
+    host.querySelectorAll('.choice').forEach((c,j)=>{c.classList.add('locked');if(opts[j][1]==='y')c.classList.add('correct');else if(j===i)c.classList.add('wrong');else c.classList.add('dim');});done=true;if(ok)flash();onDone(ok);});}
+
+/* ================= RECALL SYSTEM ================= */
+/* ================= RECALL SYSTEM ================= */
+/* Cues from the earlier courses carry ext:{course,m}; their review links open that course at #m{module}b{beat}. */
+const COURSE_URL={calc:'calculus.html',la:'linear-algebra.html'};
+const PRIOR_KEYS=['calc_c0','calc_c4','calc_c5','calc_c6','calc_c8','la_m1','la_m3','la_m4','la_m5','la_m6','calc_c9','calc_c11'];
+const RECALL={
+ calc_c0:{title:'Calculus · Module 1 — Functions & the Building Blocks', ext:{course:'calc',m:0}, cues:[
+   {q:"What are the log laws, and what does $\\ln$ do to a product of many factors?",
+    a:"$\\ln$ is the inverse of $e^x$, with $\\ln(xy)=\\ln x+\\ln y$ and $\\ln(x^p)=p\\ln x$. So $\\ln\\prod_i a_i=\\sum_i\\ln a_i$: a product of many factors becomes a sum, which is far easier to differentiate and stays numerically stable when the factors are tiny.", b:3}
+ ]},
+ calc_c4:{title:'Calculus · Module 5 — Integration & the FTC', ext:{course:'calc',m:4}, cues:[
+   {q:"What is the definite integral $\\int_a^b f(x)\\,dx$, and what does 'signed area' mean?",
+    a:"The limit of Riemann sums $\\lim\\sum f(x_i)\\,\\Delta x$ as the slices shrink — the accumulated area between the curve and the axis, counting area below the axis as negative.", b:3},
+   {q:"State Fundamental Theorem Part 1 — the area-so-far function.",
+    a:"If $A(x)=\\int_a^x f(t)\\,dt$, then $A'(x)=f(x)$: the derivative of the area function is the height of the curve. (Proven by the difference quotient = average value, squeezed between the min and max on the shrinking sliver.)", b:4},
+   {q:"State Fundamental Theorem Part 2, and how it evaluates a definite integral.",
+    a:"$\\int_a^b f = F(b)-F(a)$ for any antiderivative $F$ (proven by telescoping + MVT over a partition). So you evaluate an integral by finding an antiderivative and subtracting — no limits of sums.", b:6},
+   {q:"How are $\\ln$, $e$, and $e^x$ defined from the integral, and what are $(\\ln x)'$ and $(e^x)'$?",
+    a:"$\\ln x:=\\int_1^x \\frac{dt}{t}$, so $(\\ln x)'=\\frac1x$ (FTC Part 1); $e$ is defined by $\\ln e=1$; $e^x$ is the inverse of $\\ln$, and $(e^x)'=e^x$.", b:7},
+   {q:"Prove — FTC Part 1: $\\tfrac{d}{dx}\\int_a^x f=f(x)$.",
+    a:"$A(x+h)-A(x)=\\int_x^{x+h}f\\approx f(x)\\,h$ (a thin strip is almost a rectangle of height $f(x)$). Divide by $h$ and let $h\\to0$: $A'(x)=f(x)$.", b:4}
+ ]},
+ calc_c5:{title:'Calculus · Module 6 — Techniques & Applications of Integration', ext:{course:'calc',m:5}, cues:[
+   {q:"How does substitution work, and which differentiation rule does it reverse?",
+    a:"It reverses the chain rule: $\\int f(g(x))\\,g'(x)\\,dx=\\int f(u)\\,du$ with $u=g(x)$. Spot an inner function whose derivative is also present, rename it, and the integral collapses.", b:2},
+   {q:"State integration by parts and the rule it reverses.",
+    a:"It reverses the product rule: $\\int u\\,dv=uv-\\int v\\,du$. Choose $u$ to be the part that gets simpler when differentiated, so the leftover integral is easier.", b:3},
+   {q:"How do you handle an improper integral over an infinite interval, and what is convergence?",
+    a:"Integrate to a finite $b$ and take $\\lim_{b\\to\\infty}$. It <em>converges</em> if that limit is finite ($\\int_1^\\infty\\tfrac{1}{x^2}=1$), <em>diverges</em> if not ($\\int_1^\\infty\\tfrac1x=\\infty$).", b:5},
+   {q:"Derive — $\\int_0^\\infty \\lambda e^{-\\lambda x}\\,dx=1$ for every $\\lambda\\gt0$.",
+    a:"Substituting $u=-\\lambda x$ gives the antiderivative $-e^{-\\lambda x}$, so $\\int_0^b\\lambda e^{-\\lambda x}\\,dx=1-e^{-\\lambda b}$. As $b\\to\\infty$, $e^{-\\lambda b}\\to0$, leaving $1$.", b:5},
+   {q:"Derive — $\\int_0^\\infty x\\,e^{-x}\\,dx=1$.",
+    a:"By parts with $u=x$, $dv=e^{-x}dx$: $\\int_0^b xe^{-x}\\,dx=\\big[-xe^{-x}\\big]_0^b+\\int_0^b e^{-x}\\,dx=-be^{-b}+1-e^{-b}$. As $b\\to\\infty$, $be^{-b}\\to0$ (L’Hôpital on $b/e^{b}$) and $e^{-b}\\to0$, leaving $1$.", b:3}
+ ]},
+ calc_c6:{title:'Calculus · Module 7 — Sequences & Series', ext:{course:'calc',m:6}, cues:[
+   {q:"When does a series $\\sum a_n$ converge, and what is the geometric series sum?",
+    a:"It converges when the partial sums $S_n$ have a finite limit. The geometric series $\\sum_{n=0}^{\\infty} r^n=\\frac{1}{1-r}$ for $|r|&lt;1$, and diverges for $|r|\\ge 1$.", b:3},
+   {q:"What is a Taylor/Maclaurin series, and the expansions of $e^x$, $\\sin$, $\\cos$?",
+    a:"$f(x)=\\sum\\frac{f^{(n)}(0)}{n!}x^n$. In particular $e^x=\\sum\\frac{x^n}{n!}$, $\\sin x=x-\\frac{x^3}{3!}+\\cdots$, $\\cos x=1-\\frac{x^2}{2!}+\\cdots$ — each valid for every $x$.", b:8},
+   {q:"Derive — $\\sum_{n=0}^{\\infty}r^n=\\tfrac1{1-r}$ for $|r|\\lt1$.",
+    a:"$S_N-rS_N=1-r^{N+1}$, so $S_N=\\tfrac{1-r^{N+1}}{1-r}$. For $|r|\\lt1$, $r^{N+1}\\to0$, leaving $\\tfrac1{1-r}$.", b:3},
+   {q:"Derive — the Taylor coefficients $c_n=\\tfrac{f^{(n)}(0)}{n!}$, and the series for $e^x$.",
+    a:"Matching $n$-th derivatives at $0$ in $f=\\sum c_nx^n$ pulls down $n!\\,c_n=f^{(n)}(0)$. For $e^x$ every derivative is $1$ at $0$, so $c_n=\\tfrac1{n!}$ and $e^x=\\sum\\tfrac{x^n}{n!}$.", b:8},
+   {q:"Derive — $\\sum_{k=0}^{\\infty}e^{-\\lambda}\\tfrac{\\lambda^k}{k!}=1$ for every $\\lambda$.",
+    a:"Factor out the constant $e^{-\\lambda}$. What remains, $\\sum_k\\tfrac{\\lambda^k}{k!}$, is the Taylor series of $e^x$ at $x=\\lambda$, which equals $e^{\\lambda}$. So the sum is $e^{-\\lambda}e^{\\lambda}=1$.", b:8}
+ ]},
+ calc_c8:{title:'Calculus · Module 9 — Multivariable Optimization', ext:{course:'calc',m:8}, cues:[
+   {q:"On a surface $z=f(x,y)$, what single vector equation locates every peak, valley, and mountain pass?",
+    a:"$\\nabla f=\\mathbf 0$ — every partial vanishes at once. It's Fermat's one-variable rule $f'(0)=0$ lifted: a flat spot in <em>all</em> directions. Each solution is a local max, local min, or saddle.", b:1},
+   {q:"How do you find the best point while <em>stuck on a constraint</em> $g=c$?",
+    a:"<b>Lagrange multipliers</b>: at the constrained optimum the objective's level curve is tangent to the constraint curve, so the gradients are parallel — $\\nabla f=\\lambda\\,\\nabla g$. Solve that together with $g(\\mathbf x)=c$. The scalar $\\lambda$ just matches their lengths.", b:7},
+   {q:"Derive — the Lagrange condition $\\nabla f=\\lambda\\nabla g$.",
+    a:"On the constraint you move only along its tangent $\\mathbf T$; at the optimum $\\tfrac{df}{ds}=\\nabla f\\cdot\\mathbf T=0$, so $\\nabla f\\perp\\mathbf T$. Since $\\nabla g\\perp\\mathbf T$ as well, the two are parallel: $\\nabla f=\\lambda\\nabla g$.", b:7}
+ ]},
+ la_m1:{title:'Linear Algebra · Module 1 — Matrices as Linear Maps', ext:{course:'la',m:0}, cues:[
+   {q:'What are the columns of A, and hence why is <span class="mono">Av</span> a combination of columns?',
+    a:'The columns are <span class="mono">T(e₁), T(e₂)</span>, so <span class="mono">Av=v₁(col₁)+v₂(col₂)</span> — the columns weighted by v\'s entries.', b:3},
+   {q:'What operation does <span class="mono">AB</span> represent, and why is order not swappable?',
+    a:'Composition: <span class="mono">(AB)v=A(Bv)</span>, do B then A. Since e.g. rotate-then-reflect ≠ reflect-then-rotate, <span class="mono">AB≠BA</span> in general.', b:5}
+ ]},
+ la_m3:{title:'Linear Algebra · Module 3 — Inner Products & Orthogonality', ext:{course:'la',m:2}, cues:[
+   {q:'Write both identities for <span class="mono">u·v</span>, and say what <span class="mono">u·v=0</span> means.',
+    a:'<span class="mono">u·v = Σuᵢvᵢ = ‖u‖‖v‖cosθ</span>; zero (for nonzero vectors) means perpendicular.', b:2},
+   {q:'How is length built from the dot product?',
+    a:'<span class="mono">‖v‖ = √(v·v)</span> — the square root of the sum of squared components (Pythagoras).', b:4},
+   {q:'Two transpose facts: what is <span class="mono">uᵀv</span>, and what is <span class="mono">(AB)ᵀ</span>?',
+    a:'<span class="mono">uᵀv = u·v</span> (a row times a column is the dot product); <span class="mono">(AB)ᵀ = BᵀAᵀ</span> (transpose reverses a product).', b:6}
+ ]},
+ la_m4:{title:'Linear Algebra · Module 4 — Eigenvalues & Eigenvectors', ext:{course:'la',m:3}, cues:[
+   {q:'Define an eigenvector and eigenvalue.',
+    a:'A nonzero vector v with <span class="mono">Av=λv</span> — a direction A only scales; λ is the scale factor (eigenvalue).', b:3},
+   {q:'What is the 2×2 determinant, and — geometrically — what does <span class="mono">det A</span> measure, so that <span class="mono">det A=0</span> signifies what?',
+    a:'<span class="mono">det[[a,b],[c,d]] = ad−bc</span>; geometrically it is the signed factor by which A scales area/volume. So <span class="mono">det A=0</span> ⟺ the map flattens volume to zero ⟺ singular ⟺ dependent columns ⟺ nonzero null space ⟺ not invertible.', b:4},
+   {q:'How do you find eigenvalues, then eigenvectors?',
+    a:'Eigenvalues solve the characteristic equation <span class="mono">det(A−λI)=0</span>; for each λ the eigenvectors are the null space of <span class="mono">A−λI</span>.', b:6},
+   {q:'What is the diagonalization <span class="mono">A=PDP⁻¹</span> — what does each factor do — and what is <span class="mono">Aⁿ</span>?',
+    a:'<span class="mono">P⁻¹</span> rewrites x in the eigenbasis, <span class="mono">D</span> scales each eigen-coordinate by its λ, <span class="mono">P</span> rebuilds. The inner pairs cancel, so <span class="mono">Aⁿ=PDⁿP⁻¹</span>.', b:9}
+ ]},
+ la_m5:{title:'Linear Algebra · Module 5 — Symmetric Matrices & the Spectral Theorem', ext:{course:'la',m:4}, cues:[
+   {q:'What is a symmetric matrix, and what does it imply about its eigenvectors (and why)?',
+    a:'<span class="mono">A=Aᵀ</span>. Its eigenvectors (for distinct eigenvalues) are orthogonal: computing <span class="mono">v₁ᵀAv₂</span> two ways gives <span class="mono">(λ₁−λ₂)(v₁·v₂)=0</span>, so <span class="mono">v₁·v₂=0</span>.', b:4},
+   {q:'How does <span class="mono">Q⁻¹=Qᵀ</span> upgrade the diagonalization, giving the spectral theorem?',
+    a:'With orthonormal eigenvectors, P becomes orthogonal Q and <span class="mono">P⁻¹=Qᵀ</span>, so <span class="mono">A=QΛQᵀ</span> — the spectral theorem, no inverse to compute.', b:6},
+   {q:'What is a quadratic form <span class="mono">xᵀAx</span>, and what does positive definite mean?',
+    a:'A number built from squares/cross-products; in the eigenbasis it is <span class="mono">Σ λᵢcᵢ²</span>. Positive definite ⟺ every eigenvalue &gt; 0 ⟺ always positive ⟺ a bowl.', b:9}
+ ]},
+ la_m6:{title:'Linear Algebra · Module 6 — The Singular Value Decomposition', ext:{course:'la',m:5}, cues:[
+   {q:'Write A as a sum of rank-1 pieces; state the best rank-k approximation and its error.',
+    a:'<span class="mono">A = Σ σᵢ uᵢvᵢᵀ</span>. Keeping the top k terms is the best rank-k approximation (Eckart–Young), with error <span class="mono">‖A−A_k‖ = σ_{k+1}</span>, the first singular value dropped. Truncating tiny σ\'s is compression / PCA.', b:11}
+ ]},
+ calc_c9:{title:'Calculus · Module 10 — Multiple Integrals', ext:{course:'calc',m:9}, cues:[
+   {q:"What does the double integral $\\iint_R f\\,dA$ actually mean?",
+    a:"The limit of a double Riemann sum: tile $R$ into cells of area $\\Delta A$, add $f(\\text{sample})\\cdot\\Delta A$ over all cells, shrink the cells. Each term is a thin box, so the total is the signed <b>volume</b> between the surface $z=f$ and $R$.", b:1},
+   {q:"How do you compute one — and what is the inner integral?",
+    a:"<b>Fubini</b>: nest two single integrals, $\\iint_R f\\,dA=\\int_c^d\\!\\big(\\int_a^b f\\,dx\\big)dy$. The inner integral holds the outer variable constant and returns the <b>slice area</b> $A(y)$; the outer integral stacks the slices. Either order gives the same answer.", b:2},
+   {q:"Why isn't the polar area element just $dr\\,d\\theta$?",
+    a:"A polar cell has radial side $dr$ but arc side $r\\,d\\theta$ (arc = radius × angle), so $dA=r\\,dr\\,d\\theta$. Cells farther out are bigger; that growing $r$ is the factor, and it makes round regions easy.", b:3},
+   {q:"What is the factor for a general change of variables?",
+    a:"$dx\\,dy=|\\det J|\\,du\\,dv$, where the Jacobian $J$ has columns $\\big(\\tfrac{\\partial x}{\\partial u},\\tfrac{\\partial y}{\\partial u}\\big)$ and $\\big(\\tfrac{\\partial x}{\\partial v},\\tfrac{\\partial y}{\\partial v}\\big)$ — the edges a tiny cell maps to. Its determinant is the local area-stretch factor (for polar it equals $r$).", b:4},
+   {q:"Derive — Fubini: why a double integral is two nested single integrals.",
+    a:"Add the boxes row by row: $\\sum_j\\big(\\sum_i f\\,\\Delta x\\big)\\Delta y$. The inner sum is a 1-D Riemann sum along a row, $\\to A(y)=\\int f\\,dx$ (slice area, $y$ held); the outer stacks the slices, $\\int A(y)\\,dy$.", b:2},
+   {q:"Derive — $dx\\,dy=|\\det J|\\,du\\,dv$, and recover polar's $r$.",
+    a:"Steps $du,dv$ map to edge vectors $\\big(\\tfrac{\\partial x}{\\partial u},\\tfrac{\\partial y}{\\partial u}\\big)du$ and $\\big(\\tfrac{\\partial x}{\\partial v},\\tfrac{\\partial y}{\\partial v}\\big)dv$; the parallelogram they span has area $|\\det J|\\,du\\,dv$. For polar $\\det J=r$.", b:4}
+ ]},
+ calc_c11:{title:'Calculus · Module 12 — Matrix Calculus', ext:{course:'calc',m:11}, cues:[
+   {q:"For a map $\\mathbf f:\\mathbb R^n\\to\\mathbb R^m$, what is the Jacobian $J_{\\mathbf f}$, and what shape is it?",
+    a:"The $m\\times n$ grid of every first partial: entry $(i,j)$ is $\\partial f_i/\\partial x_j$, and row $i$ is the gradient of output $f_i$. For a change of variables $(u,v)\\mapsto(x,y)$ it is the $2\\times2$ matrix whose determinant is the area factor.", b:1},
+   {q:"State the chain rule for a composition $\\mathbf g\\circ\\mathbf f$ in matrix form.",
+    a:"$J_{\\mathbf g\\circ\\mathbf f}(\\mathbf x)=J_{\\mathbf g}(\\mathbf f(\\mathbf x))\\,J_{\\mathbf f}(\\mathbf x)$: Jacobians multiply, inner dimensions matching. Since $\\det(AB)=\\det A\\cdot\\det B$, the area factors of a chain of square maps multiply as well.", b:2}
+ ]}
+};
+const RECALL_HINT=`Run it as one unbroken chain — each cue answers the previous one's "so what?". If a link takes you away to review, one tap on Back returns you to this list.`;
+function recallFrom(introText, moduleKeys, hintHTML, opts){
+  opts=opts||{};let out='',anyExt=false;
+  moduleKeys.forEach(k=>{const M=RECALL[k];
+    out+=`<div style="margin:14px 0 4px"><div style="font-family:var(--mono);font-size:11px;letter-spacing:.4px;color:var(--accent);text-transform:uppercase;margin-bottom:6px">${M.title}</div><ol style="margin:0;padding-left:22px">`;
+    M.cues.forEach(c=>{ const same=(k===MODULES[curM].id);let link='';
+      if(M.ext){anyExt=true;link=` &nbsp;<a class="rvlink" href="${COURSE_URL[M.ext.course]}#m${M.ext.m}b${c.b}">review ↗</a>`;}
+      else if(!same)link=` &nbsp;<span class="rvlink" data-mod="${k}" data-beat="${c.b}">review ↗</span>`;
+      out+=`<li style="font-size:14.5px;line-height:1.5;color:#d6e0ee;margin-bottom:9px">${c.q}`+
+        `<details style="margin-top:5px"><summary style="font-size:12.5px">answer</summary>`+
+        `<div style="font-size:13.5px;line-height:1.55;color:#cbd6e6;margin-top:6px;padding-left:2px">${c.a}${link}</div></details></li>`;
+    });
+    out+='</ol></div>';
+  });
+  const back=anyExt?`one tap on Back returns you here — the footer's Back within this course, the browser's back from the calculus and linear-algebra courses`:`one tap on Back returns you here`;
+  stage.innerHTML=(opts.lead||'')+`<div class="card"><h2>Recall: rebuild the story so far</h2>
+    <p>${introText} Work through these <b>from scratch, in order</b> — each answer should fall out of the ones above it. Try each on paper first; open "answer" to check, and if a result won't come, tap <span style="color:var(--gold)">review ↗</span> to jump to the beat that teaches it (${back}).</p>${out}</div>`;
+  stage.querySelectorAll('span.rvlink').forEach(el=>el.onclick=()=>{
+    const mi=MODULES.findIndex(m=>m.id===el.dataset.mod);if(mi<0)return;
+    recallReturn={mod:curM,beat:beat};curM=mi;beat=parseInt(el.dataset.beat);renderBeat();});
+  setHints(hintHTML?[hintHTML]:[]);if(!opts.gated)unlock();
+}
+
+/* ================= MODULE 1 — OUTCOMES, EVENTS & COUNTING ================= */
+function p0_recall(){
+  const lead=`<div class="card"><h2>One unit of mass, spread over the outcomes</h2>
+    <p>A random experiment — a coin toss, the number of blocks mined in the next hour, tomorrow's return on a stock, the next word a language model emits — has a set of possible <b>outcomes</b>. Probability gives the outcomes shares of one fixed total, <b>1</b>: a single unit of mass, spread so that more likely outcomes carry more of it. Every object in this course is a way of spreading that one unit, and nearly every calculation is bookkeeping that keeps the total equal to 1.</p>
+    <p>How the bookkeeping is done depends on what the outcomes look like, and each case runs on a tool from the earlier courses:</p>
+    <div class="defn"><span class="dt">Three shapes of outcome space</span>
+      <b>Countable outcomes</b> $k=0,1,2,\\dots$ — each outcome gets a share $p_k\\ge0$ (a number), and the shares are <b>added</b>: a series, $\\sum_k p_k=1$.<br><br>
+      <b>A continuum of outcomes</b> $x\\ge0$ — a single point carries no mass. Instead a <b>density</b> $f(x)$, a function of the position $x$, says how thickly the mass is spread, and the mass of an interval is an <b>area</b>: $\\int_a^b f(x)\\,dx$, with $\\int_0^\\infty f(x)\\,dx=1$.<br><br>
+      <b>Several quantities at once</b> $(x,y)$, pushed through a linear map $A$ — the map stretches every area by $|\\det A|$, so the density must shrink by that same factor for the total to stay 1.</div>
+    <p>Switch between the three cases below and work every control. In each case the shaded mass is exactly 1, however the controls are set.</p>
+    <div class="seg" id="segmode"></div>
+    <canvas id="cv" width="640" height="340"></canvas>
+    <div class="ctrls" id="ctl"></div>
+    <div class="readout" id="rd"></div>
+    <p class="small" id="cap" style="margin-top:9px"></p>
+    <div class="task"><b>Keep the total at 1</b>In <b>Map</b> mode the unit square carries a uniform density of height 1, so its mass is $1\\times1=1$. Drag the two column tips until the map is $A=\\left[\\begin{smallmatrix}2&0\\\\0&3\\end{smallmatrix}\\right]$. What height must the density have on the image so that the total mass is still 1?</div>
+    <div id="gate"><div class="entry"><input id="ni" inputmode="decimal" placeholder="e.g. 0.25 or 1/4"><button class="btn primary" style="flex:0 0 auto;padding:12px 18px">Check</button></div><div class="miniout"></div></div></div>`;
+  recallFrom(`Probability runs on tools from the earlier courses: series add up the chances of countable outcomes, integrals measure chances spread over a continuum, and determinants and Jacobians track how a change of variables stretches area — and with it, density. Optimization returns for estimation, eigenvectors for Markov chains, and symmetric matrices and quadratic forms for covariance.`,
+    PRIOR_KEYS,RECALL_HINT,{lead,gated:true});
+
+  const cv=document.getElementById('cv'),ctl=document.getElementById('ctl'),rd=document.getElementById('rd'),cap=document.getElementById('cap');
+  const MODES=[['sum','Sum'],['int','Integral'],['map','Map']];
+  let mode='sum',r=0.6,N=3,lam=1.5,bcut=1,c1=[1,0],c2=[0,1],pl=null,dragTip=-1;
+  function arrow(x0,y0,x1,y1,col,w){const ctx=pl&&pl.ctx;if(!ctx)return;const X0=pl.px(x0),Y0=pl.py(y0),X1=pl.px(x1),Y1=pl.py(y1);
+    ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=w||3;ctx.beginPath();ctx.moveTo(X0,Y0);ctx.lineTo(X1,Y1);ctx.stroke();
+    const a=Math.atan2(Y1-Y0,X1-X0),h=12;if(Math.hypot(X1-X0,Y1-Y0)<4)return;ctx.beginPath();ctx.moveTo(X1,Y1);
+    ctx.lineTo(X1-h*Math.cos(a-0.4),Y1-h*Math.sin(a-0.4));ctx.lineTo(X1-h*Math.cos(a+0.4),Y1-h*Math.sin(a+0.4));ctx.closePath();ctx.fill();}
+  function rdc(k,id){return `<div class="rdc"><div class="k">${k}</div><div class="v" id="${id}">—</div></div>`;}
+  function slider(lbl,id,min,max,step,val){return `<span class="slabel" id="${id}L">${lbl}</span><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}">`;}
+  function meter(frac){const ctx=pl&&pl.ctx;if(!ctx)return;const x0=10,w=pl.W-20,y=8,h=14;
+    ctx.fillStyle='#16202f';ctx.fillRect(x0,y,w,h);ctx.fillStyle='#e8b84b';ctx.fillRect(x0,y,w*Math.max(0,Math.min(1,frac)),h);
+    ctx.strokeStyle='#2b3a4f';ctx.lineWidth=1;ctx.strokeRect(x0,y,w,h);}
+
+  function setup(){
+    cv.height=mode==='map'?520:340;
+    if(mode==='sum'){pl=plot(cv,{xmin:-0.8,xmax:15.8,ymin:-0.04,ymax:1.12});
+      ctl.innerHTML=slider('r = 0.60','rs',0.05,0.95,0.01,r);
+      rd.innerHTML=rdc('shares through k = N','r1')+rdc('1 − r^(N+1)','r2')+rdc('all shares','r3');
+      cap.innerHTML=`Bars are the shares $p_k=(1-r)\\,r^k$ — each is $r$ times the one before. <b>Drag across the plot</b> to choose $N$; the gold bars are $p_0,\\dots,p_N$ and the meter on top fills to their running total $S_N$. The geometric series gives $S_N=(1-r)\\cdot\\frac{1-r^{N+1}}{1-r}=1-r^{N+1}$, which climbs to exactly $1$ as $N\\to\\infty$, for every $r$ between 0 and 1.`;}
+    else if(mode==='int'){pl=plot(cv,{xmin:-0.3,xmax:6,ymin:-0.12,ymax:3.6});
+      ctl.innerHTML=slider('λ = 1.5','ls',0.3,3,0.1,lam);
+      rd.innerHTML=rdc('area from 0 to b','r1')+rdc('height f(0) = λ','r2')+rdc('area from 0 to ∞','r3');
+      cap.innerHTML=`The curve is the density $f(x)=\\lambda e^{-\\lambda x}$, where $\\lambda\\gt0$ is a fixed constant you set with the slider and $x\\ge0$ is the position. <b>Drag across the plot</b> to move the cut $b$; the shaded area is $\\int_0^b\\lambda e^{-\\lambda x}\\,dx=1-e^{-\\lambda b}$, and the meter shows it. The height at $0$ is $\\lambda$, which exceeds 1 once $\\lambda\\gt1$: a density's <em>height</em> is not a probability — only <em>areas</em> under it are.`;}
+    else {pl=plot(cv,{xmin:-1.25,xmax:4.25,ymin:-0.75,ymax:-0.75+5.5*520/640});
+      ctl.innerHTML='';
+      rd.innerHTML=rdc('det A','r1')+rdc('image area |det A|','r2')+rdc('density on image','r3')+rdc('mass','r4');
+      cap.innerHTML=`The dashed unit square carries density $1$. The map $A$ has columns $A\\mathbf e_1$ (gold) and $A\\mathbf e_2$ (blue) — the images of the two edges — so the square lands on the parallelogram they span, of area $|\\det A|$. <b>Drag either tip</b> (it snaps to quarter steps). A uniform density's mass is height $\\times$ area; the shading darkens or fades as the height adjusts to keep the mass at $1$.`;}
+    renderMath(cap);
+    const s=ctl.querySelector('input');
+    if(s)s.oninput=()=>{const v=parseFloat(s.value);if(mode==='sum'){r=v;document.getElementById('rsL').textContent='r = '+r.toFixed(2);}else{lam=v;document.getElementById('lsL').textContent='λ = '+lam.toFixed(1);}draw();};
+    draw();
+  }
+  function draw(){
+    if(mode==='sum'){pl.grid();const ctx=pl.ctx;let S=0;
+      for(let k=0;k<=15;k++){const p=(1-r)*Math.pow(r,k);if(k<=N)S+=p;
+        if(ctx){ctx.fillStyle=k<=N?'#e8b84b':'#2c3d55';ctx.fillRect(pl.px(k-0.36),pl.py(p),pl.px(k+0.36)-pl.px(k-0.36),pl.py(0)-pl.py(p));}}
+      pl.vline(N+0.5,'#3a4c66',true);meter(S);
+      document.getElementById('r1').textContent='S_'+N+' = '+S.toFixed(4);
+      document.getElementById('r2').textContent=(1-Math.pow(r,N+1)).toFixed(4);
+      document.getElementById('r3').textContent='1';}
+    else if(mode==='int'){pl.grid();const ctx=pl.ctx,f=x=>x>=0?lam*Math.exp(-lam*x):NaN;
+      if(ctx){ctx.fillStyle='rgba(232,184,75,.30)';ctx.beginPath();ctx.moveTo(pl.px(0),pl.py(0));
+        for(let i=0;i<=200;i++){const x=bcut*i/200;ctx.lineTo(pl.px(x),pl.py(f(x)));}ctx.lineTo(pl.px(bcut),pl.py(0));ctx.closePath();ctx.fill();}
+      pl.curve(f,'#7ab8ff');pl.vline(bcut,'#e8b84b',true);pl.point(bcut,f(bcut),'#e8b84b',5);
+      const A=1-Math.exp(-lam*bcut);meter(A);
+      document.getElementById('r1').textContent=A.toFixed(4);
+      document.getElementById('r2').textContent=lam.toFixed(1);
+      document.getElementById('r3').textContent='1';}
+    else {pl.grid();const ctx=pl.ctx,det=c1[0]*c2[1]-c1[1]*c2[0],ar=Math.abs(det);
+      if(ctx){ctx.fillStyle='rgba(122,184,255,.18)';ctx.fillRect(pl.px(0),pl.py(1),pl.px(1)-pl.px(0),pl.py(0)-pl.py(1));
+        ctx.setLineDash([5,4]);ctx.strokeStyle='#5d6f85';ctx.lineWidth=1.5;ctx.strokeRect(pl.px(0),pl.py(1),pl.px(1)-pl.px(0),pl.py(0)-pl.py(1));ctx.setLineDash([]);
+        if(ar>1e-9){const al=Math.max(0.04,Math.min(0.85,0.42/ar));const P=[[0,0],c1,[c1[0]+c2[0],c1[1]+c2[1]],c2];
+          ctx.fillStyle='rgba(232,184,75,'+al.toFixed(3)+')';ctx.beginPath();P.forEach((q,i)=>{const X=pl.px(q[0]),Y=pl.py(q[1]);if(i)ctx.lineTo(X,Y);else ctx.moveTo(X,Y);});ctx.closePath();ctx.fill();
+          ctx.strokeStyle='#e8b84b';ctx.lineWidth=1.5;ctx.stroke();}}
+      arrow(0,0,c1[0],c1[1],'#e8b84b',3);arrow(0,0,c2[0],c2[1],'#7ab8ff',3);
+      pl.point(c1[0],c1[1],'#e8b84b',7);pl.point(c2[0],c2[1],'#7ab8ff',7);
+      const fmt=v=>(Math.abs(v-Math.round(v))<1e-9?String(Math.round(v)):v.toFixed(4));
+      document.getElementById('r1').textContent=fmt(det);
+      document.getElementById('r2').textContent=fmt(ar);
+      document.getElementById('r3').textContent=ar>1e-9?(1/ar).toFixed(4):'∞ (flattened)';
+      document.getElementById('r4').textContent=ar>1e-9?'1':'—';}
+  }
+  function canvasXY(e){const rc=cv.getBoundingClientRect();const w=Math.max(1,rc.width),h=rc.height||w*cv.height/cv.width;
+    return [(e.clientX-rc.left)*(cv.width/w),(e.clientY-rc.top)*(cv.height/h)];}
+  function applyPointer(e){const [X,Y]=canvasXY(e);
+    if(mode==='sum'){N=Math.max(0,Math.min(15,Math.round(pl.mx(X))));}
+    else if(mode==='int'){bcut=Math.max(0,Math.min(6,pl.mx(X)));}
+    else if(dragTip>=0){const q=[Math.max(-1,Math.min(4,Math.round(pl.mx(X)*4)/4)),Math.max(-0.5,Math.min(3.5,Math.round(pl.my(Y)*4)/4))];
+      if(dragTip===0)c1=q;else c2=q;}
+    draw();}
+  let down=false;cv.style.touchAction='none';
+  cv.addEventListener('pointerdown',e=>{down=true;try{cv.setPointerCapture(e.pointerId);}catch(x){}
+    if(mode==='map'){const [X,Y]=canvasXY(e);const d=c=>Math.hypot(pl.px(c[0])-X,pl.py(c[1])-Y);dragTip=d(c1)<=d(c2)?0:1;}
+    applyPointer(e);e.preventDefault();});
+  cv.addEventListener('pointermove',e=>{if(down){e.preventDefault();applyPointer(e);}});
+  const end=()=>{down=false;dragTip=-1;};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+
+  const seg=document.getElementById('segmode');
+  seg.innerHTML=MODES.map(m=>`<span class="segb${m[0]===mode?' on':''}" data-m="${m[0]}">${m[1]}</span>`).join('');
+  seg.querySelectorAll('.segb').forEach(b=>b.onclick=()=>{mode=b.dataset.m;seg.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));setup();});
+  setup();
+
+  const host=document.getElementById('gate');
+  numChk(host,1/6,()=>{addReveal(`<div class="rh">✓ Height 1/6</div>
+    <p>The columns $(2,0)$ and $(0,3)$ span a $2\\times3$ rectangle, so the image has area $|\\det A|=2\\cdot3-0\\cdot0=6$. For a uniform density, mass $=$ height $\\times$ area, so the new height $h$ satisfies $h\\cdot6=1$, giving $h=\\tfrac16$. The same reasoning works for any invertible $A$: the map multiplies every area by $|\\det A|$, so it divides the density by $|\\det A|$,</p>
+    <div class="eqbox">$$f_{\\text{image}}=\\frac{f_{\\text{original}}}{|\\det A|}.$$</div>
+    <p>A curved map stretches different places by different amounts, and $|\\det A|$ becomes the local Jacobian factor $|\\det J|$ — the same factor as in $dx\\,dy=|\\det J|\\,du\\,dv$. Module 5 derives the full density formula from it. That formula is the engine of <b>normalizing flows</b>: a generative model pushes a simple Gaussian through a chain of invertible maps and tracks $\\log|\\det J|$ at every layer to keep the total probability at 1.</p>`);},
+    s=>{const t=s.replace(/\s/g,'');const m=t.split('/');let v=m.length===2?parseFloat(m[0])/parseFloat(m[1]):parseFloat(t);if(Math.abs(v-1/6)<6e-4)v=1/6;return v;});
+  setHints([`For a uniform density, mass = height × area — and the mass has to stay 1. Set the map in Map mode and read the image's area.`,
+    `The image is a 2-by-3 rectangle, so its area is |det A| = 6. Solve height × 6 = 1.`]);
+}
+/* ================= boot ================= */
+window.onerror=function(m,s,l){console.error(m,l);};
+function bootRestore(){const s=loadState();
+  if(s&&s.completed)Object.assign(completed,s.completed);
+  const hp=parseHash();
+  let t=null;
+  if(hp&&MODULES[hp.curM]&&MODULES[hp.curM].ready)t={curM:hp.curM,beat:hp.beat};
+  else if(s&&s.view==='module'&&typeof s.curM==='number'&&MODULES[s.curM]&&MODULES[s.curM].ready)t={curM:s.curM,beat:s.beat};
+  if(t){const b=Math.max(0,Math.min(t.beat|0,MODULES[t.curM].beats.length-1));openModuleAt(t.curM,b);}
+  else renderMenu();}
+bootRestore();
+window.addEventListener('load',()=>renderMath());
+window.addEventListener('DOMContentLoaded',()=>renderMath());
+</script>
+</body>
+</html>
