@@ -154,7 +154,7 @@ const MODULES=[
   beats:[c7_recall10,c7_doubleint,c7_iterated,c7_polar,c7_jacobian,c7_intproblems]},
  {id:'c10',title:'Vector Calculus',sub:'Vector fields, line & surface integrals, and the Green/Stokes/divergence theorems.',ready:true,
   outro:`A vector field assigns an arrow to every point; the gradient was the first example. The rest of the subject measures a field along paths and over surfaces, and the Green, Stokes, and divergence theorems lift the Fundamental Theorem of Calculus into two and three dimensions.`,
-  beats:[c10_recall,c10_fields,c10_notation,c10_line,c10_conservative,c10_curl,c10_green,c10_divcurl,c10_surface,c10_stokes,c10_divergence,c10_problems]},
+  beats:[c10_recall,c10_fields,c10_notation,c10_line,c10_conservative,c10_curl,c10_green,c10_divflux,c10_greenflux,c10_surface,c10_stokes,c10_divergence,c10_problems]},
  {id:'c11',title:'Matrix Calculus',sub:'Derivatives of scalar-by-vector and vector-by-vector — gradients, Jacobians, and the chain rule in matrix form: the bridge to machine learning.',ready:true,
   outro:`The derivative of a vector-valued map is the Jacobian — the grid of every partial $\\partial y_i/\\partial x_j$ — with the gradient (scalar out) and the plain $f'$ as its small cases. Composing maps multiplies Jacobians, inner dimensions meeting like links in a chain; a short table of identities ($\\partial(Ax)/\\partial x=A$, quadratic forms, elementwise $\\Rightarrow$ diagonal) covers the pieces; and backpropagation is that product swept right-to-left from a scalar loss — one multiply of upstream gradient by local derivative at every node. This is the language machine-learning papers are written in.`,
   beats:[c11_recall,c11_shapes,c11_chain,c11_identities,c11_backprop,c11_problems]},
@@ -2104,7 +2104,7 @@ function c7_gradient(){
     <p>Two consequences drop straight out of that one line:</p>
     <p>&bull; <b>Perpendicular to the contours.</b> Walk <em>along</em> a contour and your height doesn't change, so $\\Delta f=0$, which means $\\nabla f\\cdot(\\text{step along the contour})=0$. A zero dot product means a right angle — so the gradient is perpendicular to the level curve it sits on.</p>
     <p>&bull; <b>Steepest ascent, and how steep.</b> For a step of fixed length, the dot product $\\nabla f\\cdot(\\text{step})$ is largest when the step points the <em>same way</em> as $\\nabla f$. So the gradient's direction is the steepest-uphill direction, and its length $|\\nabla f|$ is exactly how steep that best climb is — which is why the arrow stretches where the rings crowd together (steep) and shrinks where they spread out (gentle).</p>
-    <p>For our bowl, $\\nabla f=(2x,2y)$ points radially outward, straight away from the low point — the fastest way up the wall. At $(3,4)$ it's $(6,8)$, with $|\\nabla f|=\\sqrt{36+64}=10$. Next we'll ask not just for the steepest direction but for the slope in <em>any</em> direction — and the gradient will answer that too.</p></div>`;
+    <p>For our bowl, $\\nabla f=(2x,2y)$ points radially outward, straight away from the low point — the fastest way up the wall. At $(3,4)$ it's $(6,8)$, with $|\\nabla f|=\\sqrt{36+64}=10$. One framing to carry forward: each component is already a slope in a particular direction — $f_x$ is the rate stepping along $+x$, $f_y$ along $+y$ — so the gradient is assembled from the slopes along the two axes. The next beat asks for the slope along <em>any</em> heading, not just the axes, and the gradient answers that too.</p></div>`;
   // ---------- 3-D clarifier: graph vs level curve vs gradient ----------
   (function(){const gc=document.getElementById('cvg');const g=gc&&gc.getContext&&gc.getContext('2d');if(!g)return;const GW=gc.width,GH=gc.height;
     const CX=320,CY=212,SX=60,SY=20,SZ=12.5;
@@ -2171,6 +2171,7 @@ function c7_directional(){
     <p style="margin-top:16px"><b>Deriving the rule.</b> Take a small step of length $t$ in the unit direction $\\mathbf u=(\\cos\\theta,\\sin\\theta)$, so $\\Delta x=t\\cos\\theta$ and $\\Delta y=t\\sin\\theta$. From the tangent plane, the height change is $\\Delta f\\approx f_x\\,\\Delta x+f_y\\,\\Delta y=t\\,(f_x\\cos\\theta+f_y\\sin\\theta)$. The rate <em>per unit distance</em> is $\\Delta f/t$:</p>
     <div class="eqbox">$$D_{\\mathbf u}f=f_x\\cos\\theta+f_y\\sin\\theta=\\nabla f\\cdot\\mathbf u.$$</div>
     <p>The slope in any direction is just the gradient dotted with that direction. One caution: $\\mathbf u$ must be a <b>unit</b> vector, so the answer is "per unit distance." If a direction is handed to you as a longer vector $\\mathbf v$, shrink it first — use $\\mathbf u=\\mathbf v/|\\mathbf v|$.</p>
+    <p><b>Everything here is a directional derivative.</b> Two special headings recover the partials: $\\mathbf u=(1,0)$ gives $D_{\\mathbf u}f=f_x$ and $\\mathbf u=(0,1)$ gives $f_y$. So the gradient's own components are directional derivatives — the slopes along the two axes — and the gradient $\\nabla f$ is simply the vector that packages those two and, through $\\nabla f\\cdot\\mathbf u$, hands back the slope along <em>any</em> heading at all. The partial derivatives, the gradient, the steepest slope: all of them are directional derivatives, read in one direction or another.</p>
     <p><b>The cosine picture.</b> A dot product is $\\nabla f\\cdot\\mathbf u=|\\nabla f|\\,|\\mathbf u|\\cos\\varphi$, and $|\\mathbf u|=1$, so</p>
     <div class="eqbox">$$D_{\\mathbf u}f=|\\nabla f|\\cos\\varphi,\\qquad \\varphi=\\text{angle between }\\mathbf u\\text{ and }\\nabla f.$$</div>
     <p>That single formula contains the whole last beat plus more — it's the curve plotted on the right as you spin $\\mathbf u$:</p>
@@ -2292,7 +2293,7 @@ function c7_taylor(){
     <div class="eqbox">$$H=\\begin{pmatrix}f_{xx}&f_{xy}\\\\ f_{xy}&f_{yy}\\end{pmatrix},\\qquad \\tfrac12\\,\\mathbf p^{\\mathsf T}H\\,\\mathbf p=\\tfrac12\\big(f_{xx}\\,\\Delta x^2+2f_{xy}\\,\\Delta x\\,\\Delta y+f_{yy}\\,\\Delta y^2\\big).$$</div>
 
     <div class="eqbox">single variable: one axis, one bend&nbsp; $f''(x)$ &nbsp;$\\longrightarrow$&nbsp; two variables: a bend for every heading&nbsp; $\\mathbf p^{\\mathsf T}H\\mathbf p$</div>
-    <p><b>From one bend to a bend per direction.</b> In one variable you can only step along the $x$-axis, left or right, so a point's curvature is a single number $f''(x)$. With two inputs you can step out of $P$ in <em>any</em> heading, so "the second derivative" is no longer one number — it's one bend <em>per direction</em>, the map $\\mathbf p\\mapsto\\mathbf p^{\\mathsf T}H\\mathbf p$. The Hessian $H$ stores them all at once: hand it a heading $\\mathbf p$ and it returns that heading's curvature. Point along $x$ with $\\mathbf p=(1,0)$ and it returns $f_{xx}$, the ordinary 1-D bend along $x$. The new ingredient is the cross-term $f_{xy}$: it lets the two axes interact, which a lone $x$ could never do.</p>
+    <p><b>From one bend to a bend per direction.</b> In one variable you can only step along the $x$-axis, left or right, so a point's curvature is a single number $f''(x)$. With two inputs you can step out of $P$ in <em>any</em> heading, so "the second derivative" is no longer one number — it's one bend <em>per direction</em>, the map $\\mathbf p\\mapsto\\mathbf p^{\\mathsf T}H\\mathbf p$. The Hessian $H$ stores them all at once: hand it a heading $\\mathbf p$ and it returns that heading's curvature. So the pure second partials are nothing exotic — $f_{xx}$ <em>is</em> the curvature straight along $x$ (set $\\mathbf p=(1,0)$) and $f_{yy}$ straight along $y$ (set $\\mathbf p=(0,1)$); in each case the cross-term switches off and you're left with a single ordinary 1-D bend along that axis. The mixed term $2f_{xy}\\,p_1p_2$ turns on only for a <em>diagonal</em> heading that mixes both axes — it is what lets the two directions interact, something a lone $x$ could never do.</p>
 
     <p><b>This is the directional derivative, one order up.</b> In one variable the word "derivative" hides a choice you never had to make: with only the $x$-axis, "the slope" and "the curvature" come with a built-in direction. With two inputs that choice is out in the open — every rate is measured along a heading $\\mathbf p$. The slope you read is exactly the <em>directional derivative</em> from the previous beat; the curvature is its second-order sibling:</p>
     <div class="eqbox">slope $=\\nabla f\\cdot\\mathbf p$ &nbsp;(directional derivative)$\\qquad$ curvature $=\\mathbf p^{\\mathsf T}H\\mathbf p$ &nbsp;(directional <em>second</em> derivative)</div>
@@ -2300,6 +2301,7 @@ function c7_taylor(){
 
     <p><b>Where the curvature term comes from.</b> To pin down that second directional derivative, collapse the surface back to one variable. Walk a straight line out of $P$ in a fixed heading $\\mathbf p=(p_1,p_2)$; your position after distance $s$ is</p>
     <div class="eqbox">$$x(s)=x_0+s\\,p_1,\\qquad y(s)=y_0+s\\,p_2,\\qquad\\text{so}\\quad \\frac{dx}{ds}=p_1,\\ \\ \\frac{dy}{ds}=p_2.$$</div>
+    <p>So the heading $\\mathbf p=(p_1,p_2)$ <em>is</em> the velocity of your walk: a unit step per unit distance, $\\mathbf p=\\big(\\tfrac{dx}{ds},\\tfrac{dy}{ds}\\big)$. "Direction $\\mathbf p$" and "velocity $(dx/ds,\\,dy/ds)$" are two names for the same vector — handy to keep in view, since the chain rule below threads exactly this velocity through $f$.</p>
     <p>Let $g(s)=f\\big(x(s),y(s)\\big)$ — your height as you walk. It is the blue slice: an ordinary function of the single variable $s$, so the 1-D Taylor expansion from Module 6 applies:</p>
     <div class="eqbox">$$g(s)\\approx g(0)+g'(0)\\,s+\\tfrac12\\,g''(0)\\,s^2.$$</div>
     <p><b>First derivative — chain rule, once.</b> $f$ changes with $s$ only through $x$ and $y$, so the multivariable chain rule adds the two routes:</p>
@@ -3554,74 +3556,185 @@ function c10_green(){
   numChk(stage.querySelector('.card'),2,()=>{addReveal(`<div class="rh">✓ circulation = 2</div><p>Green's theorem replaces the four-edge walk with one area integral: $\\oint\\mathbf F\\cdot d\\mathbf r=\\iint_R(Q_x-P_y)\\,dA$. The curl is the constant $2$ and the unit square has area $1$, so the circulation is $2\\cdot1=2$ — no line integral needed. (The swirl field spins everything at the same rate, so the answer just scales with the area you enclose.)</p>`);});
   setHints([`Green's theorem: circulation = ∬ curl dA. Curl is constant 2, area of the unit square is 1.`,`2 × 1 = 2.`]);
 }
-function c10_divcurl(){
-  stage.innerHTML=`<div class="card"><h2>Curl and divergence: the two things a field does at a point</h2>
-    <p>Green's theorem turned the number $Q_x-P_y$ into a law. It's time to name it — and to meet its partner. Drop a tiny blob of fluid into a field and let the arrows carry it for an instant: it can <b>twist</b> (rotate) and it can <b>swell or shrink</b> (gain or lose area). Those are the two independent local behaviors, and each gets a derivative.</p>
+function c10_divflux(){
+  stage.innerHTML=`<div class="card"><h2>Divergence: how fast a field spreads out</h2>
+    <p>Spin is only half of what a field does at a point. It can also push fluid <b>out</b> — a source, like a spring — or draw it <b>in</b> — a sink, like a drain. We want one number for the net rate fluid leaves a point. Curl read the field's <em>tangent</em> around a loop; divergence reads its <em>normal</em> — the same field, measured the perpendicular way.</p>
 
-    <p><b>Watch the blob.</b> The grey circle is a speck of fluid; the gold shape is where the field pushes its points an instant later. <b>Drag it around</b> and flip the field: a source swells it, a sink shrinks it, a swirl spins it, a spiral does both.</p>
-    <div class="seg" id="segF"></div>
-    <canvas id="cv" width="640" height="430"></canvas>
-    <p class="small" id="obs" style="margin-top:6px;color:#9fb0c4"></p>
-    <div class="readout"><div class="rdc"><div class="k">divergence Pₓ+Qᵧ (swell rate)</div><div class="v" id="dv">—</div></div><div class="rdc"><div class="k">curl Qₓ−Pᵧ (twist rate)</div><div class="v" id="cu">—</div></div></div>
+    <p><b>Measure outflow with flux across a loop.</b> Ring the point with a small loop and ask how much flow crosses <em>out</em> through it. Only the part of $\\mathbf F$ pointing <em>through</em> the boundary — along the outward normal $\\mathbf n$ — actually crosses; the part running along the boundary slides past without leaving. So the outward <b>flux</b> across the loop is $\\oint \\mathbf F\\cdot\\mathbf n\\,ds$. <b>Drag the loop, flip the field</b>: green marks flow leaving, red flow entering.</p>
+    <div class="seg" id="segX"></div>
+    <canvas id="cvfx" width="640" height="360"></canvas>
+    <p class="small" id="obsX" style="margin-top:6px;color:#9fb0c4"></p>
+    <div class="readout"><div class="rdc"><div class="k">flux ∮F·n ds (this loop)</div><div class="v" id="xF">—</div></div><div class="rdc"><div class="k">source / sink?</div><div class="v" id="xS">—</div></div></div>
+    <p>The source pushes out all the way around (all green) — positive flux. The swirl is all grey: it circulates <em>along</em> the loop but never crosses it, so its flux is zero. Spread and spin are independent — a field can do one, the other, both, or neither.</p>
 
-    <p style="margin-top:16px"><b>Divergence — net outflow.</b> Is more fluid leaving the blob than entering? Add the two ways the field can push outward: how fast the $x$-flow grows as you move in $x$, plus how fast the $y$-flow grows as you move in $y$.</p>
+    <p><b>The outward normal, written down.</b> Walk the loop counter-clockwise with unit tangent $\\mathbf T=(dx/ds,\\,dy/ds)$. The outward normal is $\\mathbf T$ turned $90^\\circ$ clockwise, $\\mathbf n=(dy/ds,\\,-dx/ds)$. So the flux integrand is $\\mathbf F\\cdot\\mathbf n\\,ds=(P,Q)\\cdot(dy,-dx)=P\\,dy-Q\\,dx$:</p>
+    <div class="eqbox">$$\\text{flux across the loop}=\\oint_C\\big(P\\,dy-Q\\,dx\\big).$$</div>
+
+    <p><b>From a loop to a point: flux per area.</b> Flux through a big loop blends the outflow of everything inside. To get the outflow <em>at</em> the point, shrink the loop and divide by the area it encloses. That limit is the <b>divergence</b>:</p>
+    <div class="eqbox">$$\\operatorname{div}\\mathbf F=\\lim_{\\text{area}\\to 0}\\frac{\\oint \\mathbf F\\cdot\\mathbf n\\,ds}{\\text{area enclosed}}.$$</div>
+
+    <p><b>Derive it on a tiny rectangle.</b> Box with corner $(x,y)$, width $dx$, height $dy$. Count the outward flux through each edge — the field component through it times the edge length, outward positive:</p>
+    <canvas id="cvcellf" width="640" height="250"></canvas>
+    <p style="margin:4px 0 2px">&bull; the two <b>vertical</b> edges (outward normals $\\pm x$): $P(x{+}dx)\\,dy-P(x)\\,dy$ — the $x$-flow out the right minus in the left;</p>
+    <p style="margin:2px 0 4px">&bull; the two <b>horizontal</b> edges (outward normals $\\pm y$): $Q(y{+}dy)\\,dx-Q(y)\\,dx$ — the $y$-flow out the top minus in the bottom.</p>
+    <p>Each pair is one function's change over a small step — $\\text{change}\\approx\\text{rate}\\times\\text{step}$ — so $[P(x{+}dx)-P(x)]\\approx P_x\\,dx$ and $[Q(y{+}dy)-Q(y)]\\approx Q_y\\,dy$:</p>
+    <div class="eqbox">$$\\oint_{\\text{cell}}\\mathbf F\\cdot\\mathbf n\\,ds=\\underbrace{[P(x{+}dx)-P(x)]}_{P_x\\,dx}\\,dy+\\underbrace{[Q(y{+}dy)-Q(y)]}_{Q_y\\,dy}\\,dx=\\big(P_x+Q_y\\big)\\,dx\\,dy.$$</div>
+    <p>Divide by the area $dx\\,dy$ and the outflow density — the divergence — falls out:</p>
     <div class="eqbox">$$\\operatorname{div}\\mathbf F=\\frac{\\partial P}{\\partial x}+\\frac{\\partial Q}{\\partial y}.$$</div>
-    <p>Positive means a <b>source</b> (the blob swells, fluid created), negative a <b>sink</b> (it shrinks), zero means incompressible — area conserved. For the source $(x,y)$: $P_x+Q_y=1+1=2$, a steady spring at every point.</p>
 
-    <p><b>Curl — local spin.</b> Does the field spin the blob? That's the swirl from Green's theorem, the circulation packed into a point: how fast the $y$-push grows across $x$, minus how fast the $x$-push grows up $y$.</p>
-    <div class="eqbox">$$\\operatorname{curl}\\mathbf F=\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}.$$</div>
-    <p>Positive spins counter-clockwise, negative clockwise, zero not at all. For the swirl $(-y,x)$: $Q_x-P_y=1-(-1)=2$. They're <em>independent</em> — a field can swell without spinning (a source), spin without swelling (a swirl), or do both (a spiral); knowing one tells you nothing about the other.</p>
+    <p><b>Read it, and meet its twin.</b> Positive is a <b>source</b> (fluid created, the patch spreads), negative a <b>sink</b>, zero incompressible — area conserved. The source $(x,y)$ has $P_x+Q_y=1+1=2$; the swirl $(-y,x)$ has $0$ — it spins but never spreads. Divergence and curl are the two things a field does at a point, and both read off its <b>Jacobian</b> $J=\\begin{pmatrix}P_x&P_y\\\\Q_x&Q_y\\end{pmatrix}$ — the local-linearization matrix from the change-of-variables beat: the divergence is its <em>trace</em> $P_x+Q_y$, the curl its off-diagonal twist $Q_x-P_y$. Writing $\\nabla=(\\partial_x,\\partial_y)$, the three operators line up: $\\nabla f$ is the gradient, $\\nabla\\cdot\\mathbf F$ the divergence, $\\nabla\\times\\mathbf F$ the curl.</p>
 
-    <p><b>Both come out of the field's Jacobian.</b> Near a point the field is linear, $\\mathbf F(\\mathbf x+\\mathbf d)\\approx\\mathbf F+J\\mathbf d$ with $J=\\begin{pmatrix}P_x&P_y\\\\Q_x&Q_y\\end{pmatrix}$ — the same local-linearization matrix from the change-of-variables beat. Its <b>trace</b> $P_x+Q_y$ is the divergence (how the blob's area scales), and its off-diagonal twist $Q_x-P_y$ is the curl. Two numbers read off one matrix. Writing $\\nabla=(\\partial_x,\\partial_y)$ as a "vector of derivatives" packs all three operators together: $\\nabla f$ is the gradient, $\\nabla\\cdot\\mathbf F$ the divergence, $\\nabla\\times\\mathbf F$ the curl.</p>
+    <div class="task"><b>Compute a divergence</b>Find the divergence $P_x+Q_y$ of the spiral field $\\mathbf F=(x-y,\\ x+y)$.</div>
+    <div class="entry"><input id="ni" inputmode="numeric" placeholder="?"><button class="btn primary" style="flex:0 0 auto;padding:12px 18px">Check</button></div><div class="miniout"></div>
 
-    <p><b>Green's theorem, twice.</b> Both local rates add up over a region to something on its boundary. Summing the spin gives the circulation form you already proved; summing the outflow gives its twin, the <b>flux form</b> — net flow across the boundary equals the divergence totalled inside:</p>
-    <div class="eqbox">$$\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_R(\\operatorname{curl}\\mathbf F)\\,dA,\\qquad \\oint_C\\mathbf F\\cdot\\mathbf n\\,ds=\\iint_R(\\operatorname{div}\\mathbf F)\\,dA.$$</div>
-    <p>And curl ties the whole chapter together: a field is <b>conservative</b> exactly when its curl is zero (on a region with no holes) — no spin anywhere means every loop does zero work. The flux form is the 2-D <b>divergence theorem</b>; next it lifts off the plane into Stokes' and the divergence theorems in 3-D.</p>
+    <p style="margin-top:16px"><b>Next.</b> Divergence is the outflow at one point. Tile a region with these tiny loops and the flux through each shared interior edge cancels — leaving only the boundary. That is Green's second form.</p></div>`;
 
-    <div class="task"><b>Read off a field</b>For the spiral field $\\mathbf F=(x-y,\\ x+y)$, compute the divergence $P_x+Q_y$.</div>
-    <div class="entry"><input id="ni" inputmode="numeric" placeholder="?"><button class="btn primary" style="flex:0 0 auto;padding:12px 18px">Check</button></div><div class="miniout"></div></div>`;
+  const arrow=(c,X0,Y0,X1,Y1,col,w)=>{if(!c)return;c.strokeStyle=col;c.lineWidth=w||2;c.beginPath();c.moveTo(X0,Y0);c.lineTo(X1,Y1);c.stroke();const a=Math.atan2(Y1-Y0,X1-X0),hl=Math.min(9,Math.hypot(X1-X0,Y1-Y0));c.fillStyle=col;c.beginPath();c.moveTo(X1,Y1);c.lineTo(X1-hl*Math.cos(a-0.4),Y1-hl*Math.sin(a-0.4));c.lineTo(X1-hl*Math.cos(a+0.4),Y1-hl*Math.sin(a+0.4));c.closePath();c.fill();};
 
-  const cv=document.getElementById('cv');const ctx=cv.getContext&&cv.getContext('2d');const W=cv.width,H=cv.height,S=80,cx=320,cy=215;
+  // ===== interactive 1: flux across a loop (normal components) =====
+  const cXc=document.getElementById('cvfx');const g1=cXc&&cXc.getContext&&cXc.getContext('2d');const W1=cXc.width,H1=cXc.height,S1=70,cx1=W1/2,cy1=H1/2;
+  const px1=x=>cx1+x*S1, py1=y=>cy1-y*S1;
+  const FIELDS={
+    source:{F:(x,y)=>[x,y],div:2,label:'source (x, y)'},
+    sink:{F:(x,y)=>[-x,-y],div:-2,label:'sink (−x, −y)'},
+    swirl:{F:(x,y)=>[-y,x],div:0,label:'swirl (−y, x)'},
+    shear:{F:(x,y)=>[x,0],div:1,label:'shear (x, 0)'}
+  };
+  let fk='source', C=[0,0];const rho=0.9;
+  function flux(){const F=FIELDS[fk].F,N=240;let s=0;for(let i=0;i<N;i++){const th=(i+0.5)/N*2*Math.PI;const x=C[0]+rho*Math.cos(th),y=C[1]+rho*Math.sin(th);const nx=Math.cos(th),ny=Math.sin(th);const f=F(x,y);s+=(f[0]*nx+f[1]*ny)*rho*(2*Math.PI/N);}return s;}
+  function draw1(){if(!g1)return;g1.clearRect(0,0,W1,H1);const F=FIELDS[fk].F;
+    g1.strokeStyle='#16202f';g1.lineWidth=1;for(let gv=-3;gv<=3;gv++){g1.beginPath();g1.moveTo(px1(gv),py1(-2.4));g1.lineTo(px1(gv),py1(2.4));g1.stroke();g1.beginPath();g1.moveTo(px1(-3.8),py1(gv));g1.lineTo(px1(3.8),py1(gv));g1.stroke();}
+    for(let gx=-3;gx<=3;gx+=0.6)for(let gy=-2;gy<=2;gy+=0.6){const v=F(gx,gy),m=Math.hypot(v[0],v[1]);if(m<1e-9)continue;const L=Math.max(0.12,Math.min(0.34,m*0.09));arrow(g1,px1(gx),py1(gy),px1(gx+v[0]/m*L),py1(gy+v[1]/m*L),'#223247',1.1);}
+    g1.strokeStyle='#8fa3bb';g1.lineWidth=1.8;g1.beginPath();for(let i=0;i<=64;i++){const th=i/64*2*Math.PI;const X=px1(C[0]+rho*Math.cos(th)),Y=py1(C[1]+rho*Math.sin(th));i?g1.lineTo(X,Y):g1.moveTo(X,Y);}g1.stroke();
+    const M=16;for(let i=0;i<M;i++){const th=i/M*2*Math.PI;const x=C[0]+rho*Math.cos(th),y=C[1]+rho*Math.sin(th);const nx=Math.cos(th),ny=Math.sin(th);const f=F(x,y);const nc=f[0]*nx+f[1]*ny;const col=nc>0.03?'#3fb98f':(nc<-0.03?'#d98f8f':'#5d7186');const L=Math.max(0,Math.min(0.5,Math.abs(nc)*0.12))*Math.sign(nc);if(Math.abs(nc)>0.03)arrow(g1,px1(x),py1(y),px1(x+nx*L),py1(y+ny*L),col,2.2);else{g1.fillStyle=col;g1.beginPath();g1.arc(px1(x),py1(y),2,0,7);g1.fill();}}
+    g1.fillStyle='#dbe6f4';g1.beginPath();g1.arc(px1(C[0]),py1(C[1]),3.5,0,7);g1.fill();
+    const fv=flux();
+    document.getElementById('xF').textContent=fv.toFixed(2);
+    document.getElementById('xS').textContent=fv>0.05?'source (net outflow)':(fv<-0.05?'sink (net inflow)':'neither');
+    const ob=document.getElementById('obsX');if(ob)ob.textContent=FIELDS[fk].div===0?'The swirl runs along the loop, never across it (grey normals): zero flux — it spins but does not spread.':'The normal pushes are mostly '+(FIELDS[fk].div>0?'green (outward): a source':'red (inward): a sink')+'. Net flux '+fv.toFixed(2)+'.';}
+  function segX(){document.getElementById('segX').innerHTML=Object.keys(FIELDS).map(k=>`<span class="segb ${k===fk?'on':''}" data-k="${k}">${FIELDS[k].label}</span>`).join('');document.querySelectorAll('#segX .segb').forEach(b=>b.onclick=()=>{fk=b.dataset.k;segX();draw1();});}
+  segX();
+  cXc.style.touchAction='none';let drgX=false;
+  function setX(e){const r=cXc.getBoundingClientRect();const X=(e.clientX-r.left)*(W1/Math.max(1,r.width)),Y=(e.clientY-r.top)*(H1/Math.max(1,r.height));C=[Math.max(-2.6,Math.min(2.6,(X-cx1)/S1)),Math.max(-1.4,Math.min(1.4,(cy1-Y)/S1))];draw1();}
+  cXc.addEventListener('pointerdown',e=>{drgX=true;try{cXc.setPointerCapture(e.pointerId);}catch(x){}setX(e);e.preventDefault();});
+  cXc.addEventListener('pointermove',e=>{if(drgX){e.preventDefault();setX(e);}});
+  const endX=()=>drgX=false;cXc.addEventListener('pointerup',endX);cXc.addEventListener('pointercancel',endX);
+  draw1();
+
+  // ===== one-cell outward-flux diagram =====
+  (function(){const c=document.getElementById('cvcellf');const g=c&&c.getContext&&c.getContext('2d');if(!g)return;const Wc=c.width,Hc=c.height;
+    const x0=255,y0=58,L=130;
+    g.clearRect(0,0,Wc,Hc);
+    g.fillStyle='rgba(122,184,255,0.10)';g.fillRect(x0,y0,L,L);g.strokeStyle='#3a4c66';g.lineWidth=1;g.strokeRect(x0,y0,L,L);
+    arrow(g,x0+L,y0+L/2,x0+L+26,y0+L/2,'#e8b84b',2.5);
+    arrow(g,x0,y0+L/2,x0-26,y0+L/2,'#e8b84b',2.5);
+    arrow(g,x0+L/2,y0,x0+L/2,y0-26,'#e8b84b',2.5);
+    arrow(g,x0+L/2,y0+L,x0+L/2,y0+L+26,'#e8b84b',2.5);
+    g.fillStyle='#caa64e';g.font='13px sans-serif';
+    g.fillText('+P dy',x0+L+14,y0+L/2-4);
+    g.fillText('−P dy',x0-72,y0+L/2-4);
+    g.fillText('+Q dx',x0+L/2+8,y0-14);
+    g.fillText('−Q dx',x0+L/2+8,y0+L+30);
+    g.fillStyle='#8095ab';g.font='12px sans-serif';
+    g.fillText('outward flux through each edge', 30, 26);
+    g.fillText('one cell, size dx × dy', 30, 44);
+  })();
+
+  numChk(stage.querySelector('.card'),2,()=>{addReveal(`<div class="rh">✓ divergence = 2</div><p>$P=x-y$ gives $P_x=1$; $Q=x+y$ gives $Q_y=1$; so $\\operatorname{div}\\mathbf F=P_x+Q_y=1+1=2>0$ — the spiral is a source, fluid spreading out everywhere. (Its curl is $Q_x-P_y=1-(-1)=2$ as well, so it also spins: it spreads and twists at once, yet the two numbers are read independently.)</p>`);});
+  setHints([`div = P_x + Q_y. Here P = x−y (so P_x = 1) and Q = x+y (so Q_y = 1).`,`1 + 1 = 2.`]);
+}
+function c10_greenflux(){
+  stage.innerHTML=`<div class="card"><h2>Green's theorem, flux form: outflow across = divergence inside</h2>
+    <p>Divergence is the outflow at a single point. <b>Green's flux form</b> adds it over a whole region and finds it equals the total flux out through the region's boundary. It is the circulation story again, with the field dotted into the <em>normal</em> instead of the tangent — and it is the plane's <b>divergence theorem</b>.</p>
+
+    <p><b>Tile the region with tiny loops.</b> Cover $R$ with little cells, each with its own small boundary loop. From the last beat, each cell's outward flux is $(\\operatorname{div}\\mathbf F)\\,dA=(P_x+Q_y)\\,dA$, so adding over all the cells gives the total enclosed divergence, $\\iint_R(P_x+Q_y)\\,dA$.</p>
+
+    <p><b>The interior cancels.</b> Every edge <em>inside</em> the region is shared by two neighbouring cells, and their outward normals through it point <em>opposite</em> ways: what leaves one cell enters the other, so the two fluxes are equal and opposite and cancel in pairs. Only the <em>outer</em> edges survive, and together they are the flux out through the boundary, $\\oint_C\\mathbf F\\cdot\\mathbf n\\,ds$. <b>Flip the switch</b> to watch the interior cancel.</p>
+    <div class="seg" id="segT"></div>
+    <canvas id="cvtf" width="640" height="300"></canvas>
+    <p class="small" id="obsT" style="margin-top:6px;color:#9fb0c4"></p>
+    <p>That one sum, counted two ways — cell by cell the enclosed divergence, surviving-edge by surviving-edge the boundary flux — gives Green's flux form:</p>
+    <div class="eqbox">$$\\oint_C\\mathbf F\\cdot\\mathbf n\\,ds=\\iint_R\\Big(\\frac{\\partial P}{\\partial x}+\\frac{\\partial Q}{\\partial y}\\Big)\\,dA.$$</div>
+
+    <p><b>See it live.</b> The background shades the divergence (<span style="color:#d98f8f">red</span> source, <span style="color:#7ab8ff">blue</span> sink). <b>Drag the loop</b>: the flux measured out through its edge matches the divergence totalled over its inside. Flip the field.</p>
+    <div class="seg" id="segF"></div>
+    <canvas id="cvf" width="640" height="430"></canvas>
+    <p class="small" id="obs" style="margin-top:6px;color:#9fb0c4"></p>
+    <div class="readout"><div class="rdc"><div class="k">flux ∮ F·n ds</div><div class="v" id="flx">—</div></div><div class="rdc"><div class="k">enclosed ∬(Pₓ+Qᵧ)dA</div><div class="v" id="enc">—</div></div></div>
+
+    <div class="task"><b>Use the theorem</b>The source field $\\mathbf F=(x,y)$ has divergence $P_x+Q_y=2$. By Green's flux form, what is the outward flux across the boundary of the unit square $[0,1]\\times[0,1]$? (div $\\times$ area)</div>
+    <div class="entry"><input id="ni" inputmode="numeric" placeholder="?"><button class="btn primary" style="flex:0 0 auto;padding:12px 18px">Check</button></div><div class="miniout"></div>
+
+    <p style="margin-top:16px"><b>Both forms of Green, side by side.</b> The same region-equals-boundary idea, read two perpendicular ways — dot the field with the <em>tangent</em> to catch what flows <em>along</em> the edge, or with the <em>normal</em> to catch what flows <em>across</em> it:</p>
+    <div class="eqbox" style="line-height:2.2">circulation (curl):&nbsp; $\\displaystyle\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_R(Q_x-P_y)\\,dA$<br>flux (divergence):&nbsp; $\\displaystyle\\oint_C\\mathbf F\\cdot\\mathbf n\\,ds=\\iint_R(P_x+Q_y)\\,dA$</div>
+    <p><b>Where it goes.</b> These two flat theorems now lift off the plane: the circulation form becomes <b>Stokes'</b> (a curved surface spanning a wire loop), and this flux form becomes the <b>divergence theorem</b> (a closed surface around a volume). The surface integral in the next beat is exactly this flux across a curve, raised one dimension — flow through a sheet instead of across a loop.</p></div>`;
+
+  const arrow=(c,X0,Y0,X1,Y1,col,w)=>{if(!c)return;c.strokeStyle=col;c.lineWidth=w||2;c.beginPath();c.moveTo(X0,Y0);c.lineTo(X1,Y1);c.stroke();const a=Math.atan2(Y1-Y0,X1-X0),hl=Math.min(9,Math.hypot(X1-X0,Y1-Y0));c.fillStyle=col;c.beginPath();c.moveTo(X1,Y1);c.lineTo(X1-hl*Math.cos(a-0.4),Y1-hl*Math.sin(a-0.4));c.lineTo(X1-hl*Math.cos(a+0.4),Y1-hl*Math.sin(a+0.4));c.closePath();c.fill();};
+
+  // ===== picture 1: tiling / cancellation (outward normals) =====
+  const ct=document.getElementById('cvtf');const tg=ct&&ct.getContext&&ct.getContext('2d');const Wt=ct.width,Ht=ct.height;
+  let tstate='cells';const TN=4,tx0=200,ty0=42,tL=55;
+  function cellOut(cxp,cyp,r){arrow(tg,cxp,cyp,cxp+r,cyp,'#e8b84b',1.5);arrow(tg,cxp,cyp,cxp-r,cyp,'#e8b84b',1.5);arrow(tg,cxp,cyp,cxp,cyp-r,'#e8b84b',1.5);arrow(tg,cxp,cyp,cxp,cyp+r,'#e8b84b',1.5);}
+  function drawTile(){if(!tg)return;tg.clearRect(0,0,Wt,Ht);
+    if(tstate==='cells'){
+      for(let i=0;i<TN;i++)for(let j=0;j<TN;j++){tg.strokeStyle='#2b3a4f';tg.lineWidth=1;tg.strokeRect(tx0+i*tL,ty0+j*tL,tL,tL);cellOut(tx0+i*tL+tL/2,ty0+j*tL+tL/2,tL*0.3);}
+      tg.fillStyle='#8095ab';tg.font='12px sans-serif';tg.fillText('every cell pushes flux outward through its four edges',tx0-20,ty0+TN*tL+26);
+    } else {
+      tg.strokeStyle='#1c2838';tg.lineWidth=1;for(let i=0;i<=TN;i++){tg.beginPath();tg.moveTo(tx0+i*tL,ty0);tg.lineTo(tx0+i*tL,ty0+TN*tL);tg.stroke();tg.beginPath();tg.moveTo(tx0,ty0+i*tL);tg.lineTo(tx0+TN*tL,ty0+i*tL);tg.stroke();}
+      for(let i=1;i<TN;i++)for(let j=0;j<TN;j++){const X=tx0+i*tL,Y=ty0+j*tL+tL/2;tg.strokeStyle='#3a4c66';tg.lineWidth=1;tg.beginPath();tg.moveTo(X,Y);tg.lineTo(X-9,Y);tg.moveTo(X,Y);tg.lineTo(X+9,Y);tg.stroke();}
+      for(let j=1;j<TN;j++)for(let i=0;i<TN;i++){const X=tx0+i*tL+tL/2,Y=ty0+j*tL;tg.strokeStyle='#3a4c66';tg.lineWidth=1;tg.beginPath();tg.moveTo(X,Y);tg.lineTo(X,Y-9);tg.moveTo(X,Y);tg.lineTo(X,Y+9);tg.stroke();}
+      const X0=tx0,Y0=ty0,SZ=TN*tL;
+      for(let k=0;k<TN;k++){arrow(tg,X0+k*tL+tL/2,Y0,X0+k*tL+tL/2,Y0-20,'#e8b84b',2.5);arrow(tg,X0+k*tL+tL/2,Y0+SZ,X0+k*tL+tL/2,Y0+SZ+20,'#e8b84b',2.5);arrow(tg,X0,Y0+k*tL+tL/2,X0-20,Y0+k*tL+tL/2,'#e8b84b',2.5);arrow(tg,X0+SZ,Y0+k*tL+tL/2,X0+SZ+20,Y0+k*tL+tL/2,'#e8b84b',2.5);}
+      tg.fillStyle='#8095ab';tg.font='12px sans-serif';tg.fillText('interior normals cancel in pairs — only the outward boundary flux survives',tx0-52,ty0+SZ+26);
+    }
+    const ob=document.getElementById('obsT');if(ob)ob.textContent=tstate==='cells'?'Each cell measures the outflow from its own area.':'Shared interior edges cancel; the sum is the flux out through the outer boundary.';}
+  function segT(){document.getElementById('segT').innerHTML=`<span class="segb ${tstate==='cells'?'on':''}" data-s="cells">every cell spreads</span><span class="segb ${tstate==='cancel'?'on':''}" data-s="cancel">interior cancels</span>`;document.querySelectorAll('#segT .segb').forEach(b=>b.onclick=()=>{tstate=b.dataset.s;segT();drawTile();});}
+  segT();drawTile();
+
+  // ===== picture 2: flux equality, draggable loop over divergence heatmap =====
+  const cv=document.getElementById('cvf');const ctx=cv.getContext&&cv.getContext('2d');const W=cv.width,H=cv.height,S=80,cx=320,cy=215;
   const px=x=>cx+x*S,py=y=>cy-y*S;
   const FIELDS={
-    source:{F:(x,y)=>[x,y],div:2,curl:0,label:'source (x, y)'},
-    sink:{F:(x,y)=>[-x,-y],div:-2,curl:0,label:'sink (−x, −y)'},
-    swirl:{F:(x,y)=>[-y,x],div:0,curl:2,label:'swirl (−y, x)'},
-    spiral:{F:(x,y)=>[x-y,x+y],div:2,curl:2,label:'spiral (x−y, x+y)'}
+    source:{F:(x,y)=>[x,y],div:()=>2,label:'source (x, y)'},
+    sink:{F:(x,y)=>[-x,-y],div:()=>-2,label:'sink (−x, −y)'},
+    vary:{F:(x,y)=>[x*x,y],div:(x)=>2*x+1,label:'varying (x², y)'}
   };
-  let fk='source';let C=[0.7,0.4];const r0=0.42,dt=0.22;
-  function arrow(X0,Y0,X1,Y1,col,w){if(!ctx)return;ctx.strokeStyle=col;ctx.lineWidth=w||1.5;ctx.beginPath();ctx.moveTo(X0,Y0);ctx.lineTo(X1,Y1);ctx.stroke();const a=Math.atan2(Y1-Y0,X1-X0),hl=Math.min(9,Math.hypot(X1-X0,Y1-Y0));ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(X1,Y1);ctx.lineTo(X1-hl*Math.cos(a-0.4),Y1-hl*Math.sin(a-0.4));ctx.lineTo(X1-hl*Math.cos(a+0.4),Y1-hl*Math.sin(a+0.4));ctx.closePath();ctx.fill();}
-  function draw(){if(!ctx)return;ctx.clearRect(0,0,W,H);const F=FIELDS[fk].F;
+  let fk='source';let C=[0.1,0.1];const hs=0.7;
+  function flux(){const F=FIELDS[fk].F,N=200;let s=0;const a=[C[0]-hs,C[1]-hs],b=[C[0]+hs,C[1]+hs];
+    for(let i=0;i<N;i++){const x=a[0]+(i+0.5)/N*(b[0]-a[0]),y=a[1];s+=-F(x,y)[1]*((b[0]-a[0])/N);}      // bottom: -Q dx
+    for(let i=0;i<N;i++){const x=b[0],y=a[1]+(i+0.5)/N*(b[1]-a[1]);s+=F(x,y)[0]*((b[1]-a[1])/N);}        // right: +P dy
+    for(let i=0;i<N;i++){const x=b[0]-(i+0.5)/N*(b[0]-a[0]),y=b[1];s+=-F(x,y)[1]*(-(b[0]-a[0])/N);}      // top: -Q dx
+    for(let i=0;i<N;i++){const x=a[0],y=b[1]-(i+0.5)/N*(b[1]-a[1]);s+=F(x,y)[0]*(-(b[1]-a[1])/N);}        // left: +P dy
+    return s;}
+  function enclosed(){const dv=FIELDS[fk].div,N=60,d=2*hs/N;let s=0;for(let i=0;i<N;i++)for(let j=0;j<N;j++){const x=C[0]-hs+(i+0.5)*d,y=C[1]-hs+(j+0.5)*d;s+=dv(x,y)*d*d;}return s;}
+  function draw(){if(!ctx)return;ctx.clearRect(0,0,W,H);const F=FIELDS[fk].F,dv=FIELDS[fk].div;
+    const step=0.2;for(let gx=-2;gx<2;gx+=step)for(let gy=-2;gy<2;gy+=step){const c=dv(gx+step/2,gy+step/2);const t=Math.max(-1,Math.min(1,c/4));const col=t>=0?'rgba(217,143,143,'+(0.06+0.5*t)+')':'rgba(122,184,255,'+(0.06+0.5*(-t))+')';ctx.fillStyle=col;ctx.fillRect(px(gx),py(gy+step),step*S,step*S);}
     ctx.strokeStyle='#16202f';ctx.lineWidth=1;for(let g=-2;g<=2;g++){ctx.beginPath();ctx.moveTo(px(g),py(-2));ctx.lineTo(px(g),py(2));ctx.stroke();ctx.beginPath();ctx.moveTo(px(-2),py(g));ctx.lineTo(px(2),py(g));ctx.stroke();}
-    for(let gx=-2;gx<=2;gx+=0.5)for(let gy=-2;gy<=2;gy+=0.5){const v=F(gx,gy),m=Math.hypot(v[0],v[1]);if(m<1e-9)continue;const L=Math.max(0.1,Math.min(0.32,m*0.07));arrow(px(gx),py(gy),px(gx+v[0]/m*L),py(gy+v[1]/m*L),'#223247',1.1);}
-    // original blob (grey dashed)
-    ctx.strokeStyle='#6b7d92';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.beginPath();for(let i=0;i<=48;i++){const a=i/48*2*Math.PI;const X=px(C[0]+r0*Math.cos(a)),Y=py(C[1]+r0*Math.sin(a));i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}ctx.stroke();ctx.setLineDash([]);
-    // advected blob (gold)
-    ctx.fillStyle='rgba(232,184,75,0.16)';ctx.strokeStyle='#e8b84b';ctx.lineWidth=2.5;ctx.beginPath();for(let i=0;i<=48;i++){const a=i/48*2*Math.PI;const bx=C[0]+r0*Math.cos(a),by=C[1]+r0*Math.sin(a);const v=F(bx,by);const X=px(bx+dt*v[0]),Y=py(by+dt*v[1]);i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}ctx.closePath();ctx.fill();ctx.stroke();
-    // a few flow arrows from original to advected
-    for(let i=0;i<8;i++){const a=i/8*2*Math.PI;const bx=C[0]+r0*Math.cos(a),by=C[1]+r0*Math.sin(a);const v=F(bx,by);arrow(px(bx),py(by),px(bx+dt*v[0]),py(by+dt*v[1]),'rgba(122,184,255,0.7)',1.3);}
-    ctx.fillStyle='#dbe6f4';ctx.beginPath();ctx.arc(px(C[0]),py(C[1]),3.5,0,7);ctx.fill();
-    ctx.fillStyle='#9fb0c4';ctx.font='12px sans-serif';ctx.fillText('grey = now · gold = an instant later',px(-1.95),py(-1.75));
-    const d=FIELDS[fk].div,c=FIELDS[fk].curl;
-    document.getElementById('dv').textContent=d.toFixed(2);
-    document.getElementById('cu').textContent=c.toFixed(2);
-    const ob=document.getElementById('obs');if(ob)ob.textContent=
-      (d>0.01?'The blob swells (divergence '+d+' > 0, a source)':d<-0.01?'The blob shrinks (divergence '+d+' < 0, a sink)':'The blob keeps its area (divergence 0)')+
-      '; '+(c>0.01?'and twists counter-clockwise (curl '+c+' > 0).':c<-0.01?'and twists clockwise (curl '+c+' < 0).':'and does not spin (curl 0).');}
-  function segs(){document.getElementById('segF').innerHTML=Object.keys(FIELDS).map(k=>`<span class="segb ${k===fk?'on':''}" data-k="${k}">${FIELDS[k].label}</span>`).join('');document.querySelectorAll('#segF .segb').forEach(b=>b.onclick=()=>{fk=b.dataset.k;segs();draw();});}
-  segs();
+    for(let gx=-2;gx<=2;gx+=0.5)for(let gy=-2;gy<=2;gy+=0.5){const v=F(gx,gy),mag=Math.hypot(v[0],v[1]);if(mag<1e-9)continue;const L=Math.max(0.1,Math.min(0.32,mag*0.08));arrow(ctx,px(gx),py(gy),px(gx+v[0]/mag*L),py(gy+v[1]/mag*L),'#2b4258',1.1);}
+    const a=[C[0]-hs,C[1]-hs],b=[C[0]+hs,C[1]+hs];
+    ctx.strokeStyle='#e8b84b';ctx.lineWidth=2.5;ctx.strokeRect(px(a[0]),py(b[1]),2*hs*S,2*hs*S);
+    arrow(ctx,px(b[0]),py(C[1]),px(b[0]+0.22),py(C[1]),'#e8b84b',2);           // outward normal (right)
+    arrow(ctx,px(C[0]),py(b[1]),px(C[0]),py(b[1]+0.22),'#e8b84b',2);           // outward normal (top)
+    ctx.fillStyle='#dbe6f4';ctx.beginPath();ctx.arc(px(C[0]),py(C[1]),4,0,7);ctx.fill();
+    ctx.fillStyle='#9fb0c4';ctx.font='12px sans-serif';ctx.fillText('drag the loop · arrows = outward normal',px(C[0])+8,py(C[1])-8);
+    const fv=flux(),ev=enclosed();
+    document.getElementById('flx').textContent=fv.toFixed(3);
+    document.getElementById('enc').textContent=ev.toFixed(3);
+    const ob=document.getElementById('obs');if(ob)ob.textContent='Flux out through the loop ('+fv.toFixed(3)+') equals the divergence totalled over its inside ('+ev.toFixed(3)+') — Green’s flux form, live.';}
+  function segF(){document.getElementById('segF').innerHTML=Object.keys(FIELDS).map(k=>`<span class="segb ${k===fk?'on':''}" data-k="${k}">${FIELDS[k].label}</span>`).join('');document.querySelectorAll('#segF .segb').forEach(b=>b.onclick=()=>{fk=b.dataset.k;segF();draw();});}
+  segF();
   cv.style.touchAction='none';let drg=false;
-  function setP(e){const r=cv.getBoundingClientRect();const X=(e.clientX-r.left)*(W/Math.max(1,r.width)),Y=(e.clientY-r.top)*(H/Math.max(1,r.height));C=[Math.max(-1.5,Math.min(1.5,(X-cx)/S)),Math.max(-1.5,Math.min(1.5,(cy-Y)/S))];draw();}
+  function setP(e){const r=cv.getBoundingClientRect();const X=(e.clientX-r.left)*(W/Math.max(1,r.width)),Y=(e.clientY-r.top)*(H/Math.max(1,r.height));C=[Math.max(-1.3,Math.min(1.3,(X-cx)/S)),Math.max(-1.3,Math.min(1.3,(cy-Y)/S))];draw();}
   cv.addEventListener('pointerdown',e=>{drg=true;try{cv.setPointerCapture(e.pointerId);}catch(x){}setP(e);e.preventDefault();});
   cv.addEventListener('pointermove',e=>{if(drg){e.preventDefault();setP(e);}});
   const end=()=>drg=false;cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
   draw();
-  numChk(stage.querySelector('.card'),2,()=>{addReveal(`<div class="rh">✓ divergence = 2</div><p>$P=x-y$ gives $P_x=1$; $Q=x+y$ gives $Q_y=1$; so $\\operatorname{div}\\mathbf F=1+1=2$ — the spiral is a source, its blob swells. (Its curl is $Q_x-P_y=1-(-1)=2$ too, so it also spins: swell and twist together.)</p>`);});
-  setHints([`Divergence = P_x + Q_y. Here P = x−y (so P_x = 1) and Q = x+y (so Q_y = 1).`,`1 + 1 = 2.`]);
+  numChk(stage.querySelector('.card'),2,()=>{addReveal(`<div class="rh">✓ flux = 2</div><p>Green's flux form replaces the four-edge flux integral with one area integral: $\\oint_C\\mathbf F\\cdot\\mathbf n\\,ds=\\iint_R(P_x+Q_y)\\,dA$. The divergence is the constant $2$ and the unit square has area $1$, so the outward flux is $2\\cdot1=2$. (A uniform source pumps the same amount out of every unit of area, so the total just scales with the area enclosed.)</p>`);});
+  setHints([`Green's flux form: flux = ∬ div dA. The divergence is constant 2, the unit square has area 1.`,`2 × 1 = 2.`]);
 }
 function c10_surface(){
   stage.innerHTML=`<div class="card"><h2>Surface integrals: how much flows through</h2>
-    <p>A line integral measured a field's push <em>along a curve</em>. A <b>surface integral</b> (flux) measures how much a field flows <em>through a surface</em> — water through a net, wind through a window, field lines through a sheet. And the same lesson returns: only the part of the field that actually crosses the surface counts. Hold a net face-on to a river and it catches the full current; turn it edge-on and the water slips past, catching nothing.</p>
+    <p>In the plane you measured a field's <b>flux across a curve</b> — the flow crossing a loop, dotting $\\mathbf F$ with the curve's outward normal. A <b>surface integral</b> lifts that one dimension: the flow <em>through a surface</em> in space — water through a net, wind through a window, field lines through a sheet. The same lesson returns: only the part of the field that actually crosses the surface counts. Hold a net face-on to a river and it catches the full current; turn it edge-on and the water slips past, catching nothing.</p>
 
     <p><b>One flat patch.</b> Flow streams in from the left (blue arrows). <b>Drag to tilt the panel.</b> Its <span style="color:#3fb98f">normal</span> $\\mathbf n$ is the direction it faces; the flux is the flow speed times the area times how squarely it faces the stream — the dot product $\\mathbf F\\cdot\\mathbf n$ times area.</p>
     <canvas id="cv" width="640" height="380"></canvas>
