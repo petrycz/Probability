@@ -124,7 +124,7 @@ const completed={};
 const MODULES=[
  {id:'p0',title:'Outcomes, Events & Counting',sub:'Sample spaces and events, the three axioms, equally likely outcomes, permutations and combinations, and inclusion–exclusion.',ready:true,
   outro:`A probability is the share of trials on which an event happens in the long run, so probabilities lie between 0 and 1 and the outcomes' probabilities add to 1 — summed over a list, integrated under a density on a line, or taken as a volume over a plane. When the outcomes are equally likely, probability reduces to counting, and permutations, combinations, and inclusion–exclusion do the counting.`,
-  beats:[p0_intro,p0_shapes,p0_recall]},
+  beats:[p0_intro,p0_shapes,p0_recall,p0_events]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:false,outro:'',beats:[]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
@@ -602,6 +602,173 @@ function p0_shapes(){
     snapTo(1/6,0.0015));
   setHints([`The volume is height × base area, and it must stay 1. Read the base area in step 4 once the tips are at (2,0) and (0,3).`,
     `The base is a 2-by-3 rectangle, area |det A| = 6. Solve height × 6 = 1.`]);
+}
+
+/* ---------- Beat 4: sample spaces and events (two dice) ---------- */
+function p0_events(){
+  stage.innerHTML=`<div class="card"><h2>Sample spaces and events: two dice</h2>
+    <p>Roll two fair dice, one <span style="color:#e2664f;font-weight:650">red</span> and one <span class="cy" style="font-weight:650">blue</span>. Two numbers come out of every trial, so name both before going further.</p>
+    <div class="defn"><span class="dt">The objects</span>
+      $r$ — the face on the red die, one of $1,\\dots,6$.<br>
+      $b$ — the face on the blue die, one of $1,\\dots,6$.<br>
+      <b>Outcome</b> $\\omega=(r,b)$ — an <em>ordered</em> pair: red first, blue second. $(5,6)$ means red 5, blue 6; $(6,5)$ is a different outcome.<br>
+      <b>Sample space</b> $\\Omega=\\{(r,b):\\ r,b\\in\\{1,\\dots,6\\}\\}$. Each of the 6 red faces pairs with each of the 6 blue faces, so $|\\Omega|=6\\cdot6=36$.</div>
+    <p>Two quantities are free here, $r$ and $b$, so the sample space is naturally a $6\\times6$ grid: red face across, blue face up, one cell per outcome. Every trial drops a dot into exactly one cell. Roll, and watch the dots spread.</p>
+    <div class="seg" id="segroll"></div>
+    <div class="seg" id="segview" style="margin-top:7px"></div>
+    <canvas id="cvs" width="640" height="600" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">rolls n</div><div class="v" id="rn">0</div></div><div class="rdc"><div class="k">a 5 and a 6, either order</div><div class="v" id="r56">—</div></div><div class="rdc"><div class="k">two 6s</div><div class="v" id="r66">—</div></div><div class="rdc"><div class="k">ratio</div><div class="v" id="rr">—</div></div></div>
+    <p style="margin-top:14px">Nothing favors one ordered pair over another: each red face is equally likely, each blue face is equally likely, and the dice are rolled separately (Module 2 makes "separately" precise as <em>independence</em>). So the 36 cells take equal shares of the total: each outcome has probability $\\tfrac1{36}$. Think of each cell as a pebble of mass $\\tfrac1{36}$; the probability of any collection of outcomes is the mass of its pebbles.</p>
+    <p>Now switch the view to <b>both white</b>. With two identical dice, a roll can only be recorded as an unordered result such as $\\{5,6\\}$. There are 21 such results: 6 doubles and 15 mixed pairs. They are <em>not</em> equally likely. The result $\\{5,6\\}$ is the roll $(5,6)$ or the roll $(6,5)$ — two cells, two pebbles — while $\\{6,6\\}$ is the single cell $(6,6)$. Painting the dice white changes what gets written down, not how they fall. Roll a few thousand times: "a 5 and a 6" comes up about twice as often as "two 6s", near $\\tfrac2{36}\\approx0.056$ against $\\tfrac1{36}\\approx0.028$.</p>
+    <p>That is the rule for choosing a sample space: describe each outcome in enough detail that symmetry makes the outcomes equally likely. Recording less detail is allowed, but then each recorded result is a <em>collection</em> of equally likely outcomes, and must be weighed by how many it contains.</p>
+
+    <h2 style="margin-top:22px">Events are subsets</h2>
+    <p>An <b>event</b> is a yes-or-no question about the outcome, recorded as the set of outcomes that answer yes. "The sum is 7" is the event $\\{(1,6),(2,5),(3,4),(4,3),(5,2),(6,1)\\}$, a subset of $\\Omega$. An event <b>occurs</b> on a trial when that trial's outcome lands inside it. With equally likely outcomes, writing $|A|$ for the number of outcomes in $A$,</p>
+    <div class="eqbox">$$P(A)=\\frac{|A|}{|\\Omega|}=\\frac{|A|}{36}.$$</div>
+    <p>Questions combine with the words <em>not</em>, <em>and</em>, <em>or</em>, and each word is an operation on sets. For events $A$ and $B$ (both subsets of $\\Omega$):</p>
+    <div class="defn"><span class="dt">Three operations</span>
+      <b>Complement</b> — "not $A$": $A^{c}=\\{\\omega\\in\\Omega:\\ \\omega\\notin A\\}$, every outcome outside $A$.<br>
+      <b>Intersection</b> — "$A$ and $B$": $A\\cap B=\\{\\omega:\\ \\omega\\in A\\text{ and }\\omega\\in B\\}$, the outcomes in both.<br>
+      <b>Union</b> — "$A$ or $B$": $A\\cup B=\\{\\omega:\\ \\omega\\in A\\text{ or }\\omega\\in B\\}$, the outcomes in at least one. In probability "or" always includes "both".</div>
+    <p>Pick two events and an operation below. Cells in $A$ carry a gold corner mark, cells in $B$ a blue one, and the cells in the combined event are filled. Setting $A$ to <b>tap cells</b> lets you build any event by tapping outcomes.</p>
+    <div class="slabel" style="margin-top:12px">A =</div><div class="seg" id="segA" style="margin-top:4px"></div>
+    <div class="slabel" style="margin-top:10px">B =</div><div class="seg" id="segB" style="margin-top:4px"></div>
+    <div class="slabel" style="margin-top:10px">show</div><div class="seg" id="segop" style="margin-top:4px"></div>
+    <canvas id="cve" width="640" height="600" style="margin-top:10px"></canvas>
+    <p class="small" id="opw" style="margin-top:8px;color:#e8b84b;min-height:20px"></p>
+    <div class="readout"><div class="rdc"><div class="k">cells in event</div><div class="v" id="ek">—</div></div><div class="rdc"><div class="k">P = cells / 36</div><div class="v" id="ep">—</div></div><div class="rdc"><div class="k">share of your rolls</div><div class="v" id="es">—</div></div></div>
+    <p style="margin-top:14px">Everyday phrasing translates into these operations, and the translation is most of the work in a word problem:</p>
+    <div style="overflow-x:auto;margin:10px 0"><table style="width:100%;border-collapse:collapse;font-size:14px;line-height:1.5">
+      <tr style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px"><td style="padding:6px 8px;border-bottom:1px solid var(--line)">in words</td><td style="padding:6px 8px;border-bottom:1px solid var(--line)">as sets</td></tr>
+      <tr><td style="padding:6px 8px;border-bottom:1px solid var(--line)">not $A$</td><td style="padding:6px 8px;border-bottom:1px solid var(--line)">$A^{c}$</td></tr>
+      <tr><td style="padding:6px 8px;border-bottom:1px solid var(--line)">$A$ and $B$</td><td style="padding:6px 8px;border-bottom:1px solid var(--line)">$A\\cap B$</td></tr>
+      <tr><td style="padding:6px 8px;border-bottom:1px solid var(--line)">$A$ or $B$ (or both); at least one of $A,B$</td><td style="padding:6px 8px;border-bottom:1px solid var(--line)">$A\\cup B$</td></tr>
+      <tr><td style="padding:6px 8px;border-bottom:1px solid var(--line)">$A$ but not $B$</td><td style="padding:6px 8px;border-bottom:1px solid var(--line)">$A\\setminus B=A\\cap B^{c}$</td></tr>
+      <tr><td style="padding:6px 8px;border-bottom:1px solid var(--line)">exactly one of $A,B$</td><td style="padding:6px 8px;border-bottom:1px solid var(--line)">$(A\\setminus B)\\cup(B\\setminus A)$</td></tr>
+      <tr><td style="padding:6px 8px;border-bottom:1px solid var(--line)">neither $A$ nor $B$</td><td style="padding:6px 8px;border-bottom:1px solid var(--line)">$(A\\cup B)^{c}=A^{c}\\cap B^{c}$</td></tr>
+      <tr><td style="padding:6px 8px;border-bottom:1px solid var(--line)">$A$ and $B$ cannot both happen</td><td style="padding:6px 8px;border-bottom:1px solid var(--line)">$A\\cap B=\\varnothing$ (<b>disjoint</b>, or mutually exclusive)</td></tr>
+      <tr><td style="padding:6px 8px">whenever $A$ happens, so does $B$</td><td style="padding:6px 8px">$A\\subseteq B$</td></tr>
+    </table></div>
+    <p>Two of these deserve a check on the grid. Set $A$ = doubles, $B$ = sum = 7 and show $A\\cap B$: it is empty, because a double has an even sum. Those two events are disjoint. Then show $(A\\cup B)^{c}$ and $A^{c}\\cap B^{c}$ in turn, for any choice of $A$ and $B$: the same cells fill both times. "Not ($A$ or $B$)" and "not $A$ and not $B$" are the same question, and swapping "or" for "and" under a complement holds in general — <b>De Morgan's laws</b>:</p>
+    <div class="eqbox">$$(A\\cup B)^{c}=A^{c}\\cap B^{c},\\qquad (A\\cap B)^{c}=A^{c}\\cup B^{c}.$$</div>
+
+    <h2 style="margin-top:22px">Outcomes versus events: the sum</h2>
+    <p>The sum $r+b$ runs from 2 to 12, but those 11 values are not 11 equally likely outcomes. Each value is an event — a whole anti-diagonal of the grid — and the anti-diagonals have different lengths. <b>Tap or drag across the bars</b> to pick a sum $s$. The gold outlines are the exact probabilities $|\\{r+b=s\\}|/36$; the blue bars are the shares among your rolls.</p>
+    <canvas id="cvh" width="640" height="300"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">chosen sum s</div><div class="v" id="hs">—</div></div><div class="rdc"><div class="k">cells with r + b = s</div><div class="v" id="hk">—</div></div><div class="rdc"><div class="k">all 11 sums added</div><div class="v" id="ht">—</div></div></div>
+    <p class="small" id="hl" style="margin-top:8px"></p>
+    <p style="margin-top:12px">The 11 sum events are pairwise disjoint (no roll has two sums) and together they cover $\\Omega$ (every roll has a sum). A family of events with both properties is a <b>partition</b> of $\\Omega$, and since it splits the 36 pebbles without overlap or leftovers, its probabilities add to exactly 1: $\\tfrac{1+2+3+4+5+6+5+4+3+2+1}{36}=1$. Combining two uniform quantities produced one that is far from uniform — the most common sum, 7, is six times as likely as 2 or 12.</p>
+    <div class="task"><b>At least one six</b>Roll two dice. What is the probability that at least one of them shows a 6? Translate the question into sets, build it on the second grid, and enter a fraction or a decimal.</div>
+    ${gateHTML('e.g. 5/36 or 0.139')}</div>`;
+
+  /* ---- shared rolls ---- */
+  let rolls=[],view='color';const cnt=[];for(let i=0;i<=6;i++)cnt.push([0,0,0,0,0,0,0]);
+  const MAXN=20000,MAXDOTS=2500;
+  const cvs=document.getElementById('cvs'),cve=document.getElementById('cve'),cvh=document.getElementById('cvh');
+  const G={xmin:0,xmax:7,ymin:0,ymax:600*7/640};
+  const ps=plot(cvs,G),pe=plot(cve,G),ph=plot(cvh,{xmin:1.2,xmax:12.8,ymin:-0.03,ymax:0.2});
+  const font='600 14px '+getComputedStyle(document.body).fontFamily,fontS='600 11px '+getComputedStyle(document.body).fontFamily;
+  function cellRect(pl,r,b,inset){const i=inset||0;return [pl.px(r-0.5+i),pl.py(b+0.5-i),pl.px(r+0.5-i)-pl.px(r-0.5+i),pl.py(b-0.5+i)-pl.py(b+0.5-i)];}
+  function axes(pl){const ctx=pl.ctx;if(!ctx)return;ctx.font=font;
+    for(let k=1;k<=6;k++){ctx.fillStyle='#e2664f';ctx.fillText(String(k),pl.px(k)-4,pl.py(0.12));ctx.fillStyle='#7ab8ff';ctx.fillText(String(k),pl.px(0.18),pl.py(k)+5);}
+    ctx.font=fontS;ctx.fillStyle='#e2664f';ctx.fillText('red r →',pl.px(5.55),pl.py(0.32));ctx.fillStyle='#7ab8ff';ctx.fillText('blue b ↑',pl.px(0.05),pl.py(6.62));}
+  function frame(pl){const ctx=pl.ctx;if(!ctx)return;ctx.strokeStyle='#2b3a4f';ctx.lineWidth=1;
+    for(let r=1;r<=6;r++)for(let b=1;b<=6;b++){const c=cellRect(pl,r,b);ctx.strokeRect(c[0],c[1],c[2],c[3]);}}
+
+  /* ---- canvas S: sample space and the two views ---- */
+  function drawS(){const ctx=ps.ctx;
+    if(ctx){ctx.clearRect(0,0,ps.W,ps.H);
+      for(let r=1;r<=6;r++)for(let b=1;b<=6;b++){const c=cellRect(ps,r,b);let fill='#111a28';
+        const is56=(r===5&&b===6)||(r===6&&b===5),is66=r===6&&b===6;
+        if(view==='white'){fill=r===b?'#16273a':'#131d2c';}
+        if(is56)fill='rgba(232,184,75,.30)';if(is66)fill='rgba(122,184,255,.30)';
+        ctx.fillStyle=fill;ctx.fillRect(c[0],c[1],c[2],c[3]);}
+      frame(ps);
+      if(view==='white'){ctx.strokeStyle='#5d6f85';ctx.setLineDash([5,4]);ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(ps.px(0.5),ps.py(0.5));ctx.lineTo(ps.px(6.5),ps.py(6.5));ctx.stroke();ctx.setLineDash([]);
+        ctx.font=fontS;for(let r=1;r<=6;r++)for(let b=1;b<=6;b++){const lo=Math.min(r,b),hi=Math.max(r,b);ctx.fillStyle=(lo===5&&hi===6)?'#e8b84b':(lo===6&&hi===6?'#7ab8ff':'#5d6f85');ctx.fillText('{'+lo+','+hi+'}',ps.px(r)-15,ps.py(b)-24);}
+        ctx.strokeStyle='#e8b84b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ps.px(5),ps.py(6));ctx.quadraticCurveTo(ps.px(6.35),ps.py(6.35),ps.px(6),ps.py(5));ctx.stroke();}
+      else{ctx.font=fontS;for(let r=1;r<=6;r++)for(let b=1;b<=6;b++){const sp=(r===5&&b===6)||(r===6&&b===5)||(r===6&&b===6);ctx.fillStyle=sp?(r===6&&b===6?'#7ab8ff':'#e8b84b'):'#3d4f66';ctx.fillText('('+r+','+b+')',ps.px(r)-17,ps.py(b)-24);}}
+      ctx.fillStyle='rgba(233,238,246,.80)';const st=Math.max(0,rolls.length-MAXDOTS);
+      for(let i=st;i<rolls.length;i++){const q=rolls[i];ctx.fillRect(ps.px(q[0]+q[2])-1.5,ps.py(q[1]+q[3])-1.5,3,3);}
+      axes(ps);}
+    const n=rolls.length,c56=cnt[5][6]+cnt[6][5],c66=cnt[6][6];
+    set('rn',String(n));set('r56',n?(c56/n).toFixed(4):'—');set('r66',n?(c66/n).toFixed(4):'—');set('rr',c66?(c56/c66).toFixed(2):'—');}
+
+  /* ---- canvas E: event builder ---- */
+  const PRE=[['r6','red = 6',(r,b)=>r===6],['b6','blue = 6',(r,b)=>b===6],['dbl','doubles',(r,b)=>r===b],['s7','sum = 7',(r,b)=>r+b===7],
+    ['s10','sum ≥ 10',(r,b)=>r+b>=10],['rgt','red > blue',(r,b)=>r>b],['rev','red even',(r,b)=>r%2===0],['tap','tap cells',null]];
+  const OPS=[['A','A'],['B','B'],['Ac','Aᶜ'],['AuB','A ∪ B'],['AnB','A ∩ B'],['AmB','A ∖ B'],['xor','exactly one'],['nAuB','(A ∪ B)ᶜ'],['AcnBc','Aᶜ ∩ Bᶜ']];
+  let pa='dbl',pb='s10',op='AuB';const tapSet=new Set();
+  const inP=(key,r,b)=>{if(key==='tap')return tapSet.has(r*10+b);return PRE.find(p=>p[0]===key)[2](r,b);};
+  const nameP=key=>PRE.find(p=>p[0]===key)[1];
+  function inOp(r,b){const a=inP(pa,r,b),c=inP(pb,r,b);
+    switch(op){case 'A':return a;case 'B':return c;case 'Ac':return !a;case 'AuB':return a||c;case 'AnB':return a&&c;case 'AmB':return a&&!c;case 'xor':return a!==c;case 'nAuB':return !(a||c);default:return !a&&!c;}}
+  function words(){const A='“'+(pa==='tap'?'your tapped cells':nameP(pa))+'”',B='“'+nameP(pb)+'”';
+    return {A:'A = '+A,B:'B = '+B,Ac:'not '+A,AuB:A+' or '+B+' (or both)',AnB:A+' and '+B,AmB:A+' but not '+B,xor:'exactly one of '+A+', '+B,nAuB:'not ('+A+' or '+B+')',AcnBc:'not '+A+' and not '+B}[op];}
+  function drawE(){const ctx=pe.ctx;let k=0,hit=0;
+    for(let r=1;r<=6;r++)for(let b=1;b<=6;b++)if(inOp(r,b)){k++;hit+=cnt[r][b];}
+    if(ctx){ctx.clearRect(0,0,pe.W,pe.H);
+      for(let r=1;r<=6;r++)for(let b=1;b<=6;b++){const c=cellRect(pe,r,b);ctx.fillStyle=inOp(r,b)?'rgba(232,184,75,.42)':'#111a28';ctx.fillRect(c[0],c[1],c[2],c[3]);
+        const s=(c[2])*0.2;
+        if(inP(pa,r,b)){ctx.fillStyle='#e8b84b';ctx.beginPath();ctx.moveTo(c[0]+2,c[1]+2);ctx.lineTo(c[0]+2+s,c[1]+2);ctx.lineTo(c[0]+2,c[1]+2+s);ctx.closePath();ctx.fill();}
+        if(inP(pb,r,b)){ctx.fillStyle='#7ab8ff';ctx.beginPath();ctx.moveTo(c[0]+c[2]-2,c[1]+2);ctx.lineTo(c[0]+c[2]-2-s,c[1]+2);ctx.lineTo(c[0]+c[2]-2,c[1]+2+s);ctx.closePath();ctx.fill();}}
+      frame(pe);ctx.font=fontS;ctx.fillStyle='#5d6f85';
+      for(let r=1;r<=6;r++)for(let b=1;b<=6;b++)ctx.fillText('('+r+','+b+')',pe.px(r)-17,pe.py(b)+5);
+      axes(pe);}
+    set('ek',k+' of 36');set('ep',k+'/36 = '+(k/36).toFixed(4));set('es',rolls.length?(hit/rolls.length).toFixed(4):'—');
+    set('opw',words());}
+
+  /* ---- canvas H: the sum ---- */
+  let sSel=7;
+  function drawH(){const ctx=ph.ctx,n=rolls.length;const sc=[];for(let s=0;s<=12;s++)sc.push(0);
+    for(let r=1;r<=6;r++)for(let b=1;b<=6;b++)sc[r+b]+=cnt[r][b];
+    let tot=0;
+    if(ctx){ctx.clearRect(0,0,ph.W,ph.H);ctx.strokeStyle='#16202f';ctx.lineWidth=1;for(let y=0.05;y<0.2;y+=0.05){ctx.beginPath();ctx.moveTo(0,ph.py(y));ctx.lineTo(ph.W,ph.py(y));ctx.stroke();}}
+    for(let s=2;s<=12;s++){const k=6-Math.abs(s-7),p=k/36;tot+=p;
+      if(ctx){const x0=ph.px(s-0.36),w=ph.px(s+0.36)-x0;
+        if(n){const sh=sc[s]/n;ctx.fillStyle=s===sSel?'rgba(122,184,255,.95)':'rgba(61,90,128,.85)';ctx.fillRect(x0+4,ph.py(sh),w-8,ph.py(0)-ph.py(sh));}
+        ctx.strokeStyle='#e8b84b';ctx.lineWidth=s===sSel?3:1.6;ctx.strokeRect(x0,ph.py(p),w,ph.py(0)-ph.py(p));
+        ctx.font=font;ctx.fillStyle=s===sSel?'#e8b84b':'#9fb0c4';ctx.fillText(String(s),ph.px(s)-(s>9?8:4),ph.py(-0.022));}}
+    const k=6-Math.abs(sSel-7),cells=[];for(let r=1;r<=6;r++){const b=sSel-r;if(b>=1&&b<=6)cells.push('('+r+','+b+')');}
+    set('hs',String(sSel));set('hk',k+' of 36');set('ht',(tot).toFixed(4));
+    set('hl','r + b = '+sSel+':  '+cells.join('  ')+(n?'   ·   share of your rolls: '+(sc[sSel]/n).toFixed(4):''));}
+
+  function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+  function redraw(){drawS();drawE();drawH();}
+
+  /* ---- controls ---- */
+  function mkSeg(id,items,cur,on){const el=document.getElementById(id);
+    el.innerHTML=items.map(it=>`<span class="segb${it[0]===cur?' on':''}" data-k="${it[0]}">${it[1]}</span>`).join('');
+    el.querySelectorAll('.segb').forEach(b=>b.onclick=()=>{el.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));on(b.dataset.k);});}
+  mkSeg('segroll',[['1','+1 roll'],['10','+10'],['100','+100'],['1000','+1000'],['0','reset']],null,k=>{
+    const m=+k;if(!m){rolls=[];cnt.forEach(row=>row.fill(0));}
+    else for(let i=0;i<m&&rolls.length<MAXN;i++){const r=1+Math.floor(Math.random()*6),b=1+Math.floor(Math.random()*6);rolls.push([r,b,(Math.random()-0.5)*0.74,(Math.random()-0.5)*0.5-0.08]);cnt[r][b]++;}
+    document.querySelectorAll('#segroll .segb').forEach(x=>x.classList.remove('on'));redraw();});
+  mkSeg('segview',[['color','red & blue: 36 outcomes'],['white','both white: 21 results']],view,k=>{view=k;drawS();});
+  mkSeg('segA',PRE.map(p=>[p[0],p[1]]),pa,k=>{pa=k;drawE();});
+  mkSeg('segB',PRE.filter(p=>p[0]!=='tap').map(p=>[p[0],p[1]]),pb,k=>{pb=k;drawE();});
+  mkSeg('segop',OPS,op,k=>{op=k;drawE();});
+
+  function canvasXY(cv,e){const rc=cv.getBoundingClientRect();const w=Math.max(1,rc.width),h=rc.height||w*cv.height/cv.width;
+    return [(e.clientX-rc.left)*(cv.width/w),(e.clientY-rc.top)*(cv.height/h)];}
+  cve.addEventListener('pointerdown',e=>{if(pa!=='tap')return;const [X,Y]=canvasXY(cve,e);const r=Math.round(pe.mx(X)),b=Math.round(pe.my(Y));
+    if(r<1||r>6||b<1||b>6)return;const key=r*10+b;if(tapSet.has(key))tapSet.delete(key);else tapSet.add(key);drawE();e.preventDefault();});
+  let hdown=false;cvh.style.touchAction='none';
+  const hset=e=>{const [X]=canvasXY(cvh,e);sSel=Math.max(2,Math.min(12,Math.round(ph.mx(X))));drawH();};
+  cvh.addEventListener('pointerdown',e=>{hdown=true;try{cvh.setPointerCapture(e.pointerId);}catch(x){}hset(e);e.preventDefault();});
+  cvh.addEventListener('pointermove',e=>{if(hdown){e.preventDefault();hset(e);}});
+  const hend=()=>hdown=false;cvh.addEventListener('pointerup',hend);cvh.addEventListener('pointercancel',hend);
+  redraw();
+
+  numChk(document.getElementById('gate'),11/36,()=>{addReveal(`<div class="rh">✓ 11/36 ≈ 0.306</div>
+    <p>"At least one six" means red is 6, or blue is 6, or both: the union $A\\cup B$ with $A=\\{r=6\\}$ and $B=\\{b=6\\}$. On the grid, $A$ is the red-6 column (6 cells) and $B$ is the blue-6 row (6 cells). They share one cell, $(6,6)$, so the union has $6+6-1=11$ cells, and $P=\\tfrac{11}{36}$.</p>
+    <p>Adding $\\tfrac16+\\tfrac16=\\tfrac{12}{36}$ counts the cell $(6,6)$ twice, once in each event. Subtracting the overlap repairs it, $|A\\cup B|=|A|+|B|-|A\\cap B|$, the first case of <b>inclusion–exclusion</b>, developed later in this module.</p>
+    <p>The complement gives the same answer with no overlap to track. By De Morgan, "not (red 6 or blue 6)" is "red not 6 and blue not 6": $r$ and $b$ each range over $1,\\dots,5$, a $5\\times5$ block of 25 cells. So</p>
+    <div class="eqbox">$$P(\\text{at least one }6)=1-P(\\text{no }6)=1-\\tfrac{25}{36}=\\tfrac{11}{36}.$$</div>
+    <p>With $n$ dice the complement stays a single block, $5^n$ of the $6^n$ outcomes, so $P(\\text{at least one }6)=1-(\\tfrac56)^n$, while the direct count would need overlaps among $n$ events. "At least one" questions are nearly always answered through "none". The same step sizes up the birthday problem and hash collisions later in this module, and it is the arithmetic behind <b>multiple testing</b>: if 20 strategies with no real edge are each backtested, and each has a 5% chance of looking significant by luck, then — when the tests do not influence each other — the chance that at least one looks significant is $1-0.95^{20}\\approx0.64$ (Module 14).</p>`);},
+    snapTo(11/36,0.0015));
+  setHints([`“At least one six” means red = 6, or blue = 6, or both: an “or” question. In the second grid, set A to red = 6, B to blue = 6, and show A ∪ B.`,
+    `A ∪ B is the red-6 column (6 cells) plus the blue-6 row (6 cells), which share the cell (6,6): 6 + 6 − 1 = 11 cells out of 36.`]);
 }
 
 /* ================= boot ================= */
