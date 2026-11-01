@@ -120,7 +120,7 @@
 const stage=document.getElementById('stage'),hintBtn=document.getElementById('hintBtn'),contBtn=document.getElementById('contBtn'),
       hintbox=document.getElementById('hintbox'),flashEl=document.getElementById('flash'),footer=document.getElementById('footer');
 let view='menu',curM=0,beat=0,unlocked=false,hints=[],hintIdx=0,recallReturn=null;
-const completed={};
+const completed={},reached={};
 const MODULES=[
  {id:'p0',title:'Outcomes, Events & Counting',sub:'Sample spaces and events, the three axioms, equally likely outcomes, permutations and combinations, and inclusion–exclusion.',ready:true,
   outro:`A probability is the share of trials on which an event happens in the long run, so probabilities lie between 0 and 1 and the outcomes' probabilities add to 1 — summed over a list, integrated under a density on a line, or taken as a volume over a plane. When the outcomes are equally likely, probability reduces to counting, and permutations, combinations, and inclusion–exclusion do the counting.`,
@@ -144,14 +144,16 @@ const MODULES=[
  {id:'a4',addon:'A4',title:'Monte Carlo in Depth',sub:'Markov chain Monte Carlo: Metropolis–Hastings, Gibbs sampling, and Hamiltonian Monte Carlo.',ready:false,outro:'',beats:[]},
 ];
 function setHints(a){hints=a||[];hintIdx=0;hintBtn.style.display=hints.length?'block':'none';}
-function unlock(){if(unlocked)return;unlocked=true;contBtn.disabled=false;}
+function unlock(){if(unlocked)return;unlocked=true;contBtn.disabled=false;
+  if(view==='module'){const id=MODULES[curM].id;if((reached[id]||0)<beat+1){reached[id]=beat+1;saveState();}}}
+function resumeBeat(i){const M=MODULES[i],r=reached[M.id]||0;return r>=M.beats.length?0:Math.max(0,r);}
 function flash(t){flashEl.textContent=t||'✓';flashEl.className='flash show';setTimeout(()=>flashEl.className='flash',1100);}
 function addReveal(html){const r=document.createElement('div');r.className='reveal';r.innerHTML=html;stage.querySelector('.card').appendChild(r);renderMath(r);unlock();}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function scrollTop(){try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){}}
 function renderMath(el){try{if(window.renderMathInElement)renderMathInElement(el||stage,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});}catch(e){}}
 const SAVE_KEY='prob_fp_v1';
-function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({view,curM,beat,completed}));}catch(e){}}
+function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({view,curM,beat,completed,reached}));}catch(e){}}
 function loadState(){try{return JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){return null;}}
 /* URL-hash position (survives refresh even when storage is blocked) */
 function setHash(){try{const h=view==='module'?('#m'+curM+'b'+beat):'';if((location.hash||'')!==h)history.replaceState(null,'',h||location.pathname+location.search);}catch(e){}}
@@ -163,11 +165,11 @@ function renderMenu(){
   document.getElementById('kick').className='kick course';document.getElementById('kick').textContent='Probability, from First Principles';
   document.getElementById('stepLbl').textContent='';
   let html=`<div class="card"><h1>Probability, from First Principles</h1><p class="lede">A self-contained probability course, built on the calculus and linear-algebra courses: every rule is derived, and every distribution is built, sampled, and watched on screen. It runs from counting and conditioning through random variables, limit theorems, and information theory, into stochastic processes, estimation, and inference — the probability behind modern machine learning, the Bitcoin paper, and quantitative trading. Guided discovery, real proofs, worked problems.</p></div>`;
-  MODULES.forEach((m,i)=>{const done=completed[m.id];const st=done?['done','✓ Done']:(m.ready?['todo','Start']:['soon','Soon']);
+  MODULES.forEach((m,i)=>{const done=completed[m.id];const rb=m.ready?resumeBeat(i):0;const st=(done&&(reached[m.id]||0)>=m.beats.length)?['done','✓ Done']:(m.ready?(rb>0?['todo','Resume · '+(rb+1)+'/'+m.beats.length]:['todo','Start']):['soon','Soon']);
     html+=`<div class="card mcard${m.ready?'':' lock'}" data-i="${i}"><div class="mtop"><span class="mnum">${m.addon?'Add-on '+m.addon:'Module '+(i+1)}</span><span class="mstat ${st[0]}">${st[1]}</span></div>
       <div class="mtitle">${m.title}</div><div class="msub">${m.sub}</div></div>`;});
   stage.innerHTML=html;
-  stage.querySelectorAll('.mcard').forEach(c=>{const i=parseInt(c.dataset.i);if(MODULES[i].ready)c.onclick=()=>openModule(i);});
+  stage.querySelectorAll('.mcard').forEach(c=>{const i=parseInt(c.dataset.i);if(MODULES[i].ready)c.onclick=()=>openModuleAt(i,resumeBeat(i));});
   scrollTop();renderMath();saveState();setHash();
 }
 function openModuleAt(i,b){curM=i;beat=b;view='module';footer.style.display='flex';contBtn.style.display='';hintBtn.style.display='';
@@ -176,7 +178,7 @@ function openModuleAt(i,b){curM=i;beat=b;view='module';footer.style.display='fle
 function openModule(i){openModuleAt(i,0);}
 function renderBeat(){
   unlocked=false;contBtn.disabled=true;hintbox.className='hintbox';hintbox.innerHTML='';setHints([]);stage.innerHTML='';
-  const M=MODULES[curM];M.beats[beat]();
+  const M=MODULES[curM];M.beats[beat]();if(beat<(reached[M.id]||0))unlock();
   document.getElementById('kick').textContent=M.title;
   document.getElementById('stepLbl').textContent=(beat+1)+' / '+M.beats.length;
   document.getElementById('pfill').style.width=Math.round((beat+1)/M.beats.length*100)+'%';
@@ -186,7 +188,7 @@ hintBtn.onclick=()=>{if(hintIdx<hints.length){hintbox.innerHTML=hints[hintIdx];h
 contBtn.onclick=()=>{const M=MODULES[curM];if(beat<M.beats.length-1){beat++;renderBeat();}else finish();};
 document.getElementById('backBtn').onclick=renderMenu;
 document.getElementById('prevBtn').onclick=()=>{if(recallReturn){curM=recallReturn.mod;beat=recallReturn.beat;recallReturn=null;renderBeat();return;}if(beat>0){beat--;renderBeat();}};
-function finish(){const M=MODULES[curM];completed[M.id]=true;const next=(curM+1<MODULES.length&&MODULES[curM+1].ready)?MODULES[curM+1]:null;
+function finish(){const M=MODULES[curM];completed[M.id]=true;reached[M.id]=Math.max(reached[M.id]||0,M.beats.length);const next=(curM+1<MODULES.length&&MODULES[curM+1].ready)?MODULES[curM+1]:null;
   footer.style.display='none';document.getElementById('pfill').style.width='100%';
   stage.innerHTML=`<div class="card" style="text-align:center;padding:30px 18px"><div style="font-size:40px">✦</div><h2 style="margin-top:8px">Module complete</h2><p>${M.outro}</p>
     <div style="display:flex;gap:10px;margin-top:14px">${next?`<button class="btn primary" id="nx">Next →</button>`:''}<button class="btn ghost" id="mn" style="${next?'':'flex:1'}">Back to menu</button></div></div>`;
@@ -775,6 +777,8 @@ function p0_events(){
 window.onerror=function(m,s,l){console.error(m,l);};
 function bootRestore(){const s=loadState();
   if(s&&s.completed)Object.assign(completed,s.completed);
+  if(s&&s.reached)Object.assign(reached,s.reached);
+  MODULES.forEach(m=>{if(completed[m.id]&&reached[m.id]==null)reached[m.id]=Math.max(0,m.beats.length-1);});
   const hp=parseHash();
   let t=null;
   if(hp&&MODULES[hp.curM]&&MODULES[hp.curM].ready)t={curM:hp.curM,beat:hp.beat};
