@@ -131,7 +131,7 @@ const completed={},reached={};
 const MODULES=[
  {id:'p0',title:'Outcomes, Events & Counting',sub:'Sample spaces and events, the three axioms, equally likely outcomes, permutations and combinations, and inclusion–exclusion.',ready:true,
   outro:`A probability is the share of trials on which an event happens in the long run, so probabilities lie between 0 and 1 and the outcomes' probabilities add to 1 — summed over a list, integrated under a density on a line, or taken as a volume over a plane. When the outcomes are equally likely, probability reduces to counting, and permutations, combinations, and inclusion–exclusion do the counting.`,
-  beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum]},
+  beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:false,outro:'',beats:[]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
@@ -808,6 +808,158 @@ function p0_sum(){
 
 /* ---------- beat names for the jump list ---------- */
 const BEAT_NAMES={p0_intro:'What a probability is',p0_shapes:'Where the probability sits',p0_recall:'Recall: the tools from calculus and linear algebra',p0_space:'Two dice: the sample space',p0_events:'Events, and the words not, and, or',p0_sum:'Outcomes versus events: the sum'};
+
+/* ---------- Beat 5: the three axioms ---------- */
+function p0_axioms(){
+  stage.innerHTML=`<div class="card"><h2>The three rules every probability obeys</h2>
+    <p>So far probabilities came from counting equally likely outcomes. Most probabilities are not like that: a loaded die, the chance a block arrives within a minute, the chance a stock closes up. To work with all of them, list the properties any probability must have, and derive everything else from that list alone.</p>
+    <p>Start with a <b>loaded die</b>. Each face $f$ gets a probability $p_f$, a number set by the die's construction, not by symmetry. <b>Drag the bar tops</b> to load it any way you like, and <b>tap the face labels</b> to choose an event $A$. Watch which settings the readouts accept.</p>
+    <canvas id="cvd" width="640" height="300"></canvas>
+    <div class="ctrls"><button class="btn ghost" id="rescale" style="padding:10px 14px">Rescale so the total is 1</button><button class="btn ghost" id="fair" style="padding:10px 14px">Fair die</button></div>
+    <div class="readout"><div class="rdc"><div class="k">total of all p_f</div><div class="v" id="dt">—</div></div><div class="rdc"><div class="k">P(A) = sum over faces in A</div><div class="v" id="da">—</div></div><div class="rdc"><div class="k">P(not A)</div><div class="v" id="dc">—</div></div></div>
+    <p class="small" id="dv" style="margin-top:8px;min-height:20px"></p>
+    <p style="margin-top:12px">Any heights work, as long as none is negative and they total exactly 1. Those requirements are not arbitrary: they are the properties of the long-run shares from the first beat. A share is never negative; the shares of all the outcomes make up all of the trials, so they total 1; and the share of trials landing in one of two separate groups is the sum of the two groups' shares. In 1933 Andrey Kolmogorov took exactly these three properties as the definition of probability.</p>
+    <div class="defn"><span class="dt">The axioms of probability</span>
+      A <b>probability</b> $P$ is a rule that takes an event $A\\subseteq\\Omega$ as input and returns a real number $P(A)$, such that:<br><br>
+      <b>1. Nonnegativity.</b> $P(A)\\ge0$ for every event $A$.<br>
+      <b>2. Normalization.</b> $P(\\Omega)=1$: something in the sample space always happens.<br>
+      <b>3. Additivity.</b> If $A$ and $B$ are disjoint ($A\\cap B=\\varnothing$), then $P(A\\cup B)=P(A)+P(B)$. More generally, for any list $A_1,A_2,A_3,\\dots$ of pairwise disjoint events, finite or infinite, $P(A_1\\cup A_2\\cup\\cdots)=P(A_1)+P(A_2)+\\cdots$.</div>
+    <p>The infinite version of rule 3 is what made the coin-tossing list in the second beat work: "first head by some toss" is the union of the disjoint events $\\{k=1\\},\\{k=2\\},\\dots$, and its probability is the whole series $\\sum_k(\\tfrac12)^k$. Additivity for two events at a time can only ever reach finitely many terms.</p>
+    <p>For the loaded die, rule 3 says the probability of any event is the sum of its faces' probabilities: the faces in $A$ are disjoint single outcomes. Equally likely outcomes are one special case of the rules — six equal heights of $\\tfrac16$ — not the definition.</p>
+
+    <h2 style="margin-top:22px">Probability as area: the dartboard</h2>
+    <p>The cleanest picture of the three rules is <b>area</b>. Let $\\Omega$ be a square of area 1 and throw a dart that lands uniformly at random. An event is a region, it occurs when the dart lands inside, and its probability is its area. Area is never negative, the whole square has area 1, and the areas of non-overlapping regions add. Every rule below is a fact about areas you can see.</p>
+    <p><b>Drag</b> the inside of a rectangle to move it, or a corner to resize it (both snap to steps of 0.05). Throw darts to check that the share landing in a region matches its area.</p>
+    <div class="seg" id="segshow"></div>
+    <div class="seg" id="segdart" style="margin-top:7px"></div>
+    <canvas id="cvq" width="640" height="560" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">P(A)</div><div class="v" id="qa">—</div></div><div class="rdc"><div class="k">P(B)</div><div class="v" id="qb">—</div></div><div class="rdc"><div class="k">P(A ∩ B)</div><div class="v" id="qab">—</div></div><div class="rdc"><div class="k">P(A) + P(B)</div><div class="v" id="qs">—</div></div><div class="rdc"><div class="k">P(A ∪ B)</div><div class="v" id="qu">—</div></div></div>
+    <p class="small" id="qd" style="margin-top:8px;min-height:20px"></p>
+
+    <p style="margin-top:14px">Every derivation below uses one move: <b>split a region into disjoint pieces, then apply rule 3</b>. Switch the view to <b>pieces</b> to see the three disjoint parts of $A\\cup B$: $A\\setminus B$ (gold), $A\\cap B$ (green), and $B\\setminus A$ (blue).</p>
+    <div class="defn"><span class="dt">Complement rule</span>$A$ and $A^{c}$ are disjoint, and together they make up $\\Omega$. Rule 3, then rule 2:
+      $$P(A)+P(A^{c})=P(\\Omega)=1\\quad\\Longrightarrow\\quad P(A^{c})=1-P(A).$$
+      With $A=\\Omega$, whose complement is $\\varnothing$, this gives $P(\\varnothing)=1-1=0$.</div>
+    <div class="defn"><span class="dt">Monotonicity</span>If $A\\subseteq B$, split $B$ into $A$ and the disjoint leftover $B\\setminus A$. Rule 3 gives $P(B)=P(A)+P(B\\setminus A)$, and rule 1 says the leftover is at least 0:
+      $$A\\subseteq B\\quad\\Longrightarrow\\quad P(A)\\le P(B).$$
+      Since every event sits inside $\\Omega$, every probability is at most $P(\\Omega)=1$. The bound $P(A)\\le1$ was never assumed; it follows.</div>
+    <div class="defn"><span class="dt">The union rule (inclusion–exclusion for two events)</span>$A\\cup B$ splits into $A$ and the disjoint piece $B\\setminus A$, so $P(A\\cup B)=P(A)+P(B\\setminus A)$. Separately, $B$ splits into $A\\cap B$ and $B\\setminus A$, so $P(B\\setminus A)=P(B)-P(A\\cap B)$. Substitute:
+      $$P(A\\cup B)=P(A)+P(B)-P(A\\cap B).$$
+      Adding $P(A)+P(B)$ counts the green overlap twice, once inside each rectangle; subtracting it once corrects the count. For disjoint events the overlap is empty and the rule is just rule 3.</div>
+    <div class="defn"><span class="dt">The union bound</span>Since $P(A\\cap B)\\ge0$, the union rule gives $P(A\\cup B)\\le P(A)+P(B)$, and by repeating it, $P(A_1\\cup\\cdots\\cup A_n)\\le P(A_1)+\\cdots+P(A_n)$. It needs no information about overlaps, which is why it is everywhere: the chance that <em>any</em> of $n$ hashed items collides, that <em>any</em> of $n$ estimates is far off (the core step of PAC learning bounds in machine-learning theory), or that <em>any</em> of $n$ backtested strategies looks good by luck, is at most $n$ times the chance for one.</div>
+    <p>Drag $B$ completely inside $A$ to see monotonicity: $P(A\\cup B)=P(A)$ and $P(A\\cap B)=P(B)$. Pull them apart to see rule 3: the overlap vanishes and $P(A)+P(B)=P(A\\cup B)$.</p>
+    <div class="task"><b>Neither stock rises</b>Over many trading days, stock A closes up on 55% of days, stock B on 60% of days, and both close up on 40% of days. On what fraction of days does neither close up? To check it on the dartboard, stretch both rectangles to the full width and set A to heights 0 to 0.55 and B to heights 0.15 to 0.75. Enter a fraction or a decimal.</div>
+    ${gateHTML('e.g. 1/5 or 0.2')}</div>`;
+
+  function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+  function canvasXY(cv,e){const rc=cv.getBoundingClientRect();const w=Math.max(1,rc.width),h=rc.height||w*cv.height/cv.width;
+    return [(e.clientX-rc.left)*(cv.width/w),(e.clientY-rc.top)*(cv.height/h)];}
+  const font='600 14px '+getComputedStyle(document.body).fontFamily,fontS='600 12px '+getComputedStyle(document.body).fontFamily;
+
+  /* ---- loaded die ---- */
+  const cvd=document.getElementById('cvd'),pd=plot(cvd,{xmin:0.35,xmax:6.65,ymin:-0.16,ymax:0.8});
+  let w=[0,0.1,0.1,0.1,0.1,0.1,0.5];const inA=[false,false,false,false,true,true,true];
+  function drawD(){const ctx=pd.ctx;let tot=0,pa=0;for(let f=1;f<=6;f++){tot+=w[f];if(inA[f])pa+=w[f];}
+    if(ctx){ctx.clearRect(0,0,pd.W,pd.H);ctx.strokeStyle='#16202f';ctx.lineWidth=1;
+      for(let y=0.1;y<0.8;y+=0.1){ctx.beginPath();ctx.moveTo(0,pd.py(y));ctx.lineTo(pd.W,pd.py(y));ctx.stroke();}
+      ctx.strokeStyle='#2b3a4f';ctx.beginPath();ctx.moveTo(0,pd.py(0));ctx.lineTo(pd.W,pd.py(0));ctx.stroke();
+      pd.hline(1/6,'#5d6f85',true);
+      for(let f=1;f<=6;f++){const x0=pd.px(f-0.34),wd=pd.px(f+0.34)-x0;ctx.fillStyle=inA[f]?'#e8b84b':'#3d5a80';ctx.fillRect(x0,pd.py(w[f]),wd,pd.py(0)-pd.py(w[f]));
+        ctx.fillStyle='#e9eef6';ctx.fillRect(x0,pd.py(w[f])-2,wd,4);
+        ctx.font=fontS;ctx.fillStyle='#9fb0c4';ctx.fillText(w[f].toFixed(2),pd.px(f)-14,pd.py(w[f])-8);
+        ctx.font=font;ctx.fillStyle=inA[f]?'#e8b84b':'#9fb0c4';ctx.fillText((inA[f]?'● ':'○ ')+f,pd.px(f)-14,pd.py(-0.1));}
+      ctx.font=fontS;ctx.fillStyle='#5d6f85';ctx.fillText('1/6',pd.px(0.38),pd.py(1/6)-5);}
+    const ok=Math.abs(tot-1)<1e-9;
+    set('dt',tot.toFixed(2));set('da',pa.toFixed(2));set('dc',(tot-pa).toFixed(2));
+    const faces=[];for(let f=1;f<=6;f++)if(inA[f])faces.push(f);
+    const dv=document.getElementById('dv');
+    if(ok){dv.style.color='#3fb98f';dv.textContent='Valid: no negative heights, total 1. A = {'+faces.join(', ')+'}, and P(A) + P(not A) = 1.';}
+    else{dv.style.color='#e2664f';dv.textContent='Not a probability: the heights total '+tot.toFixed(2)+', not 1, so "some face comes up" would have probability '+tot.toFixed(2)+'. Rescale to fix it.';}}
+  let ddown=-1;cvd.style.touchAction='none';
+  function dset(e){const [X,Y]=canvasXY(cvd,e);const v=Math.max(0,Math.min(0.75,Math.round(pd.my(Y)*100)/100));w[ddown]=v;drawD();}
+  cvd.addEventListener('pointerdown',e=>{const [X,Y]=canvasXY(cvd,e);const f=Math.max(1,Math.min(6,Math.round(pd.mx(X))));
+    if(pd.my(Y)<-0.02){inA[f]=!inA[f];drawD();e.preventDefault();return;}
+    ddown=f;try{cvd.setPointerCapture(e.pointerId);}catch(x){}dset(e);e.preventDefault();});
+  cvd.addEventListener('pointermove',e=>{if(ddown>0){e.preventDefault();dset(e);}});
+  const dend=()=>ddown=-1;cvd.addEventListener('pointerup',dend);cvd.addEventListener('pointercancel',dend);
+  document.getElementById('rescale').onclick=()=>{let t=0;for(let f=1;f<=6;f++)t+=w[f];if(t<=0){for(let f=1;f<=6;f++)w[f]=1/6;}else{let acc=0;for(let f=1;f<=6;f++){w[f]=Math.round(w[f]/t*100)/100;acc+=w[f];}
+    const fix=Math.round((1-acc)*100)/100;if(fix){let m=1;for(let f=2;f<=6;f++)if(w[f]>w[m])m=f;w[m]=Math.round((w[m]+fix)*100)/100;}}drawD();};
+  document.getElementById('fair').onclick=()=>{for(let f=1;f<=6;f++)w[f]=1/6;drawD();};
+  drawD();
+
+  /* ---- dartboard ---- */
+  const cvq=document.getElementById('cvq'),pq=plot(cvq,{xmin:-0.08,xmax:1.08,ymin:-0.0075,ymax:1.0075});
+  let RA=[0.1,0.15,0.6,0.75],RB=[0.4,0.35,0.9,0.85],show='pieces',darts=[];const MAXD=6000;
+  const area=R=>Math.max(0,R[2]-R[0])*Math.max(0,R[3]-R[1]);
+  const inter=(P,Q)=>[Math.max(P[0],Q[0]),Math.max(P[1],Q[1]),Math.min(P[2],Q[2]),Math.min(P[3],Q[3])];
+  const inR=(R,x,y)=>x>=R[0]&&x<=R[2]&&y>=R[1]&&y<=R[3];
+  const r2=v=>Math.round(v*1e6)/1e6,f4=v=>r2(v).toFixed(4);
+  function regionTest(x,y){const a=inR(RA,x,y),b=inR(RB,x,y);
+    switch(show){case 'A':return a;case 'B':return b;case 'AnB':return a&&b;case 'AuB':return a||b;case 'Ac':return !a;default:return a||b;}}
+  function drawQ(){const ctx=pq.ctx;const a=area(RA),b=area(RB),ab=area(inter(RA,RB)),u=a+b-ab;
+    if(ctx){ctx.clearRect(0,0,pq.W,pq.H);
+      const rect=(R,fill)=>{ctx.fillStyle=fill;ctx.fillRect(pq.px(R[0]),pq.py(R[3]),pq.px(R[2])-pq.px(R[0]),pq.py(R[1])-pq.py(R[3]));};
+      rect([0,0,1,1],'#111a28');
+      // shading by view, on a fine raster
+      const N=80;for(let i=0;i<N;i++)for(let j=0;j<N;j++){const x=(i+0.5)/N,y=(j+0.5)/N,ia=inR(RA,x,y),ib=inR(RB,x,y);let c=null;
+        if(show==='pieces'){c=ia&&ib?'rgba(63,185,143,.55)':ia?'rgba(232,184,75,.42)':ib?'rgba(122,184,255,.40)':null;}
+        else if(regionTest(x,y))c='rgba(232,184,75,.45)';
+        if(c)rect([i/N,j/N,(i+1)/N,(j+1)/N],c);}
+      ctx.strokeStyle='#2b3a4f';ctx.lineWidth=1.5;ctx.strokeRect(pq.px(0),pq.py(1),pq.px(1)-pq.px(0),pq.py(0)-pq.py(1));
+      const outline=(R,col,lab)=>{ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.strokeRect(pq.px(R[0]),pq.py(R[3]),pq.px(R[2])-pq.px(R[0]),pq.py(R[1])-pq.py(R[3]));
+        [[R[0],R[1]],[R[2],R[1]],[R[2],R[3]],[R[0],R[3]]].forEach(c=>{ctx.fillStyle=col;ctx.fillRect(pq.px(c[0])-5,pq.py(c[1])-5,10,10);});
+        ctx.font=font;ctx.fillStyle=col;ctx.fillText(lab,pq.px(R[0])+7,pq.py(R[3])+19);};
+      outline(RA,'#e8b84b','A');outline(RB,'#7ab8ff','B');
+      ctx.fillStyle='rgba(233,238,246,.85)';const st=Math.max(0,darts.length-3000);
+      for(let i=st;i<darts.length;i++){const d=darts[i];ctx.fillRect(pq.px(d[0])-1.5,pq.py(d[1])-1.5,3,3);}
+      ctx.font=fontS;ctx.fillStyle='#5d6f85';ctx.fillText('Ω: area 1',pq.px(0.83),pq.py(0.03));}
+    set('qa',f4(a));set('qb',f4(b));set('qab',f4(ab));set('qs',f4(a+b));set('qu',f4(u));
+    const n=darts.length;let hit=0;for(let i=0;i<n;i++)if(regionTest(darts[i][0],darts[i][1]))hit++;
+    const lab={pieces:'A ∪ B',A:'A',B:'B',AnB:'A ∩ B',AuB:'A ∪ B',Ac:'Aᶜ'}[show];
+    const tgt={pieces:u,A:a,B:b,AnB:ab,AuB:u,Ac:1-a}[show];
+    let msg=n?(n+' darts: share in '+lab+' = '+(hit/n).toFixed(4)+', area = '+f4(tgt)+'.'):('Area of '+lab+' = '+f4(tgt)+'.');
+    if(ab<1e-9)msg+='  A and B are disjoint, so P(A ∪ B) = P(A) + P(B).';
+    else if(Math.abs(ab-b)<1e-9)msg+='  B ⊆ A, so P(B) ≤ P(A) and P(A ∪ B) = P(A).';
+    else if(Math.abs(ab-a)<1e-9)msg+='  A ⊆ B, so P(A) ≤ P(B) and P(A ∪ B) = P(B).';
+    else msg+='  P(A) + P(B) exceeds P(A ∪ B) by '+f4(ab)+' — the overlap, counted twice.';
+    set('qd',msg);}
+  let drag=null;cvq.style.touchAction='none';
+  const snap=v=>Math.round(v*20)/20,clamp=v=>Math.max(0,Math.min(1,v));
+  cvq.addEventListener('pointerdown',e=>{const [X,Y]=canvasXY(cvq,e);const x=pq.mx(X),y=pq.my(Y);
+    const tol=22/(pq.px(1)-pq.px(0));let best=null;
+    [['B',RB],['A',RA]].forEach(([nm,R])=>{[[0,1],[2,1],[2,3],[0,3]].forEach(([ix,iy])=>{const d=Math.hypot(R[ix]-x,R[iy]-y);if(d<tol&&(!best||d<best.d))best={d,nm,ix,iy};});});
+    if(best)drag={kind:'corner',nm:best.nm,ix:best.ix,iy:best.iy};
+    else if(inR(RB,x,y))drag={kind:'move',nm:'B',x0:x,y0:y,R0:RB.slice()};
+    else if(inR(RA,x,y))drag={kind:'move',nm:'A',x0:x,y0:y,R0:RA.slice()};
+    else return;
+    try{cvq.setPointerCapture(e.pointerId);}catch(z){}e.preventDefault();});
+  cvq.addEventListener('pointermove',e=>{if(!drag)return;e.preventDefault();const [X,Y]=canvasXY(cvq,e);const x=pq.mx(X),y=pq.my(Y);
+    const R=drag.nm==='A'?RA:RB;
+    if(drag.kind==='corner'){const ox=drag.ix===0?2:0,oy=drag.iy===1?3:1;
+      let nx=snap(clamp(x)),ny=snap(clamp(y));
+      if(drag.ix===0)nx=Math.min(nx,R[ox]-0.05);else nx=Math.max(nx,R[ox]+0.05);
+      if(drag.iy===1)ny=Math.min(ny,R[oy]-0.05);else ny=Math.max(ny,R[oy]+0.05);
+      R[drag.ix]=r2(nx);R[drag.iy]=r2(ny);}
+    else{const R0=drag.R0,wd=R0[2]-R0[0],ht=R0[3]-R0[1];let nx=snap(R0[0]+x-drag.x0),ny=snap(R0[1]+y-drag.y0);
+      nx=Math.max(0,Math.min(1-wd,nx));ny=Math.max(0,Math.min(1-ht,ny));R[0]=r2(nx);R[1]=r2(ny);R[2]=r2(nx+wd);R[3]=r2(ny+ht);}
+    drawQ();});
+  const qend=()=>drag=null;cvq.addEventListener('pointerup',qend);cvq.addEventListener('pointercancel',qend);
+  function mkSeg(id,items,cur,on){const el=document.getElementById(id);
+    el.innerHTML=items.map(it=>`<span class="segb${it[0]===cur?' on':''}" data-k="${it[0]}">${it[1]}</span>`).join('');
+    el.querySelectorAll('.segb').forEach(b=>b.onclick=()=>{if(cur!==null)el.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));on(b.dataset.k);});}
+  mkSeg('segshow',[['pieces','pieces'],['A','A'],['B','B'],['AnB','A ∩ B'],['AuB','A ∪ B'],['Ac','Aᶜ']],show,k=>{show=k;drawQ();});
+  mkSeg('segdart',[['100','+100 darts'],['1000','+1000'],['0','clear darts']],null,k=>{const m=+k;if(!m)darts=[];else for(let i=0;i<m&&darts.length<MAXD;i++)darts.push([Math.random(),Math.random()]);drawQ();});
+  drawQ();
+
+  numChk(document.getElementById('gate'),0.25,()=>{addReveal(`<div class="rh">✓ 0.25 — one day in four</div>
+    <p>Write $A$ = "stock A closes up" and $B$ = "stock B closes up", with $P(A)=0.55$, $P(B)=0.6$, $P(A\\cap B)=0.4$. "Neither closes up" is $(A\\cup B)^{c}$, so take two steps, each one rule:</p>
+    <div class="eqbox">$$P(A\\cup B)=0.55+0.6-0.4=0.75,\\qquad P\\big((A\\cup B)^{c}\\big)=1-0.75=0.25.$$</div>
+    <p>Adding $0.55+0.6=1.15$ gives a "probability" above 1 — a sure sign the overlap was counted twice. With the suggested rectangles, A covers heights $0$ to $0.55$ and B covers $0.15$ to $0.75$; their overlap is the band $0.15$ to $0.55$, area $0.4$, and the uncovered strip above $0.75$ has area $0.25$. Throw darts and about a quarter land there.</p>
+    <p>The axioms also rule out some data outright. If someone reported $P(A)=0.55$, $P(B)=0.6$ and $P(A\\cap B)=0.1$, the union would be $1.05\\gt1$, which monotonicity forbids. Checking reported numbers against the axioms is a quick test of whether they can all be true at once.</p>`);},
+    snapTo(0.25,0.0015));
+  setHints([`“Neither” is the complement of “A or B”. First find P(A ∪ B) with the union rule, then use the complement rule.`,
+    `P(A ∪ B) = 0.55 + 0.6 − 0.4 = 0.75, so neither = 1 − 0.75.`]);
+}
 
 /* ================= boot ================= */
 window.onerror=function(m,s,l){console.error(m,l);};
