@@ -131,7 +131,7 @@ const completed={},reached={};
 const MODULES=[
  {id:'p0',title:'Outcomes, Events & Counting',sub:'Sample spaces and events, the three axioms, equally likely outcomes, permutations and combinations, and inclusion–exclusion.',ready:true,
   outro:`A probability is the share of trials on which an event happens in the long run, so probabilities lie between 0 and 1 and the outcomes' probabilities add to 1 — summed over a list, integrated under a density on a line, or taken as a volume over a plane. When the outcomes are equally likely, probability reduces to counting, and permutations, combinations, and inclusion–exclusion do the counting.`,
-  beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms]},
+  beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:false,outro:'',beats:[]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
@@ -772,6 +772,13 @@ function p0_sum(){
     <p>The 11 sum events have two properties. They are pairwise <b>disjoint</b> — no roll has two different sums — and together they <b>cover</b> $\\Omega$ — every roll has some sum. A family of events with both properties is a <b>partition</b> of $\\Omega$. It splits the 36 pebbles with no overlap and nothing left over, so its probabilities add to exactly 1:</p>
     <div class="eqbox">$$\\sum_{s=2}^{12}P(r+b=s)=\\frac{1+2+3+4+5+6+5+4+3+2+1}{36}=\\frac{36}{36}=1.$$</div>
     <p>A partition also lets an event be weighed in pieces: an event made of several disjoint pieces has probability equal to the sum of the pieces' probabilities.</p>
+    <div class="defn"><span class="dt">A parallel with linear algebra</span>
+      Write each event $A$ as a vector. Its <b>indicator</b> $\mathbf 1_A$ has one entry per outcome — 36 entries for two dice — equal to 1 at the outcomes in $A$ and 0 elsewhere. Give vectors on $\Omega$ the inner product that weights each outcome by its probability,
+      $$\langle\mathbf f,\mathbf g\rangle=\sum_{\omega\in\Omega}P(\omega)\,f(\omega)\,g(\omega),$$
+      which for fair dice is $\tfrac1{36}$ times the ordinary dot product. The product $\mathbf 1_A(\omega)\,\mathbf 1_B(\omega)$ is 1 exactly when $\omega$ lies in both events, so
+      $$\langle\mathbf 1_A,\mathbf 1_B\rangle=P(A\cap B),\qquad \|\mathbf 1_A\|^2=P(A).$$
+      Disjoint events therefore have <b>orthogonal</b> indicators. Each outcome lies in exactly one cell of a partition, so the cells' indicators add to the all-ones vector: $\sum_s\mathbf 1_{\{r+b=s\}}=\mathbf 1$. The 11 sum indicators are an orthogonal basis — orthogonal, not orthonormal, since $\|\mathbf 1_{\{r+b=s\}}\|^2=P(r+b=s)$ differs from cell to cell — for an 11-dimensional subspace of $\mathbb R^{36}$: the vectors that take one value on each anti-diagonal, which are exactly the quantities that depend only on the sum. The 36 single outcomes are the finest partition, and their indicators are an orthogonal basis for all of $\mathbb R^{36}$.<br><br>
+      This picture returns in Module 5, where the <b>conditional expectation</b> of a quantity given a partition is its orthogonal projection onto that subspace (projection as in Linear Algebra Module 3). The same projection is why a model trained to minimize squared error learns a conditional mean, and it underlies least-squares regression and the Kalman filter.</div>
     <div class="task"><b>A sum of 8 or more</b>Two dice are rolled. What is the probability that the sum is at least 8? Enter a fraction or a decimal.</div>
     ${gateHTML('e.g. 7/36 or 0.194')}</div>`;
   let sSel=7;const cvh=document.getElementById('cvh'),cvg=document.getElementById('cvg');
@@ -959,6 +966,130 @@ function p0_axioms(){
     snapTo(0.25,0.0015));
   setHints([`“Neither” is the complement of “A or B”. First find P(A ∪ B) with the union rule, then use the complement rule.`,
     `P(A ∪ B) = 0.55 + 0.6 − 0.4 = 0.75, so neither = 1 − 0.75.`]);
+}
+
+/* ---------- Beat 8: counting by stages ---------- */
+function p0_multiply(){
+  stage.innerHTML=`<div class="card"><h2>Counting by stages: the multiplication principle</h2>
+    <p>With equally likely outcomes, $P(A)=|A|/|\\Omega|$, so every such probability needs two counts. For two dice the grid made $|\\Omega|=36$ visible at a glance. Most sample spaces have too many outcomes to draw, but they are usually built in <b>stages</b>: a password one character at a time, a shuffled deck one card at a time, a sentence one word at a time. Counting by stages turns a huge count into a short product.</p>
+    <div class="defn"><span class="dt">The objects</span>
+      $k$ — the number of stages; each outcome is a sequence of $k$ choices.<br>
+      $n_j$ — the number of options available at stage $j$, for $j=1,\\dots,k$.<br>
+      <b>Tree diagram</b> — the root is "nothing chosen yet"; each node at depth $j-1$ branches once for each option at stage $j$. A path from the root to a leaf is one complete sequence of choices, so the leaves are the outcomes.</div>
+    <p>Build a code from the letters A, B, C, D. Choose how many letters are available, how many stages there are, and whether a letter may repeat. <b>Tap a leaf</b> to read the outcome its path spells.</p>
+    <div class="slabel" style="margin-top:12px">letters available</div><div class="seg" id="segn" style="margin-top:4px"></div>
+    <div class="slabel" style="margin-top:10px">stages</div><div class="seg" id="segk" style="margin-top:4px"></div>
+    <div class="slabel" style="margin-top:10px">rule</div><div class="seg" id="segrule" style="margin-top:4px"></div>
+    <canvas id="cvt" width="640" height="380" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">leaves (outcomes)</div><div class="v" id="tl">—</div></div><div class="rdc"><div class="k">count by stages</div><div class="v" id="tp">—</div></div><div class="rdc"><div class="k">tapped outcome</div><div class="v" id="to">—</div></div></div>
+    <p class="small" id="tn" style="margin-top:8px;min-height:20px"></p>
+    <p style="margin-top:14px">With repeats allowed, every node at a given depth has the same number of children, so the leaves multiply out level by level: depth 1 has $n_1$ nodes, depth 2 has $n_1n_2$, and depth $k$ has $n_1n_2\\cdots n_k$.</p>
+    <p>Now switch to <b>no repeats</b>. Different nodes now offer <em>different</em> letters — after A the next stage offers B, C, D; after B it offers A, C, D — but every node at a given depth still offers the <em>same number</em> of letters. The count only needs the number, so the product still holds.</p>
+    <div class="defn"><span class="dt">The multiplication principle</span>
+      Suppose an outcome is built in $k$ stages such that (i) at stage $j$ there are $n_j$ options, <em>however the earlier stages went</em>, and (ii) different sequences of choices produce different outcomes. Then the number of outcomes is
+      $$n_1\\cdot n_2\\cdots n_k.$$</div>
+    <p>Condition (i) is about the number of options, not the options themselves. Switch the rule to <b>uneven</b> to see it fail: roll a die, getting $r$, then pick a whole number from 1 to $r$. The second stage has $r$ options, and $r$ depends on the first stage, so the tree is lopsided and no single product counts it. Count it branch by branch instead: the first stage splits the outcomes into disjoint groups, and the group sizes add, $1+2+3+4+5+6=21$. That is the <b>addition principle</b> — additivity (rule 3) in counting form.</p>
+    <p>Condition (ii) guards against counting one outcome twice. If two different paths could spell the same final result, the leaves would outnumber the outcomes. The two-dice grid is the multiplication principle with $k=2$ and $n_1=n_2=6$; reading the result as an unordered pair instead would merge paths, and $6\\cdot6$ would overcount the 21 unordered results.</p>
+
+    <h2 style="margin-top:22px">Ordered selections and permutations</h2>
+    <p>Two cases come up constantly. Choose $k$ items in order from $n$ distinct items:</p>
+    <div class="defn"><span class="dt">With repetition</span>Every stage has all $n$ options: $\;n\\cdot n\\cdots n=n^k$ sequences.</div>
+    <div class="defn"><span class="dt">Without repetition</span>Stage 1 has $n$ options, stage 2 has $n-1$ (one item is used up, whichever it was), stage 3 has $n-2$, and stage $k$ has $n-k+1$:
+      $$n(n-1)(n-2)\\cdots(n-k+1)=\\frac{n!}{(n-k)!},$$
+      where $n!=n(n-1)\\cdots2\\cdot1$ is <b>$n$ factorial</b>; dividing by $(n-k)!$ cancels the factors below $n-k+1$. Each such sequence is an <b>ordered selection</b>, or $k$-permutation. Taking all $k=n$ items gives the number of <b>permutations</b> (orderings) of $n$ items, $n!$ — which requires $0!=1$ so that $\\frac{n!}{0!}=n!$.</div>
+    <p>Both counts grow fast, and the gap between them is itself a probability. Among all $n^k$ equally likely sequences, the fraction with no repeated item is $\\frac{n!/(n-k)!}{n^k}$. Set $n$ and $k$ below. The vertical axis is logarithmic: it shows the number of digits, $\\log_{10}$ of each count.</p>
+    <div class="ctrls"><span class="slabel" id="gnL">n = 10</span><input type="range" id="gn" min="2" max="60" step="1" value="10"></div>
+    <div class="ctrls" style="margin-top:4px"><span class="slabel" id="gkL">k = 4</span><input type="range" id="gk" min="1" max="10" step="1" value="4"></div>
+    <canvas id="cvg" width="640" height="320" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">n^k (repeats allowed)</div><div class="v" id="gr">—</div></div><div class="rdc"><div class="k">n!/(n−k)! (no repeats)</div><div class="v" id="gf">—</div></div><div class="rdc"><div class="k">fraction with no repeat</div><div class="v" id="gq">—</div></div></div>
+    <p style="margin-top:14px">These counts are why the objects in this course are too big to list:</p>
+    <div class="defn"><span class="dt">Where the counts show up</span>
+      <b>Hashes.</b> A 256-bit hash such as Bitcoin's SHA-256 is 256 stages of 2 options: $2^{256}\\approx1.2\\times10^{77}$ possible values.<br>
+      <b>Language models.</b> With a vocabulary of $V=50{,}000$ tokens, a sequence of $L=10$ tokens has $V^{L}\\approx10^{47}$ possibilities, so no model can store a probability for each one. Instead a model generates one token per stage, walking down a tree like the one above, and the probability of a whole sequence is the product of the next-token probabilities along its path (the multiplication rule of Module 2).<br>
+      <b>Orderings.</b> Self-attention in a Transformer treats its inputs as a set: all $L!$ orderings of the same tokens look identical to it, which is why Transformers add positional encodings to mark the order. A shuffled 52-card deck has $52!\\approx8.1\\times10^{67}$ orderings, so a well-shuffled deck is almost surely in an order no deck has ever been in.</div>
+    <div class="task"><b>No repeated letter</b>A password is 3 lowercase letters, each chosen uniformly from the 26 letters, with repeats allowed. What is the probability that a random password has no repeated letter? Enter a fraction or a decimal.</div>
+    ${gateHTML('e.g. 3/4 or 0.75')}</div>`;
+
+  function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+  function canvasXY(cv,e){const rc=cv.getBoundingClientRect();const w=Math.max(1,rc.width),h=rc.height||w*cv.height/cv.width;
+    return [(e.clientX-rc.left)*(cv.width/w),(e.clientY-rc.top)*(cv.height/h)];}
+  const ff=getComputedStyle(document.body).fontFamily,font='600 13px '+ff,fontS='600 11px '+ff;
+  function mkSeg(id,items,cur,on){const el=document.getElementById(id);
+    el.innerHTML=items.map(it=>`<span class="segb${it[0]===cur?' on':''}" data-k="${it[0]}">${it[1]}</span>`).join('');
+    el.querySelectorAll('.segb').forEach(b=>b.onclick=()=>{el.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));on(b.dataset.k);});}
+
+  /* ---- tree ---- */
+  const cvt=document.getElementById('cvt');const LET='ABCD';
+  let n=4,k=3,rule='norep',tree=null,sel=-1;
+  function build(){/* returns {levels:[[node]], leaves:[node]} ; node={label,path,children,x,y,parent} */
+    const root={label:'',path:[],children:[]};let frontier=[root];const K=rule==='uneven'?2:k;
+    for(let d=1;d<=K;d++){const next=[];
+      frontier.forEach(nd=>{let opts;
+        if(rule==='uneven')opts=d===1?['1','2','3','4','5','6']:Array.from({length:+nd.path[0]},(_,i)=>String(i+1));
+        else{opts=LET.slice(0,n).split('');if(rule==='norep')opts=opts.filter(c=>nd.path.indexOf(c)<0);}
+        opts.forEach(o=>{const c={label:o,path:nd.path.concat([o]),children:[],parent:nd};nd.children.push(c);next.push(c);});});
+      frontier=next;}
+    return {root,leaves:frontier,K};}
+  function layout(t){const W=cvt.width,H=cvt.height,top=26,bot=H-(t.leaves.length<=16?54:30);
+    const L=t.leaves.length;t.leaves.forEach((lf,i)=>{lf.x=L===1?W/2:24+(W-48)*i/(L-1);});
+    const place=(nd,d)=>{nd.y=top+(bot-top)*d/t.K;if(nd.children.length){nd.children.forEach(c=>place(c,d+1));nd.x=nd.children.reduce((s,c)=>s+c.x,0)/nd.children.length;}};
+    place(t.root,0);}
+  function drawT(){const ctx=cvt.getContext&&cvt.getContext('2d');const t=tree,L=t.leaves.length;
+    const selPath=sel>=0?t.leaves[sel]:null;const onSel=nd=>{let q=selPath;while(q){if(q===nd)return true;q=q.parent;}return false;};
+    if(ctx){ctx.clearRect(0,0,cvt.width,cvt.height);
+      const edge=(a,b)=>{const hl=selPath&&onSel(b);ctx.strokeStyle=hl?'#e8b84b':'#3d5a80';ctx.lineWidth=hl?3:1.4;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+        if(L<=24||b.children.length){ctx.font=fontS;ctx.fillStyle=hl?'#e8b84b':'#9fb0c4';const mx=a.x+(b.x-a.x)*0.62,my=a.y+(b.y-a.y)*0.62;ctx.fillText(b.label,mx+3,my-2);}};
+      const walk=nd=>{nd.children.forEach(c=>{edge(nd,c);walk(c);});};walk(t.root);
+      const dot=(nd,r,c)=>{ctx.fillStyle=c;ctx.beginPath();ctx.arc(nd.x,nd.y,r,0,7);ctx.fill();};
+      const walk2=nd=>{dot(nd,nd===t.root?5:3.2,onSel(nd)||nd===t.root?'#e8b84b':'#7ab8ff');nd.children.forEach(walk2);};walk2(t.root);
+      t.leaves.forEach((lf,i)=>dot(lf,i===sel?6:3.6,i===sel?'#e8b84b':'#7ab8ff'));
+      if(L<=16){ctx.font=font;t.leaves.forEach((lf,i)=>{const s=lf.path.join('');ctx.fillStyle=i===sel?'#e8b84b':'#d6e0ee';ctx.save();ctx.translate(lf.x-4,lf.y+12);ctx.rotate(Math.PI/2);ctx.fillText(s,0,0);ctx.restore();});}
+      ctx.font=fontS;ctx.fillStyle='#5d6f85';for(let d=1;d<=t.K;d++){const y=26+((cvt.height-(L<=16?54:30))-26)*d/t.K;}
+    }
+    let prod;
+    if(rule==='uneven')prod='1+2+3+4+5+6 = 21';
+    else{const f=[];for(let j=0;j<k;j++)f.push(rule==='norep'?n-j:n);prod=f.some(v=>v<=0)?'0':f.join(' × ')+' = '+f.reduce((a,b)=>a*b,1);}
+    set('tl',String(L));set('tp',prod);
+    set('to',sel>=0?(rule==='uneven'?'roll '+t.leaves[sel].path[0]+', pick '+t.leaves[sel].path[1]:t.leaves[sel].path.join('')):'—');
+    let note='';
+    if(rule==='rep')note='Every node at depth j has '+n+' children, so the leaves number '+n+'^'+k+'.';
+    else if(rule==='norep')note=(k>n?'Only '+n+' letters exist, so '+k+' stages without repeats is impossible: some stage has 0 options.':'Each stage has one option fewer than the last — different letters on different branches, but the same number at each depth.');
+    else note='The second stage has r options, and r depends on the first stage. The branches have different sizes, so the count is a sum, not a product.';
+    set('tn',note);}
+  function refresh(){if(rule==='norep'&&k>n){tree={root:{children:[],path:[]},leaves:[],K:k};tree.root.x=cvt.width/2;tree.root.y=26;}else{tree=build();layout(tree);}sel=-1;drawT();}
+  mkSeg('segn',[['2','A, B'],['3','A, B, C'],['4','A, B, C, D']],String(n),v=>{n=+v;refresh();});
+  mkSeg('segk',[['1','1'],['2','2'],['3','3']],String(k),v=>{k=+v;refresh();});
+  mkSeg('segrule',[['rep','repeats allowed'],['norep','no repeats'],['uneven','uneven: die, then 1..r']],rule,v=>{rule=v;refresh();});
+  cvt.style.touchAction='none';
+  cvt.addEventListener('pointerdown',e=>{if(!tree.leaves.length)return;const [X,Y]=canvasXY(cvt,e);let b=0,bd=1e9;
+    tree.leaves.forEach((lf,i)=>{const d=Math.abs(lf.x-X);if(d<bd){bd=d;b=i;}});sel=b;drawT();e.preventDefault();});
+  refresh();
+
+  /* ---- growth ---- */
+  const cvg=document.getElementById('cvg'),gn=document.getElementById('gn'),gk=document.getElementById('gk');
+  const lg=v=>Math.log10(v);function lfact(m){let s=0;for(let i=2;i<=m;i++)s+=Math.log10(i);return s;}
+  function sci(l){if(l<6)return Math.round(Math.pow(10,l)).toLocaleString('en-US');const e=Math.floor(l),m=Math.pow(10,l-e);return m.toFixed(2)+' × 10^'+e;}
+  function drawG(){const N=+gn.value;gk.max=String(N);let K=Math.min(+gk.value,N);gk.value=String(K);
+    document.getElementById('gnL').textContent='n = '+N;document.getElementById('gkL').textContent='k = '+K;
+    const ymax=Math.max(2,N*lg(N))*1.08,pl=plot(cvg,{xmin:-N*0.04,xmax:N*1.04,ymin:-ymax*0.06,ymax});const ctx=pl.ctx;
+    if(ctx){ctx.clearRect(0,0,pl.W,pl.H);ctx.strokeStyle='#2b3a4f';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,pl.py(0));ctx.lineTo(pl.W,pl.py(0));ctx.stroke();
+      const line=(f,col)=>{ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.beginPath();for(let j=0;j<=N;j++){const X=pl.px(j),Y=pl.py(f(j));if(j)ctx.lineTo(X,Y);else ctx.moveTo(X,Y);}ctx.stroke();};
+      line(j=>j*lg(N),'#7ab8ff');line(j=>lfact(N)-lfact(N-j),'#e8b84b');
+      pl.vline(K,'#5d6f85',true);pl.point(K,K*lg(N),'#7ab8ff',5);pl.point(K,lfact(N)-lfact(N-K),'#e8b84b',5);
+      ctx.font=fontS;ctx.fillStyle='#7ab8ff';ctx.fillText('log10 n^k',pl.px(N*0.62),pl.py(N*0.62*lg(N))-10);
+      ctx.fillStyle='#e8b84b';ctx.fillText('log10 n!/(n−k)!',pl.px(N*0.7),pl.py(lfact(N)-lfact(N-Math.round(N*0.7)))+18);
+      ctx.fillStyle='#5d6f85';ctx.fillText('k →',pl.W-34,pl.py(0)+14);ctx.fillText('digits',6,14);}
+    const lr=K*lg(N),lf=lfact(N)-lfact(N-K);
+    set('gr',sci(lr));set('gf',sci(lf));set('gq',Math.pow(10,lf-lr).toFixed(4));}
+  gn.oninput=drawG;gk.oninput=drawG;drawG();
+
+  numChk(document.getElementById('gate'),15600/17576,()=>{addReveal(`<div class="rh">✓ 15600/17576 ≈ 0.888</div>
+    <p>Each password is a 3-stage sequence with 26 options per stage, so by the multiplication principle there are $26^3=17{,}576$ equally likely passwords. Those with no repeated letter are ordered selections without repetition: 26 options, then 25, then 24, giving $26\\cdot25\\cdot24=15{,}600$. So</p>
+    <div class="eqbox">$$P(\\text{no repeat})=\\frac{26\\cdot25\\cdot24}{26^3}=\\frac{25}{26}\\cdot\\frac{24}{26}\\approx0.888.$$</div>
+    <p>The second form reads stage by stage: the first letter is free, the second must avoid one letter ($\\tfrac{25}{26}$), the third must avoid two ($\\tfrac{24}{26}$). The probability of at least one repeat is the complement, about $0.112$. Swap 26 letters for 365 birthdays and 3 stages for a room of people, and the same product answers the <b>birthday problem</b> — the next counting question in this module, and the reason hash collisions arrive far sooner than intuition suggests.</p>`);},
+    snapTo(15600/17576,0.0015));
+  setHints([`Count all passwords with the multiplication principle (26 options at each of 3 stages), then count those with no repeat (one fewer option at each stage). Divide.`,
+    `All: 26³ = 17,576. No repeat: 26 · 25 · 24 = 15,600. The slider widget with n = 26, k = 3 shows the same fraction.`]);
 }
 
 /* ================= boot ================= */
