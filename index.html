@@ -102,6 +102,10 @@
   .mstat.done{color:var(--good);background:var(--good2);} .mstat.todo{color:var(--accent);background:rgba(122,184,255,.14);} .mstat.soon{color:var(--muted2);background:#141e2c;}
   .mtitle{font-weight:750;font-size:17px;margin:8px 0 5px;} .msub{color:var(--muted);font-size:13.5px;line-height:1.5;}
   .rvlink{color:var(--gold);cursor:pointer;font-size:12px;white-space:nowrap;}
+  .ccard{background:rgba(232,184,75,.04);border:1px dashed rgba(232,184,75,.45);box-shadow:none;padding:13px 15px;}
+  .ccard .mnum{color:var(--gold);} .ccard .mtitle{font-size:15.5px;margin:6px 0 4px;} .ccard .msub{font-size:13px;}
+  .mstat.plan{color:var(--gold);background:rgba(232,184,75,.12);}
+  .ctag{display:inline-block;font-size:10.5px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:1px 8px;margin:7px 5px 0 0;}
   a.rvlink{text-decoration:none;}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;}}
   .katex{font-size:1.03em;}
@@ -131,7 +135,7 @@ const completed={},reached={};
 const MODULES=[
  {id:'p0',title:'Outcomes, Events & Counting',sub:'Sample spaces and events, the three axioms, equally likely outcomes, permutations and combinations, and inclusion–exclusion.',ready:true,
   outro:`A probability is the share of trials on which an event happens in the long run, so probabilities lie between 0 and 1 and the outcomes' probabilities add to 1 — summed over a list, integrated under a density on a line, or taken as a volume over a plane. When the outcomes are equally likely, probability reduces to counting, and permutations, combinations, and inclusion–exclusion do the counting.`,
-  beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply]},
+  beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply,p0_combinations]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:false,outro:'',beats:[]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
@@ -166,6 +170,30 @@ function loadState(){try{return JSON.parse(localStorage.getItem(SAVE_KEY));}catc
 function setHash(){try{const h=view==='module'?('#m'+curM+'b'+beat):'';if((location.hash||'')!==h)history.replaceState(null,'',h||location.pathname+location.search);}catch(e){}}
 function parseHash(){const m=/^#m(\d+)b(\d+)$/.exec(location.hash||'');return m?{curM:+m[1],beat:+m[2]}:null;}
 
+/* Capstone projects: built in their own GitHub repos, interleaved on the menu after the module that unlocks them */
+const CAPSTONES=[
+ {after:'p2',title:'Bayesian spam filter',sub:'Reimplement Paul Graham’s “A Plan for Spam”: word counts, Bayes’ theorem, and a classifier trained on a real email corpus.',tags:['paper','ML']},
+ {after:'p2',title:'Probabilistic data structures',sub:'A Bloom filter, a Count-Min sketch, and HyperLogLog, each with its error rate derived and then measured.',tags:['library','infrastructure','product']},
+ {after:'p4',title:'Portfolio risk engine',sub:'Estimate a covariance matrix from real returns, trace the Markowitz efficient frontier, and compute Gaussian value-at-risk.',tags:['trading']},
+ {after:'p5',title:'Monte Carlo pricer and backtest bootstrap',sub:'Price European options by simulation and check against Black–Scholes; bootstrap a backtest to test whether it beats luck.',tags:['trading']},
+ {after:'p6',title:'Arithmetic coder and n-gram compressor',sub:'Compress text to within a hair of its entropy, and try to beat gzip with a better probability model.',tags:['algorithm']},
+ {after:'p6',title:'GPT from scratch',sub:'A decoder-only Transformer on your own autograd engine: softmax over the vocabulary, cross-entropy training, and temperature / top-k / top-p sampling.',tags:['paper','ML']},
+ {after:'p7',title:'Nakamoto attack simulator',sub:'Reproduce Section 11 of the Bitcoin paper by simulation and in closed form — the security chapter of the blockchain capstone.',tags:['paper','blockchain']},
+ {after:'p7',title:'Limit-order-book simulator',sub:'Orders arriving as Poisson processes, a matching engine, and a testbed for market-making ideas.',tags:['trading']},
+ {after:'p8',title:'PageRank',sub:'Reimplement Brin & Page (1998): the stationary distribution of a random surfer on a real web crawl.',tags:['paper','algorithm']},
+ {after:'p8',title:'HMM market-regime detector',sub:'Fit a hidden Markov model to returns and decode bull and bear regimes with the forward algorithm and Viterbi.',tags:['trading']},
+ {after:'p9',title:'Particle-filter robot localization',sub:'Localize a simulated robot from noisy range readings, as in CS7638.',tags:['robotics','OMSCS']},
+ {after:'p9',title:'Kalman-filter pairs trade',sub:'Ernest Chan’s adaptive hedge ratio: a Kalman filter tracking the spread between two cointegrated assets.',tags:['trading']},
+ {after:'p10',title:'Bayes-net inference engine',sub:'A small pgmpy: build networks, then answer queries by variable elimination and Gibbs sampling, aimed at CS6601.',tags:['library','OMSCS']},
+ {after:'p11',title:'Bayesian A/B testing tool',sub:'Beta–binomial posteriors, the probability one variant beats another, and a stopping rule.',tags:['product']},
+ {after:'p11',title:'Thompson-sampling recommender and Elo/Glicko ratings',sub:'Bandits that learn from clicks, and rating systems as Bayesian updating.',tags:['ML','product']},
+ {after:'p12',title:'EM, VAE, and diffusion trilogy',sub:'Gaussian mixtures by EM, then a variational autoencoder on your own autograd, then DDPM diffusion.',tags:['paper','ML']},
+ {after:'p13',title:'Deflated Sharpe ratio auditor',sub:'Bailey & López de Prado: flag backtests whose Sharpe ratio is explained by the number of strategies tried.',tags:['paper','trading','product']},
+ {after:'a1',title:'Fama–French factor model',sub:'Regress returns on market, size, and value factors; read alphas and their standard errors.',tags:['paper','trading']},
+ {after:'a2',title:'Cointegration pairs scanner',sub:'Scan a universe for cointegrated pairs with Engle–Granger and Johansen, and estimate mean-reversion half-lives.',tags:['trading']},
+ {after:'a3',title:'Kelly-sized backtester',sub:'Size positions by the Kelly criterion and study drawdowns and growth under fractional Kelly.',tags:['trading']},
+ {after:'a4',title:'Mini MCMC sampler',sub:'Metropolis–Hastings, then Hamiltonian Monte Carlo on your own autograd, checked against known posteriors.',tags:['library','ML']},
+];
 function renderMenu(){
   view='menu';footer.style.display='none';hintbox.className='hintbox';hintbox.innerHTML='';
   document.getElementById('backBtn').style.display='none';document.getElementById('pbarWrap').style.display='none';
@@ -174,7 +202,9 @@ function renderMenu(){
   let html=`<div class="card"><h1>Probability, from First Principles</h1><p class="lede">A self-contained probability course, built on the calculus and linear-algebra courses: every rule is derived, and every distribution is built, sampled, and watched on screen. It runs from counting and conditioning through random variables, limit theorems, and information theory, into stochastic processes, estimation, and inference — the probability behind modern machine learning, the Bitcoin paper, and quantitative trading. Guided discovery, real proofs, worked problems.</p></div>`;
   MODULES.forEach((m,i)=>{const done=completed[m.id];const rb=m.ready?resumeBeat(i):0;const st=(done&&(reached[m.id]||0)>=m.beats.length)?['done','✓ Done']:(m.ready?(rb>0?['todo','Resume · '+(rb+1)+'/'+m.beats.length]:['todo','Start']):['soon','Soon']);
     html+=`<div class="card mcard${m.ready?'':' lock'}" data-i="${i}"><div class="mtop"><span class="mnum">${m.addon?'Add-on '+m.addon:'Module '+(i+1)}</span><span class="mstat ${st[0]}">${st[1]}</span></div>
-      <div class="mtitle">${m.title}</div><div class="msub">${m.sub}</div></div>`;});
+      <div class="mtitle">${m.title}</div><div class="msub">${m.sub}</div></div>`;
+    CAPSTONES.filter(c=>c.after===m.id).forEach(c=>{html+=`<div class="card ccard"><div class="mtop"><span class="mnum">Capstone · unlocked by ${m.addon?'Add-on '+m.addon:'Module '+(i+1)}</span><span class="mstat plan">Planned</span></div>
+      <div class="mtitle">${c.title}</div><div class="msub">${c.sub}</div>${c.tags.map(t=>`<span class="ctag">${t}</span>`).join('')}</div>`;});});
   stage.innerHTML=html;
   stage.querySelectorAll('.mcard').forEach(c=>{const i=parseInt(c.dataset.i);if(MODULES[i].ready)c.onclick=()=>openModuleAt(i,resumeBeat(i));});
   scrollTop();renderMath();saveState();setHash();
@@ -1090,6 +1120,110 @@ function p0_multiply(){
     snapTo(15600/17576,0.0015));
   setHints([`Count all passwords with the multiplication principle (26 options at each of 3 stages), then count those with no repeat (one fewer option at each stage). Divide.`,
     `All: 26³ = 17,576. No repeat: 26 · 25 · 24 = 15,600. The slider widget with n = 26, k = 3 shows the same fraction.`]);
+}
+
+/* ---------- Beat 9: combinations and Pascal's triangle ---------- */
+function p0_combinations(){
+  stage.innerHTML=`<div class="card"><h2>Choosing without order: combinations</h2>
+    <p>Many counts ignore order. A poker hand is the same hand however the cards were dealt; a committee is the same committee whoever was named first; in ten coin tosses, "heads on tosses 2, 5, and 9" names a set of positions, not a sequence. The question is: how many <em>sets</em> of $k$ items can be chosen from $n$ distinct items?</p>
+    <div class="defn"><span class="dt">The objects</span>
+      $n$ — the number of distinct items available.<br>
+      $k$ — how many are chosen, $0\\le k\\le n$.<br>
+      <b>Combination</b> — a set of $k$ of the items, with no order: $\\{A,B,C\\}$ and $\\{C,A,B\\}$ are the same combination.<br>
+      $\\binom{n}{k}$ — read "$n$ choose $k$" — the number of combinations.</div>
+    <p>The ordered selections from the last beat are easy to count, $\\frac{n!}{(n-k)!}$. Each combination appears among them several times, once for each way of ordering it. Below, every ordered selection of $k$ letters from the first $n$ letters is a chip, colored by the <em>set</em> of letters it uses. In the ordered list, same-colored chips are scattered. Switch to <b>grouped by set</b>, and <b>tap any chip</b> to outline everything in its group.</p>
+    <div class="slabel" style="margin-top:12px">items n</div><div class="seg" id="segcn" style="margin-top:4px"></div>
+    <div class="slabel" style="margin-top:10px">chosen k</div><div class="seg" id="segck" style="margin-top:4px"></div>
+    <div class="seg" id="segcv" style="margin-top:10px"></div>
+    <canvas id="cvc" width="640" height="360" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">ordered selections</div><div class="v" id="co">—</div></div><div class="rdc"><div class="k">chips per set</div><div class="v" id="cp">—</div></div><div class="rdc"><div class="k">sets (rows)</div><div class="v" id="cs">—</div></div><div class="rdc"><div class="k">tapped set</div><div class="v" id="ct">—</div></div></div>
+    <p style="margin-top:14px">Every group has the same size. A set of $k$ letters can be put in order in $k\\cdot(k-1)\\cdots1=k!$ ways — the multiplication principle again, with one fewer letter left at each stage — and each ordered selection belongs to exactly one set. So the ordered selections split into $\\binom nk$ groups of exactly $k!$ each:</p>
+    <div class="eqbox">$$\\binom{n}{k}\\cdot k!=\\frac{n!}{(n-k)!}\\quad\\Longrightarrow\\quad\\binom{n}{k}=\\frac{n!}{k!\\,(n-k)!}.$$</div>
+    <p>Counting one representative per group, by dividing by the group size, is the general way to remove an overcount: it works whenever every group has the same size. Two facts follow at once. Choosing which $k$ items are <em>in</em> is the same as choosing which $n-k$ are <em>out</em>, so $\\binom nk=\\binom n{n-k}$; the formula agrees, since it treats $k$ and $n-k$ alike. And $\\binom n0=\\binom nn=1$: one way to take nothing, one way to take everything.</p>
+
+    <h2 style="margin-top:22px">Pascal's triangle</h2>
+    <p>Arrange the counts in rows: row $n$ lists $\\binom n0,\\binom n1,\\dots,\\binom nn$. <b>Tap an entry</b> to select $\\binom nk$; its two neighbors in the row above light up.</p>
+    <canvas id="cvp" width="640" height="420"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">selected</div><div class="v" id="pk">—</div></div><div class="rdc"><div class="k">two above, added</div><div class="v" id="pa">—</div></div><div class="rdc"><div class="k">row total</div><div class="v" id="pr">—</div></div><div class="rdc"><div class="k">P(k heads in n tosses)</div><div class="v" id="ph">—</div></div></div>
+    <p style="margin-top:14px">Each entry is the sum of the two above it. The reason is a counting argument, not algebra. Single out one of the $n$ items — call it $z$. Every $k$-set either contains $z$ or does not, never both, so the $k$-sets split into two disjoint groups:</p>
+    <div class="defn"><span class="dt">Pascal's rule</span>
+      <b>Sets containing $z$:</b> the other $k-1$ members come from the remaining $n-1$ items, in $\\binom{n-1}{k-1}$ ways.<br>
+      <b>Sets without $z$:</b> all $k$ members come from the remaining $n-1$ items, in $\\binom{n-1}{k}$ ways.<br>
+      The groups are disjoint and cover every $k$-set, so by the addition principle
+      $$\\binom nk=\\binom{n-1}{k-1}+\\binom{n-1}{k}.$$</div>
+    <p>The row totals are powers of 2. A subset of the $n$ items is a sequence of $n$ yes-or-no decisions — each item in or out — so there are $2^n$ subsets in all (multiplication principle). Sorting them by size counts the same subsets a second way, so $\\sum_{k=0}^{n}\\binom nk=2^n$.</p>
+    <p>That is the bridge to coin tossing. A sequence of $n$ tosses with exactly $k$ heads is fixed by choosing <em>which</em> $k$ of the $n$ positions are heads, so there are $\\binom nk$ such sequences among the $2^n$ equally likely ones:</p>
+    <div class="eqbox">$$P(\\text{exactly }k\\text{ heads in }n\\text{ fair tosses})=\\frac{\\binom nk}{2^n}.$$</div>
+    <p>This is the <b>binomial distribution</b> of Module 3, and the same path counting drives the random walks of Module 8, including the attacker's race against the honest chain in the Bitcoin paper.</p>
+    <div class="defn"><span class="dt">How large these counts get</span>
+      A poker hand: $\\binom{52}{5}=2{,}598{,}960$. Choosing 5 predictors out of 100 candidate signals: $\\binom{100}{5}=75{,}287{,}520$ possible models — a search space this large will contain models that fit past data well by luck alone, the data-snooping problem of Module 14. A dropout mask that keeps exactly $k$ of a layer's $n$ units is one of $\\binom nk$ subsets, and a mask that keeps each unit independently is one of $2^n$.</div>
+    <div class="task"><b>Five heads in ten</b>Toss a fair coin 10 times. What is the probability of exactly 5 heads? Read what you need from the triangle, and enter a fraction or a decimal.</div>
+    ${gateHTML('e.g. 3/8 or 0.375')}</div>`;
+
+  function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+  function canvasXY(cv,e){const rc=cv.getBoundingClientRect();const w=Math.max(1,rc.width),h=rc.height||w*cv.height/cv.width;
+    return [(e.clientX-rc.left)*(cv.width/w),(e.clientY-rc.top)*(cv.height/h)];}
+  const ff=getComputedStyle(document.body).fontFamily;
+  function mkSeg(id,items,cur,on){const el=document.getElementById(id);
+    el.innerHTML=items.map(it=>`<span class="segb${it[0]===cur?' on':''}" data-k="${it[0]}">${it[1]}</span>`).join('');
+    el.querySelectorAll('.segb').forEach(b=>b.onclick=()=>{el.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));on(b.dataset.k);});}
+  const fact=m=>{let r=1;for(let i=2;i<=m;i++)r*=i;return r;};
+  const C=(a,b)=>b<0||b>a?0:Math.round(fact(a)/(fact(b)*fact(a-b)));
+
+  /* ---- chips ---- */
+  const cvc=document.getElementById('cvc');let cn=5,ck=3,cview='list',tapKey=null,chips=[];
+  function seqs(){const L='ABCDE'.slice(0,cn).split(''),out=[];
+    const rec=(pre)=>{if(pre.length===ck){out.push(pre.slice());return;}L.forEach(c=>{if(pre.indexOf(c)<0){pre.push(c);rec(pre);pre.pop();}});};rec([]);return out;}
+  function drawC(){const S=seqs(),keys=[];S.forEach(q=>{const kk=q.slice().sort().join('');if(keys.indexOf(kk)<0)keys.push(kk);});
+    keys.sort();const nk=keys.length,per=fact(ck);
+    const col=kk=>{const i=keys.indexOf(kk);return 'hsl('+Math.round(360*i/nk)+',62%,'+(i%2?58:46)+'%)';};
+    const W=cvc.width;chips=[];
+    if(cview==='list'){const cols=ck<=2?10:(ck===3?10:12),cw=(W-20)/cols,chh=30,rows=Math.ceil(S.length/cols);cvc.height=rows*chh+16;
+      S.forEach((q,i)=>{chips.push({x:10+(i%cols)*cw,y:8+Math.floor(i/cols)*chh,w:cw-4,h:chh-5,s:q.join(''),key:q.slice().sort().join('')});});}
+    else{const cols=per,lab=ck===1?40:(ck===2?60:(ck===3?82:100)),cw=Math.min(70,(W-lab-12)/cols),chh=30;cvc.height=nk*chh+16;
+      keys.forEach((kk,r)=>{const g=S.filter(q=>q.slice().sort().join('')===kk);g.forEach((q,j)=>chips.push({x:lab+j*cw,y:8+r*chh,w:cw-4,h:chh-5,s:q.join(''),key:kk,row:r}));});}
+    const ctx=cvc.getContext&&cvc.getContext('2d');
+    if(ctx){ctx.clearRect(0,0,cvc.width,cvc.height);
+      if(cview==='group'){ctx.font='600 12px '+ff;keys.forEach((kk,r)=>{ctx.fillStyle=col(kk);ctx.fillText('{'+kk.split('').join(',')+'}',8,8+r*30+17);});}
+      chips.forEach(c=>{ctx.fillStyle=col(c.key);ctx.globalAlpha=tapKey&&c.key!==tapKey?0.28:0.9;ctx.fillRect(c.x,c.y,c.w,c.h);ctx.globalAlpha=1;
+        if(tapKey===c.key){ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.strokeRect(c.x-1,c.y-1,c.w+2,c.h+2);}
+        ctx.fillStyle='#0a111b';ctx.font='700 '+(c.w<30?9:12)+'px '+ff;ctx.fillText(c.s,c.x+3,c.y+c.h/2+4);});}
+    const ordered=fact(cn)/fact(cn-ck);
+    set('co',String(ordered));set('cp',ck+'! = '+per);set('cs',ordered+' / '+per+' = '+nk);
+    set('ct',tapKey?'{'+tapKey.split('').join(',')+'}: '+per+' orderings':'—');}
+  mkSeg('segcn',[['4','A–D (4)'],['5','A–E (5)']],String(cn),v=>{cn=+v;if(ck>cn)ck=cn;tapKey=null;drawC();});
+  mkSeg('segck',[['1','1'],['2','2'],['3','3'],['4','4']],String(ck),v=>{ck=Math.min(+v,cn);tapKey=null;drawC();});
+  mkSeg('segcv',[['list','ordered list'],['group','grouped by set']],cview,v=>{cview=v;drawC();});
+  cvc.addEventListener('pointerdown',e=>{const [X,Y]=canvasXY(cvc,e);const hit=chips.find(c=>X>=c.x&&X<=c.x+c.w&&Y>=c.y&&Y<=c.y+c.h);
+    tapKey=hit?(tapKey===hit.key?null:hit.key):null;drawC();e.preventDefault();});
+  drawC();
+
+  /* ---- Pascal ---- */
+  const cvp=document.getElementById('cvp');const R=12;let sn=4,sk=2;
+  const pos=(n,k)=>[cvp.width/2+(k-n/2)*48,26+n*31];
+  function drawP(){const ctx=cvp.getContext&&cvp.getContext('2d');
+    if(ctx){ctx.clearRect(0,0,cvp.width,cvp.height);ctx.textAlign='center';
+      const par=(n,k)=>sn>0&&n===sn-1&&(k===sk-1||k===sk);
+      for(let n=0;n<=R;n++)for(let k=0;k<=n;k++){const [x,y]=pos(n,k),v=C(n,k),isS=n===sn&&k===sk,isP=par(n,k);
+        if(isS||isP){ctx.fillStyle=isS?'rgba(232,184,75,.30)':'rgba(122,184,255,.25)';ctx.beginPath();ctx.arc(x,y-4,17,0,7);ctx.fill();}
+        ctx.font=(isS||isP?'700 ':'600 ')+(v>=100?11:13)+'px '+ff;ctx.fillStyle=isS?'#e8b84b':(isP?'#7ab8ff':'#9fb0c4');ctx.fillText(String(v),x,y);}
+      if(sn>0){const [x,y]=pos(sn,sk);[[sn-1,sk-1],[sn-1,sk]].forEach(([a,b])=>{if(b<0||b>a)return;const [px,py]=pos(a,b);ctx.strokeStyle='#7ab8ff';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(px,py+4);ctx.lineTo(x,y-18);ctx.stroke();});}
+      ctx.textAlign='left';ctx.font='600 11px '+ff;ctx.fillStyle='#5d6f85';ctx.fillText('row n = 0',6,30);ctx.fillText('row 12',6,26+12*31);}
+    const v=C(sn,sk);set('pk','C('+sn+', '+sk+') = '+v);
+    if(sn===0)set('pa','top of the triangle');else{const a=C(sn-1,sk-1),b=C(sn-1,sk);set('pa',a+' + '+b+' = '+(a+b));}
+    set('pr','2^'+sn+' = '+Math.pow(2,sn));set('ph',v+'/'+Math.pow(2,sn)+' = '+(v/Math.pow(2,sn)).toFixed(4));}
+  cvp.addEventListener('pointerdown',e=>{const [X,Y]=canvasXY(cvp,e);let best=null,bd=1e9;
+    for(let n=0;n<=R;n++)for(let k=0;k<=n;k++){const [x,y]=pos(n,k);const d=Math.hypot(x-X,y-4-Y);if(d<bd){bd=d;best=[n,k];}}
+    if(bd<26){sn=best[0];sk=best[1];drawP();}e.preventDefault();});
+  drawP();
+
+  numChk(document.getElementById('gate'),252/1024,()=>{addReveal(`<div class="rh">✓ 252/1024 ≈ 0.246</div>
+    <p>A sequence of 10 tosses with exactly 5 heads is fixed by choosing which 5 of the 10 positions are heads: $\\binom{10}{5}=\\frac{10!}{5!\\,5!}=252$ ways, the middle of row 10. All $2^{10}=1024$ sequences are equally likely, so</p>
+    <div class="eqbox">$$P(\\text{exactly 5 heads})=\\frac{\\binom{10}{5}}{2^{10}}=\\frac{252}{1024}\\approx0.246.$$</div>
+    <p>Five heads is the single most likely count, yet it happens less than a quarter of the time: the probability is spread across the whole row, and $4$ or $6$ heads ($\\tfrac{210}{1024}$ each) are nearly as likely. As $n$ grows the middle entry's share keeps shrinking, roughly like $1/\\sqrt n$, while the row's shape settles into a bell curve — the first glimpse of the central limit theorem of Module 6.</p>`);},
+    snapTo(252/1024,0.0015));
+  setHints([`A 10-toss sequence with 5 heads is a choice of which 5 positions are heads. Tap row 10, entry 5, and divide by the number of equally likely sequences.`,
+    `C(10, 5) = 252 and there are 2¹⁰ = 1024 sequences: 252/1024.`]);
 }
 
 /* ================= boot ================= */
