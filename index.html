@@ -1142,20 +1142,41 @@ function p0_combinations(){
     <p>Counting one representative per group, by dividing by the group size, is the general way to remove an overcount: it works whenever every group has the same size. Two facts follow at once. Choosing which $k$ items are <em>in</em> is the same as choosing which $n-k$ are <em>out</em>, so $\\binom nk=\\binom n{n-k}$; the formula agrees, since it treats $k$ and $n-k$ alike. And $\\binom n0=\\binom nn=1$: one way to take nothing, one way to take everything.</p>
 
     <h2 style="margin-top:22px">Pascal's triangle</h2>
-    <p>Arrange the counts in rows: row $n$ lists $\\binom n0,\\binom n1,\\dots,\\binom nn$. <b>Tap an entry</b> to select $\\binom nk$; its two neighbors in the row above light up.</p>
+    <p>The symbol $\\binom nk$ answers one question: <em>how many different subsets of exactly $k$ members can be chosen from $n$ items?</em> Its answer is a single number.</p>
+    <p>Fix the items and vary the size. Take $n=4$ items, $A,B,C,D$. A subset of them can have 0, 1, 2, 3, or 4 members, so there are five questions, one for each $k$. List every subset and sort them by size:</p>
+    <div class="eqbox" style="font-family:var(--mono);font-size:13.5px;line-height:1.9">
+      size 0: ∅ <span class="hl">→ 1</span><br>
+      size 1: A, B, C, D <span class="hl">→ 4</span><br>
+      size 2: AB, AC, AD, BC, BD, CD <span class="hl">→ 6</span><br>
+      size 3: ABC, ABD, ACD, BCD <span class="hl">→ 4</span><br>
+      size 4: ABCD <span class="hl">→ 1</span></div>
+    <p>Each gold number is one count: $\\binom40=1$, $\\binom41=4$, $\\binom42=6$, $\\binom43=4$, $\\binom44=1$. Write those five answers side by side and you get the line</p>
+    <div class="mathrow">1 &nbsp; 4 &nbsp; 6 &nbsp; 4 &nbsp; 1</div>
+    <p>That line is <b>row 4</b> of Pascal's triangle. A row is not one count; it is the list of answers for one fixed number of items $n$, as the subset size $k$ runs from $0$ on the left to $n$ on the right. Each single entry is one count, $\\binom nk$. Do the same for $n=0,1,2,\\dots$ and stack the rows, each centered under the one before, and the triangle appears.</p>
+    <p><b>Tap any entry.</b> For rows up to 5, the panel below the triangle lists the actual subsets behind every entry of that row, one column per size, with the tapped entry's column highlighted.</p>
     <canvas id="cvp" width="640" height="420"></canvas>
-    <div class="readout"><div class="rdc"><div class="k">selected</div><div class="v" id="pk">—</div></div><div class="rdc"><div class="k">two above, added</div><div class="v" id="pa">—</div></div><div class="rdc"><div class="k">row total</div><div class="v" id="pr">—</div></div><div class="rdc"><div class="k">P(k heads in n tosses)</div><div class="v" id="ph">—</div></div></div>
-    <p style="margin-top:14px">Each entry is the sum of the two above it. The reason is a counting argument, not algebra. Single out one of the $n$ items — call it $z$. Every $k$-set either contains $z$ or does not, never both, so the $k$-sets split into two disjoint groups:</p>
+    <canvas id="cvl" width="640" height="300" style="margin-top:8px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">tapped entry</div><div class="v" id="pk">—</div></div><div class="rdc"><div class="k">two entries above, added</div><div class="v" id="pa">—</div></div><div class="rdc"><div class="k">whole row added</div><div class="v" id="pr">—</div></div></div>
+    <p class="small" id="pw" style="margin-top:8px;min-height:20px"></p>
+
+    <p style="margin-top:14px"><b>Why each entry is the sum of the two above it.</b> Tap row 4, entry 2 (the 6). Its column lists the six 2-member subsets of $\\{A,B,C,D\\}$, split by one question: does the subset contain the last item, $D$?</p>
+    <div class="defn"><span class="dt">Splitting the six subsets</span>
+      <b>Containing $D$</b> (blue): AD, BD, CD. Remove the $D$ and what is left is a 1-member subset of $\\{A,B,C\\}$: A, B, C. There are $\\binom31=3$ of them.<br>
+      <b>Not containing $D$</b> (gold): AB, AC, BC. These are exactly the 2-member subsets of $\\{A,B,C\\}$. There are $\\binom32=3$ of them.<br>
+      Every subset is in exactly one group, so $\\binom42=\\binom31+\\binom32=3+3=6$.</div>
+    <p>The two counts on the right, $\\binom31$ and $\\binom32$, are the two entries just above $\\binom42$ in row 3 — the ones that light up when you tap it. The same split works for any entry. Call the last of the $n$ items $z$:</p>
     <div class="defn"><span class="dt">Pascal's rule</span>
-      <b>Sets containing $z$:</b> the other $k-1$ members come from the remaining $n-1$ items, in $\\binom{n-1}{k-1}$ ways.<br>
-      <b>Sets without $z$:</b> all $k$ members come from the remaining $n-1$ items, in $\\binom{n-1}{k}$ ways.<br>
-      The groups are disjoint and cover every $k$-set, so by the addition principle
+      A $k$-member subset that <b>contains $z$</b> is $z$ plus $k-1$ members from the other $n-1$ items: $\\binom{n-1}{k-1}$ of them (the entry above and to the left).<br>
+      A $k$-member subset that <b>does not contain $z$</b> takes all $k$ members from the other $n-1$ items: $\\binom{n-1}{k}$ of them (the entry above and to the right).<br>
+      No subset is in both groups and every subset is in one, so by the addition principle
       $$\\binom nk=\\binom{n-1}{k-1}+\\binom{n-1}{k}.$$</div>
-    <p>The row totals are powers of 2. A subset of the $n$ items is a sequence of $n$ yes-or-no decisions — each item in or out — so there are $2^n$ subsets in all (multiplication principle). Sorting them by size counts the same subsets a second way, so $\\sum_{k=0}^{n}\\binom nk=2^n$.</p>
-    <p>That is the bridge to coin tossing. A sequence of $n$ tosses with exactly $k$ heads is fixed by choosing <em>which</em> $k$ of the $n$ positions are heads, so there are $\\binom nk$ such sequences among the $2^n$ equally likely ones:</p>
+    <p>That is how the whole triangle can be built with no factorials at all: start from a 1 at the top, put 1s down both edges ($\\binom n0=\\binom nn=1$), and fill in each inner entry by adding the two above it.</p>
+    <p><b>Why each row adds up to a power of 2.</b> Adding a whole row counts every subset of the $n$ items, of every size. Count those subsets a second way: go through the items one at a time and decide "in" or "out" for each. That is $n$ stages with 2 options each, so $2^n$ subsets (multiplication principle). For row 4: $1+4+6+4+1=16=2^4$.</p>
+    <p><b>The bridge to coin tossing.</b> Number the tosses $1,\\dots,n$. A sequence of heads and tails is the same information as the set of positions that came up heads: for $n=4$, the sequence HHTH is the set $\\{1,2,4\\}$. So the sequences with exactly $k$ heads correspond one-to-one with the $k$-member subsets of the $n$ positions, and there are $\\binom nk$ of them among the $2^n$ equally likely sequences:</p>
     <div class="eqbox">$$P(\\text{exactly }k\\text{ heads in }n\\text{ fair tosses})=\\frac{\\binom nk}{2^n}.$$</div>
-    <p>This is the <b>binomial distribution</b> of Module 3, and the same path counting drives the random walks of Module 8, including the attacker's race against the honest chain in the Bitcoin paper.</p>
-    <div class="defn"><span class="dt">How large these counts get</span>
+    <p>Read this way, row $n$ divided by $2^n$ lists the probabilities of $0,1,\\dots,n$ heads in $n$ tosses, and those probabilities add to 1 because the row adds to $2^n$. This is the <b>binomial distribution</b> of Module 3, and the same counting drives the random walks of Module 8, including the attacker's race against the honest chain in the Bitcoin paper.</p>
+    
+<div class="defn"><span class="dt">How large these counts get</span>
       A poker hand: $\\binom{52}{5}=2{,}598{,}960$. Choosing 5 predictors out of 100 candidate signals: $\\binom{100}{5}=75{,}287{,}520$ possible models — a search space this large will contain models that fit past data well by luck alone, the data-snooping problem of Module 14. A dropout mask that keeps exactly $k$ of a layer's $n$ units is one of $\\binom nk$ subsets, and a mask that keeps each unit independently is one of $2^n$.</div>
     <div class="task"><b>Five heads in ten</b>Toss a fair coin 10 times. What is the probability of exactly 5 heads? Read what you need from the triangle, and enter a fraction or a decimal.</div>
     ${gateHTML('e.g. 3/8 or 0.375')}</div>`;
@@ -1199,19 +1220,43 @@ function p0_combinations(){
   drawC();
 
   /* ---- Pascal ---- */
-  const cvp=document.getElementById('cvp');const R=12;let sn=4,sk=2;
+  const cvp=document.getElementById('cvp'),cvl=document.getElementById('cvl');const R=12;let sn=4,sk=2;
   const pos=(n,k)=>[cvp.width/2+(k-n/2)*48,26+n*31];
+  const LET='ABCDE';
+  function subsets(n,k){const out=[];const rec=(st,pre)=>{if(pre.length===k){out.push(pre.join('')||'∅');return;}for(let i=st;i<n;i++){pre.push(LET[i]);rec(i+1,pre);pre.pop();}};rec(0,[]);return out;}
   function drawP(){const ctx=cvp.getContext&&cvp.getContext('2d');
+    const par=(n,k)=>sn>0&&n===sn-1&&(k===sk-1||k===sk);
     if(ctx){ctx.clearRect(0,0,cvp.width,cvp.height);ctx.textAlign='center';
-      const par=(n,k)=>sn>0&&n===sn-1&&(k===sk-1||k===sk);
-      for(let n=0;n<=R;n++)for(let k=0;k<=n;k++){const [x,y]=pos(n,k),v=C(n,k),isS=n===sn&&k===sk,isP=par(n,k);
-        if(isS||isP){ctx.fillStyle=isS?'rgba(232,184,75,.30)':'rgba(122,184,255,.25)';ctx.beginPath();ctx.arc(x,y-4,17,0,7);ctx.fill();}
-        ctx.font=(isS||isP?'700 ':'600 ')+(v>=100?11:13)+'px '+ff;ctx.fillStyle=isS?'#e8b84b':(isP?'#7ab8ff':'#9fb0c4');ctx.fillText(String(v),x,y);}
-      if(sn>0){const [x,y]=pos(sn,sk);[[sn-1,sk-1],[sn-1,sk]].forEach(([a,b])=>{if(b<0||b>a)return;const [px,py]=pos(a,b);ctx.strokeStyle='#7ab8ff';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(px,py+4);ctx.lineTo(x,y-18);ctx.stroke();});}
-      ctx.textAlign='left';ctx.font='600 11px '+ff;ctx.fillStyle='#5d6f85';ctx.fillText('row n = 0',6,30);ctx.fillText('row 12',6,26+12*31);}
+      for(let n=0;n<=R;n++)for(let k=0;k<=n;k++){const [x,y]=pos(n,k),v=C(n,k),isS=n===sn&&k===sk,isL=par(n,k)&&k===sk-1,isR=par(n,k)&&k===sk,inRow=n===sn;
+        if(inRow&&!isS){ctx.fillStyle='rgba(122,184,255,.08)';ctx.beginPath();ctx.arc(x,y-4,17,0,7);ctx.fill();}
+        if(isS||isL||isR){ctx.fillStyle=isS?'rgba(233,238,246,.22)':(isL?'rgba(122,184,255,.30)':'rgba(232,184,75,.30)');ctx.beginPath();ctx.arc(x,y-4,17,0,7);ctx.fill();}
+        ctx.font=(isS||isL||isR?'700 ':'600 ')+(v>=100?11:13)+'px '+ff;ctx.fillStyle=isS?'#ffffff':(isL?'#7ab8ff':(isR?'#e8b84b':(inRow?'#d6e0ee':'#7d8fa5')));ctx.fillText(String(v),x,y);}
+      if(sn>0){const [x,y]=pos(sn,sk);[[sn-1,sk-1,'#7ab8ff'],[sn-1,sk,'#e8b84b']].forEach(([a,b,c])=>{if(b<0||b>a)return;const [px,py]=pos(a,b);ctx.strokeStyle=c;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(px,py+4);ctx.lineTo(x,y-18);ctx.stroke();});}
+      ctx.textAlign='left';ctx.font='600 11px '+ff;ctx.fillStyle='#5d6f85';
+      for(let n=0;n<=R;n+=2)ctx.fillText('n = '+n,6,26+n*31);
+      ctx.fillText('k = 0 at the left of each row',cvp.width-176,cvp.height-6);}
+    /* the subsets behind row sn */
+    const lctx=cvl.getContext&&cvl.getContext('2d');
+    if(sn<=5){const cols=sn+1,cw=Math.min(118,(cvl.width-12)/cols),maxc=C(sn,Math.floor(sn/2)),chh=22;cvl.height=54+maxc*chh+10;
+      const z=LET[sn-1];
+      if(lctx){lctx.clearRect(0,0,cvl.width,cvl.height);const x0=(cvl.width-cols*cw)/2;
+        for(let k=0;k<=sn;k++){const x=x0+k*cw,S=subsets(sn,k),isS=k===sk;
+          if(isS){lctx.fillStyle='rgba(233,238,246,.07)';lctx.fillRect(x+2,4,cw-4,cvl.height-8);}
+          lctx.textAlign='center';lctx.font='600 11px '+ff;lctx.fillStyle=isS?'#e9eef6':'#5d6f85';lctx.fillText('size '+k,x+cw/2,20);
+          lctx.font='700 15px '+ff;lctx.fillStyle=isS?'#ffffff':'#d6e0ee';lctx.fillText(String(S.length),x+cw/2,42);
+          S.forEach((t,i)=>{const hasZ=sn>0&&t.indexOf(z)>=0;let c='#9fb0c4';if(isS&&sn>0)c=hasZ?'#7ab8ff':'#e8b84b';
+            lctx.font=(isS?'700 ':'600 ')+'13px '+ff;lctx.fillStyle=c;lctx.fillText(t,x+cw/2,54+(i+1)*chh-6);});}
+        lctx.textAlign='left';}}
+    else{cvl.height=60;if(lctx){lctx.clearRect(0,0,cvl.width,cvl.height);lctx.textAlign='center';lctx.font='600 13px '+ff;lctx.fillStyle='#9fb0c4';
+      lctx.fillText('Row '+sn+' has '+Math.pow(2,sn).toLocaleString('en-US')+' subsets in all — too many to list. Tap a row from 0 to 5 to see them.',cvl.width/2,34);lctx.textAlign='left';}}
     const v=C(sn,sk);set('pk','C('+sn+', '+sk+') = '+v);
     if(sn===0)set('pa','top of the triangle');else{const a=C(sn-1,sk-1),b=C(sn-1,sk);set('pa',a+' + '+b+' = '+(a+b));}
-    set('pr','2^'+sn+' = '+Math.pow(2,sn));set('ph',v+'/'+Math.pow(2,sn)+' = '+(v/Math.pow(2,sn)).toFixed(4));}
+    let row=[];for(let k=0;k<=sn;k++)row.push(C(sn,k));set('pr',(sn<=6?row.join(' + ')+' = ':'')+Math.pow(2,sn)+' = 2^'+sn);
+    const items=sn===0?'0 items':(sn<=5?sn+' items '+LET.slice(0,sn).split('').join(', '):sn+' items');
+    let w=v+' = the number of '+sk+'-member subsets of '+items+'.';
+    if(sn>0&&(sk===0||sk===sn))w+=' An edge entry is always 1: there is one way to take '+(sk===0?'nothing':'everything')+'.';
+    else if(sn>0&&sn<=5)w+=' In the highlighted column, blue subsets contain '+LET[sn-1]+' ('+C(sn-1,sk-1)+' of them, the blue entry above) and gold ones do not ('+C(sn-1,sk)+', the gold entry above).';
+    set('pw',w);}
   cvp.addEventListener('pointerdown',e=>{const [X,Y]=canvasXY(cvp,e);let best=null,bd=1e9;
     for(let n=0;n<=R;n++)for(let k=0;k<=n;k++){const [x,y]=pos(n,k);const d=Math.hypot(x-X,y-4-Y);if(d<bd){bd=d;best=[n,k];}}
     if(bd<26){sn=best[0];sk=best[1];drawP();}e.preventDefault();});
