@@ -104,6 +104,10 @@
   .rvlink{color:var(--gold);cursor:pointer;font-size:12px;white-space:nowrap;}
   .ccard{background:rgba(232,184,75,.04);border:1px dashed rgba(232,184,75,.45);box-shadow:none;padding:13px 15px;}
   .ccard .mnum{color:var(--gold);} .ccard .mtitle{font-size:15.5px;margin:6px 0 4px;} .ccard .msub{font-size:13px;}
+  .pcard{background:rgba(169,139,255,.04);border:1px solid rgba(169,139,255,.32);border-left:3px solid #a98bff;box-shadow:none;padding:11px 15px;}
+  .pcard .mnum{color:#a98bff;} .pcard .mtitle{font-size:15px;margin:5px 0 3px;} .pcard .msub{font-size:13px;}
+  .pcard.md{border-left-color:var(--gold);} .pcard.md .mnum{color:var(--gold);}
+  .mstat.pread{color:#a98bff;background:rgba(169,139,255,.12);} .pcard.md .mstat.pread{color:var(--gold);background:rgba(232,184,75,.12);}
   .mstat.plan{color:var(--gold);background:rgba(232,184,75,.12);}
   .ctag{display:inline-block;font-size:10.5px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:1px 8px;margin:7px 5px 0 0;}
   a.rvlink{text-decoration:none;}
@@ -196,6 +200,48 @@ const CAPSTONES=[
  {after:'a3',title:'Kelly-sized backtester',sub:'Size positions by the Kelly criterion and study drawdowns and growth under fractional Kelly.',tags:['trading']},
  {after:'a4',title:'Mini MCMC sampler',sub:'Metropolis–Hastings, then Hamiltonian Monte Carlo on your own autograd, checked against known posteriors.',tags:['library','ML']},
 ];
+/* Research papers: read in three passes (skim the claim, re-derive the equations, reproduce one result + a short note), interleaved on the menu after the module that unlocks them */
+const PAPERS=[
+ {after:'p0',title:'Kolmogorov 1933',note:'the axioms of probability',md:0},
+ {after:'p1',title:'Bayes 1763',note:'An Essay towards solving a Problem in the Doctrine of Chances',md:0},
+ {after:'p2',title:'Graham 2002',note:'A Plan for Spam (naive Bayes in production)',md:0},
+ {after:'p2',title:'Bloom 1970',note:'space/time trade-offs in hash coding (Bloom filters)',md:0},
+ {after:'p2',title:'Flajolet et al. 2007',note:'HyperLogLog cardinality estimation',md:0},
+ {after:'p4',title:'Markowitz 1952',note:'Portfolio Selection (mean–variance)',md:0},
+ {after:'p4',title:'Rezende & Mohamed 2015',note:'normalizing flows — the Jacobian density formula as a generative model',md:1},
+ {after:'p5',title:'Metropolis & Ulam 1949',note:'The Monte Carlo Method',md:0},
+ {after:'p5',title:'Boyle 1977',note:'Options: A Monte Carlo Approach',md:0},
+ {after:'p6',title:'Shannon 1948',note:'A Mathematical Theory of Communication',md:0},
+ {after:'p6',title:'Witten, Neal & Cleary 1987',note:'arithmetic coding for data compression',md:0},
+ {after:'p6',title:'Holtzman et al. 2019',note:'nucleus (top-p) sampling',md:1},
+ {after:'p6',title:'Delétang et al. 2023',note:'Language Modeling Is Compression',md:1},
+ {after:'p7',title:'Nakamoto 2008',note:'Bitcoin §11 — the attacker\'s catch-up probability',md:0},
+ {after:'p7',title:'Grunspan & Pérez-Marco 2017',note:'double-spend races — the exact attacker probability',md:1},
+ {after:'p7',title:'Cont, Stoikov & Talreja 2010',note:'a stochastic model for order-book dynamics',md:1},
+ {after:'p8',title:'Brin & Page 1998',note:'anatomy of a web search engine (PageRank)',md:0},
+ {after:'p8',title:'Rabiner 1989',note:'the HMM tutorial (forward, Viterbi, Baum–Welch)',md:0},
+ {after:'p8',title:'Hamilton 1989',note:'regime-switching models of economic time series',md:0},
+ {after:'p9',title:'Kalman 1960',note:'a new approach to linear filtering and prediction',md:0},
+ {after:'p9',title:'Gordon, Salmond & Smith 1993',note:'the bootstrap particle filter',md:0},
+ {after:'p10',title:'Pearl 1988',note:'Probabilistic Reasoning in Intelligent Systems (excerpt)',md:0},
+ {after:'p10',title:'Geman & Geman 1984',note:'Gibbs sampling',md:0},
+ {after:'p11',title:'Fisher 1922',note:'mathematical foundations of statistics (MLE)',md:0},
+ {after:'p11',title:'Thompson 1933',note:'Thompson sampling',md:0},
+ {after:'p11',title:'Chapelle & Li 2011',note:'an empirical evaluation of Thompson sampling',md:1},
+ {after:'p12',title:'Dempster, Laird & Rubin 1977',note:'the EM algorithm',md:0},
+ {after:'p12',title:'Kingma & Welling 2013',note:'Auto-Encoding Variational Bayes (VAE)',md:1},
+ {after:'p12',title:'Blei, Kucukelbir & McAuliffe 2017',note:'variational inference: a review',md:1},
+ {after:'p12',title:'Ho, Jain & Abbeel 2020',note:'denoising diffusion probabilistic models',md:1},
+ {after:'p13',title:'Lo 2002',note:'The Statistics of Sharpe Ratios',md:0},
+ {after:'p13',title:'Bailey & López de Prado 2014',note:'The Deflated Sharpe Ratio',md:1},
+ {after:'p13',title:'Harvey, Liu & Zhu 2016',note:'…and the Cross-Section of Expected Returns (factor zoo)',md:1},
+ {after:'a1',title:'Fama & French 1993',note:'common risk factors in stock and bond returns',md:0},
+ {after:'a2',title:'Dickey & Fuller 1979',note:'the unit-root (ADF) test',md:0},
+ {after:'a2',title:'Engle & Granger 1987',note:'cointegration (pairs trading\'s foundation)',md:0},
+ {after:'a3',title:'Kelly 1956',note:'a new interpretation of information rate',md:0},
+ {after:'a4',title:'Hastings 1970',note:'Metropolis–Hastings',md:0},
+ {after:'a4',title:'Hoffman & Gelman 2014',note:'the No-U-Turn Sampler (HMC in practice)',md:1},
+];
 function renderMenu(){
   view='menu';footer.style.display='none';hintbox.className='hintbox';hintbox.innerHTML='';
   document.getElementById('backBtn').style.display='none';document.getElementById('pbarWrap').style.display='none';
@@ -206,7 +252,9 @@ function renderMenu(){
     html+=`<div class="card mcard${m.ready?'':' lock'}" data-i="${i}"><div class="mtop"><span class="mnum">${m.addon?'Add-on '+m.addon:'Module '+(i+1)}</span><span class="mstat ${st[0]}">${st[1]}</span></div>
       <div class="mtitle">${m.title}</div><div class="msub">${m.sub}</div></div>`;
     CAPSTONES.filter(c=>c.after===m.id).forEach(c=>{html+=`<div class="card ccard"><div class="mtop"><span class="mnum">Capstone · unlocked by ${m.addon?'Add-on '+m.addon:'Module '+(i+1)}</span><span class="mstat plan">Planned</span></div>
-      <div class="mtitle">${c.title}</div><div class="msub">${c.sub}</div>${c.tags.map(t=>`<span class="ctag">${t}</span>`).join('')}</div>`;});});
+      <div class="mtitle">${c.title}</div><div class="msub">${c.sub}</div>${c.tags.map(t=>`<span class="ctag">${t}</span>`).join('')}</div>`;});
+    PAPERS.filter(p=>p.after===m.id).forEach(p=>{html+=`<div class="card pcard${p.md?' md':''}"><div class="mtop"><span class="mnum">${p.md?'Frontier paper':'Paper'} \u00b7 read after ${m.addon?'Add-on '+m.addon:'Module '+(i+1)}</span><span class="mstat pread">To read</span></div>
+      <div class="mtitle">${p.title}</div><div class="msub">${p.note}</div></div>`;});});
   stage.innerHTML=html;
   stage.querySelectorAll('.mcard').forEach(c=>{const i=parseInt(c.dataset.i);if(MODULES[i].ready)c.onclick=()=>openModuleAt(i,resumeBeat(i));});
   scrollTop();renderMath();saveState();setHash();
