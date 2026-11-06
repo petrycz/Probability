@@ -108,6 +108,8 @@
   .pcard .mnum{color:#a98bff;} .pcard .mtitle{font-size:15px;margin:5px 0 3px;} .pcard .msub{font-size:13px;}
   .pcard.md{border-left-color:var(--gold);} .pcard.md .mnum{color:var(--gold);}
   .mstat.pread{color:#a98bff;background:rgba(169,139,255,.12);} .pcard.md .mstat.pread{color:var(--gold);background:rgba(232,184,75,.12);}
+  details.pread{margin-top:7px;} details.pread summary{font-size:12px;color:#a98bff;cursor:pointer;} .pcard.md details.pread summary{color:var(--gold);}
+  details.pread ul{margin:6px 0 2px;padding-left:18px;} details.pread li{font-size:12.5px;line-height:1.5;color:#c3cfdf;margin-bottom:3px;}
   .mstat.plan{color:var(--gold);background:rgba(232,184,75,.12);}
   .ctag{display:inline-block;font-size:10.5px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:1px 8px;margin:7px 5px 0 0;}
   a.rvlink{text-decoration:none;}
@@ -202,45 +204,48 @@ const CAPSTONES=[
 ];
 /* Research papers: read in three passes (skim the claim, re-derive the equations, reproduce one result + a short note), interleaved on the menu after the module that unlocks them */
 const PAPERS=[
- {after:'p0',title:'Kolmogorov 1933',note:'the axioms of probability',md:0},
- {after:'p1',title:'Bayes 1763',note:'An Essay towards solving a Problem in the Doctrine of Chances',md:0},
- {after:'p2',title:'Graham 2002',note:'A Plan for Spam (naive Bayes in production)',md:0},
- {after:'p2',title:'Bloom 1970',note:'space/time trade-offs in hash coding (Bloom filters)',md:0},
- {after:'p2',title:'Flajolet et al. 2007',note:'HyperLogLog cardinality estimation',md:0},
- {after:'p4',title:'Markowitz 1952',note:'Portfolio Selection (mean–variance)',md:0},
- {after:'p4',title:'Rezende & Mohamed 2015',note:'normalizing flows — the Jacobian density formula as a generative model',md:1},
- {after:'p5',title:'Metropolis & Ulam 1949',note:'The Monte Carlo Method',md:0},
- {after:'p5',title:'Boyle 1977',note:'Options: A Monte Carlo Approach',md:0},
- {after:'p6',title:'Shannon 1948',note:'A Mathematical Theory of Communication',md:0},
- {after:'p6',title:'Witten, Neal & Cleary 1987',note:'arithmetic coding for data compression',md:0},
- {after:'p6',title:'Holtzman et al. 2019',note:'nucleus (top-p) sampling',md:1},
- {after:'p6',title:'Delétang et al. 2023',note:'Language Modeling Is Compression',md:1},
- {after:'p7',title:'Nakamoto 2008',note:'Bitcoin §11 — the attacker\'s catch-up probability',md:0},
- {after:'p7',title:'Grunspan & Pérez-Marco 2017',note:'double-spend races — the exact attacker probability',md:1},
- {after:'p7',title:'Cont, Stoikov & Talreja 2010',note:'a stochastic model for order-book dynamics',md:1},
- {after:'p8',title:'Brin & Page 1998',note:'anatomy of a web search engine (PageRank)',md:0},
- {after:'p8',title:'Rabiner 1989',note:'the HMM tutorial (forward, Viterbi, Baum–Welch)',md:0},
- {after:'p8',title:'Hamilton 1989',note:'regime-switching models of economic time series',md:0},
- {after:'p9',title:'Kalman 1960',note:'a new approach to linear filtering and prediction',md:0},
- {after:'p9',title:'Gordon, Salmond & Smith 1993',note:'the bootstrap particle filter',md:0},
- {after:'p10',title:'Pearl 1988',note:'Probabilistic Reasoning in Intelligent Systems (excerpt)',md:0},
- {after:'p10',title:'Geman & Geman 1984',note:'Gibbs sampling',md:0},
- {after:'p11',title:'Fisher 1922',note:'mathematical foundations of statistics (MLE)',md:0},
- {after:'p11',title:'Thompson 1933',note:'Thompson sampling',md:0},
- {after:'p11',title:'Chapelle & Li 2011',note:'an empirical evaluation of Thompson sampling',md:1},
- {after:'p12',title:'Dempster, Laird & Rubin 1977',note:'the EM algorithm',md:0},
- {after:'p12',title:'Kingma & Welling 2013',note:'Auto-Encoding Variational Bayes (VAE)',md:1},
- {after:'p12',title:'Blei, Kucukelbir & McAuliffe 2017',note:'variational inference: a review',md:1},
- {after:'p12',title:'Ho, Jain & Abbeel 2020',note:'denoising diffusion probabilistic models',md:1},
- {after:'p13',title:'Lo 2002',note:'The Statistics of Sharpe Ratios',md:0},
- {after:'p13',title:'Bailey & López de Prado 2014',note:'The Deflated Sharpe Ratio',md:1},
- {after:'p13',title:'Harvey, Liu & Zhu 2016',note:'…and the Cross-Section of Expected Returns (factor zoo)',md:1},
- {after:'a1',title:'Fama & French 1993',note:'common risk factors in stock and bond returns',md:0},
- {after:'a2',title:'Dickey & Fuller 1979',note:'the unit-root (ADF) test',md:0},
- {after:'a2',title:'Engle & Granger 1987',note:'cointegration (pairs trading\'s foundation)',md:0},
- {after:'a3',title:'Kelly 1956',note:'a new interpretation of information rate',md:0},
- {after:'a4',title:'Hastings 1970',note:'Metropolis–Hastings',md:0},
- {after:'a4',title:'Hoffman & Gelman 2014',note:'the No-U-Turn Sampler (HMC in practice)',md:1},
+ {after:'p0',title:'Kolmogorov 1933',note:'the axioms of probability',md:0,read:["Preface", "Ch. I §1 Axioms (Axioms I–V on a finite field)", "Ch. I §2 The relation to experimental data (the frequency justification)", "Ch. I §4 Immediate corollaries, up to the addition theorem", "Ch. II §1 Axiom of continuity (Axiom VI = countable additivity)", "Skip: Ch. I §3, Ch. II §2 onward (Borel fields, extension theorem)"]},
+ {after:'p1',title:'Kolmogorov 1933 (part 2)',note:'conditional probability and independence',md:0,read:["Ch. I §4, the remainder: conditional probabilities and the theorem of Bayes", "Ch. I §5 Independence"]},
+ {after:'p1',title:'Bayes 1763',note:'An Essay towards solving a Problem in the Doctrine of Chances',md:0,read:["Price's introductory letter (why the problem matters)", "Section I: the definitions and Propositions 3–5 (conditional probability, in Bayes's words)", "Section II: the billiard-table postulates, Propositions 8–9, and the Scholium (the case for a uniform prior)", "Skip: the Appendix and Price's series bounds"]},
+ {after:'p2',title:'Graham 2002',note:'A Plan for Spam (naive Bayes in production)',md:0,read:["The whole essay (short)", "Focus: how each token's spam probability is estimated (good counts doubled, clamped to 0.01–0.99)", "Focus: combining the 15 most 'interesting' tokens with the naive-Bayes formula, and why it assumes independence", "Then the follow-up 'Better Bayesian Filtering' (2003): tokenization and false positives"]},
+ {after:'p2',title:'Bloom 1970',note:'space/time trade-offs in hash coding (Bloom filters)',md:0,read:["Introduction: the hyphenation-dictionary application and the idea of allowable errors", "Method 2 (the bit array with k hash functions — the Bloom filter) and its error-rate analysis", "Skim: Method 1 and the space comparison"]},
+ {after:'p2',title:'Flajolet et al. 2007',note:'HyperLogLog cardinality estimation',md:0,read:["§1 Introduction (the cardinality problem, leading-zero observable)", "§2 The HyperLogLog algorithm (the figure with the pseudocode; harmonic mean of registers)", "The main theorem's statement (bias and standard error ≈ 1.04/√m)", "§4 Practical considerations (small- and large-range corrections)", "Skip: the analysis proofs (Mellin transforms)"]},
+ {after:'p4',title:'Kolmogorov 1933 (part 3)',note:'conditional expectation',md:0,read:["Ch. V §1–2: conditional probabilities, and the explanation of a Borel paradox", "Ch. V §4: conditional mathematical expectations"]},
+ {after:'p4',title:'Markowitz 1952',note:'Portfolio Selection (mean–variance)',md:0,read:["The whole paper (~15 pages)", "Focus: the argument against maximizing expected return alone, and the expected-returns–variance (E–V) rule", "Focus: portfolio mean and variance as weighted sums with covariances", "Focus: the three-security geometry of the attainable set and the efficient curve"]},
+ {after:'p4',title:'Rezende & Mohamed 2015',note:'normalizing flows — the Jacobian density formula as a generative model',md:1,read:["§1 Introduction", "§3 Normalizing flows: §3.1 finite flows (the change-of-variables density and the log-det-Jacobian sum)", "§4.1 Invertible linear-time transformations: planar and radial flows, and their determinants", "Skim §2 (amortized variational inference) after Module 13", "Skip: the experiments"]},
+ {after:'p5',title:'Kolmogorov 1933 (part 4)',note:'independence and the law of large numbers',md:0,read:["Ch. VI: independent random variables, the law of large numbers, and Chebyshev's theorem", "Ch. VI: the strong law of large numbers"]},
+ {after:'p5',title:'Metropolis & Ulam 1949',note:'The Monte Carlo Method',md:0,read:["The whole paper (short)", "Focus: the solitaire motivation — estimate a probability by playing many games", "Focus: the neutron-chain example and why sampling beats exact enumeration"]},
+ {after:'p5',title:'Boyle 1977',note:'Options: A Monte Carlo Approach',md:0,read:["The setup: risk-neutral valuation of a European option as an expected discounted payoff", "The simulation procedure: sample terminal prices, average payoffs, report a standard error", "The variance-reduction section (control variates and antithetic variates)", "Reproduce: one row of the numerical comparison against Black–Scholes"]},
+ {after:'p6',title:'Shannon 1948',note:'A Mathematical Theory of Communication',md:0,read:["Part I §1–3: discrete noiseless systems, Markov sources, and §3 'The series of approximations to English' (n-gram text)", "Part I §6 Choice, uncertainty and entropy (the axioms for H and Theorem 2) with Appendix 2 (the derivation of H = −Σ p log p)", "Part I §7 The entropy of an information source, and §9 the fundamental theorem for a noiseless channel", "Skim: Part II (noisy channel), the statement of the channel-capacity theorem"]},
+ {after:'p6',title:'Witten, Neal & Cleary 1987',note:'arithmetic coding for data compression',md:0,read:["The description of arithmetic coding: the message as a nested sequence of intervals", "The worked example narrowing [0,1) symbol by symbol", "Incremental transmission and underflow handling", "Adaptive models (counts updated as symbols arrive); skim the C code"]},
+ {after:'p6',title:'Holtzman et al. 2019',note:'nucleus (top-p) sampling',md:1,read:["§1 Introduction: degeneration under beam search and greedy decoding", "§3 Language model decoding: maximization-based decoding, sampling with temperature, top-k, and the definition of nucleus (top-p) sampling", "Skim: the evaluation sections (perplexity, Self-BLEU, human judgments)"]},
+ {after:'p6',title:'Delétang et al. 2023',note:'Language Modeling Is Compression',md:1,read:["§1 Introduction", "§2 Background: arithmetic coding and the equivalence between prediction and compression (code length = −log₂ p)", "§3 Experiments: the main compression-rate table for text, images, and audio", "Skip: the scaling and tokenization ablations on first pass"]},
+ {after:'p7',title:'Nakamoto 2008',note:'Bitcoin §11 — the attacker\'s catch-up probability',md:0,read:["§1 Introduction and §4 Proof-of-work (what the honest and attacker chains are)", "§11 Calculations: the gambler's-ruin catch-up probability, the Poisson-weighted sum, and the C code and table", "Skip for this course: §2–3, §5–10 (signatures, Merkle trees, networking — the separate crypto track)"]},
+ {after:'p7',title:'Grunspan & Pérez-Marco 2017',note:'double-spend races — the exact attacker probability',md:1,read:["Introduction: what Nakamoto's §11 approximates", "The exact model: the attacker's progress as a negative binomial, not a Poisson", "The closed form for the double-spend probability (via the regularized incomplete beta function)", "The comparison tables against Nakamoto's figures"]},
+ {after:'p7',title:'Cont, Stoikov & Talreja 2010',note:'a stochastic model for order-book dynamics',md:1,read:["The model: each price level's queue as a birth–death process, with limit orders, market orders, and cancellations arriving as Poisson processes", "The main results' statements: probability the mid-price moves up, probability of execution before the price moves", "Parameter estimation from order-book data", "Skip: the Laplace-transform proofs"]},
+ {after:'p8',title:'Brin & Page 1998',note:'anatomy of a web search engine (PageRank)',md:0,read:["§2.1 PageRank: §2.1.1 the formula, §2.1.2 the random-surfer justification", "Skim: §4 system anatomy (crawling, indexing) for context"]},
+ {after:'p8',title:'Rabiner 1989',note:'the HMM tutorial (forward, Viterbi, Baum–Welch)',md:0,read:["§II Discrete Markov processes", "§III Hidden Markov models: the elements of an HMM and the three basic problems", "§III-A Problem 1: the forward–backward procedure", "§III-B Problem 2: the Viterbi algorithm", "§III-C Problem 3: Baum–Welch re-estimation", "Skip: §IV onward (speech-recognition specifics)"]},
+ {after:'p8',title:'Hamilton 1989',note:'regime-switching models of economic time series',md:0,read:["The model: a time series whose mean growth switches between two regimes following a Markov chain", "The filter: the recursion for the probability of each regime given the data so far", "The application to U.S. GNP: estimated regimes vs. recession dates"]},
+ {after:'p9',title:'Kalman 1960',note:'a new approach to linear filtering and prediction',md:0,read:["The introduction and problem statement (estimating a state from noisy measurements)", "The orthogonal-projection view of optimal estimation", "The main recursive result: the predict–update equations", "Pair with a modern derivation; skip the Wiener-filter comparisons on first pass"]},
+ {after:'p9',title:'Gordon, Salmond & Smith 1993',note:'the bootstrap particle filter',md:0,read:["The Bayesian recursion: prediction and update for a general state-space model", "The bootstrap filter algorithm: propagate samples, weight by likelihood, resample", "The bearings-only tracking example (compared with the extended Kalman filter)"]},
+ {after:'p10',title:'Pearl 1988',note:'Probabilistic Reasoning in Intelligent Systems (excerpt)',md:0,read:["Ch. 2 §2.1 Basic concepts (Bayesian inference)", "Ch. 3 §3.3 Bayesian networks (factorization, d-separation)", "Ch. 4 §4.2 Belief propagation in causal trees", "Skim: Ch. 4 §4.3 polytrees"]},
+ {after:'p10',title:'Geman & Geman 1984',note:'Gibbs sampling',md:0,read:["The introduction: images as Markov random fields and the posterior as a Gibbs distribution", "The Gibbs sampler: updating one site at a time from its conditional distribution", "The statements of the convergence and annealing theorems", "Skip: the image-model details and the proofs"]},
+ {after:'p11',title:'Fisher 1922',note:'mathematical foundations of statistics (MLE)',md:0,read:["§1–3: the neglect of theoretical statistics, the purpose of statistical methods, the problems of statistics", "§4 Criteria of estimation (consistency, efficiency, sufficiency)", "§6 Formal solution of problems of estimation (the method of maximum likelihood) and §7 sufficiency", "§13 Summary", "Skip: §8–11 (Pearson curves)"]},
+ {after:'p11',title:'Thompson 1933',note:'Thompson sampling',md:0,read:["The whole paper (short)", "Focus: the posterior probability that one unknown success rate exceeds another, from two binomial samples", "Focus: the proposal to allocate treatments in proportion to that probability"]},
+ {after:'p11',title:'Chapelle & Li 2011',note:'an empirical evaluation of Thompson sampling',md:1,read:["The whole paper (short)", "Focus: the Beta–Bernoulli Thompson sampling algorithm", "Focus: the simulations against UCB, and the display-advertising and news-recommendation results"]},
+ {after:'p12',title:'Dempster, Laird & Rubin 1977',note:'the EM algorithm',md:0,read:["§1 Introduction and the first example (multinomial genetic linkage)", "§2 Definition of the EM algorithm (the E-step and M-step, the exponential-family case)", "§3 General properties: the monotonicity of the likelihood", "Skip: the later examples and the published discussion"]},
+ {after:'p12',title:'Kingma & Welling 2013',note:'Auto-Encoding Variational Bayes (VAE)',md:1,read:["§1 Introduction", "§2 Method: §2.1 problem scenario, §2.2 the variational bound, §2.3 the SGVB estimator, §2.4 the reparameterization trick", "§3 Example: the variational auto-encoder", "Appendix B: the closed-form Gaussian KL term"]},
+ {after:'p12',title:'Blei, Kucukelbir & McAuliffe 2017',note:'variational inference: a review',md:1,read:["§2 Variational inference: the ELBO and the mean-field family", "§4 Coordinate-ascent VI and the Bayesian Gaussian-mixture example", "Skim: stochastic VI and the discussion"]},
+ {after:'p12',title:'Ho, Jain & Abbeel 2020',note:'denoising diffusion probabilistic models',md:1,read:["§2 Background: the forward (noising) process, the reverse process, and the variational bound", "§3 Diffusion models and denoising autoencoders: §3.2 the reverse process and ε-prediction, the simplified loss", "Algorithms 1 and 2 (training and sampling)", "Appendix A: the derivation of the bound", "Skip: the experiments"]},
+ {after:'p13',title:'Lo 2002',note:'The Statistics of Sharpe Ratios',md:0,read:["The IID case: the standard error of an estimated Sharpe ratio", "The non-IID case: the correction for autocorrelated returns", "Time aggregation: why annualizing by √12 can mislead", "The empirical table for mutual and hedge funds"]},
+ {after:'p13',title:'Bailey & López de Prado 2014',note:'The Deflated Sharpe Ratio',md:1,read:["The Probabilistic Sharpe Ratio (the probability the true Sharpe exceeds a benchmark)", "The expected maximum Sharpe ratio across many trials", "The Deflated Sharpe Ratio formula", "The numerical example"]},
+ {after:'p13',title:'Harvey, Liu & Zhu 2016',note:'…and the Cross-Section of Expected Returns (factor zoo)',md:1,read:["The introduction: the 'factor zoo' and why t > 2.0 is no longer enough", "The multiple-testing framework: Bonferroni, Holm, and BHY adjustments", "The headline result: a t-statistic hurdle around 3.0", "Skim: the catalogue of published factors"]},
+ {after:'a1',title:'Fama & French 1993',note:'common risk factors in stock and bond returns',md:0,read:["§I The returns to be explained and the explanatory factors (building SMB and HML)", "The stock-return regressions on the market, SMB, and HML, and the intercept tests", "Skip: the bond-market factors"]},
+ {after:'a2',title:'Dickey & Fuller 1979',note:'the unit-root (ADF) test',md:0,read:["The introduction and the autoregressive model with a possible unit root", "The statements of the limiting distributions of the estimator and t-statistic under ρ = 1", "The tables of critical values", "Skip: the proofs"]},
+ {after:'a2',title:'Engle & Granger 1987',note:'cointegration (pairs trading\'s foundation)',md:0,read:["§1 Introduction", "§2 The definition of cointegration and the Granger representation theorem (error-correction form)", "The two-step estimation procedure and the tests for cointegration (CRDW, DF, ADF)", "Skip: the proofs"]},
+ {after:'a3',title:'Kelly 1956',note:'a new interpretation of information rate',md:0,read:["The whole paper (short)", "Focus: the gambler with a private wire and the exponential growth rate of capital", "Focus: maximizing expected log wealth, and its link to the information rate of the channel"]},
+ {after:'a4',title:'Hastings 1970',note:'Metropolis–Hastings',md:0,read:["§1–2: the general Markov-chain sampler and the acceptance probability that generalizes Metropolis", "The examples (normal and Poisson targets)", "Skip: the later sections on error estimation"]},
+ {after:'a4',title:'Hoffman & Gelman 2014',note:'the No-U-Turn Sampler (HMC in practice)',md:1,read:["§2 Hamiltonian Monte Carlo: a review (leapfrog steps, the role of step size and path length)", "§3 The No-U-Turn Sampler: the doubling procedure and the U-turn criterion", "The dual-averaging adaptation of the step size", "Skip: the proofs of detailed balance"]},
 ];
 function renderMenu(){
   view='menu';footer.style.display='none';hintbox.className='hintbox';hintbox.innerHTML='';
@@ -254,7 +259,7 @@ function renderMenu(){
     CAPSTONES.filter(c=>c.after===m.id).forEach(c=>{html+=`<div class="card ccard"><div class="mtop"><span class="mnum">Capstone · unlocked by ${m.addon?'Add-on '+m.addon:'Module '+(i+1)}</span><span class="mstat plan">Planned</span></div>
       <div class="mtitle">${c.title}</div><div class="msub">${c.sub}</div>${c.tags.map(t=>`<span class="ctag">${t}</span>`).join('')}</div>`;});
     PAPERS.filter(p=>p.after===m.id).forEach(p=>{html+=`<div class="card pcard${p.md?' md':''}"><div class="mtop"><span class="mnum">${p.md?'Frontier paper':'Paper'} \u00b7 read after ${m.addon?'Add-on '+m.addon:'Module '+(i+1)}</span><span class="mstat pread">To read</span></div>
-      <div class="mtitle">${p.title}</div><div class="msub">${p.note}</div></div>`;});});
+      <div class="mtitle">${p.title}</div><div class="msub">${p.note}</div>${p.read?`<details class="pread"><summary>What to read</summary><ul>${p.read.map(r=>`<li>${r}</li>`).join('')}</ul></details>`:''}</div>`;});});
   stage.innerHTML=html;
   stage.querySelectorAll('.mcard').forEach(c=>{const i=parseInt(c.dataset.i);if(MODULES[i].ready)c.onclick=()=>openModuleAt(i,resumeBeat(i));});
   scrollTop();renderMath();saveState();setHash();
