@@ -1843,7 +1843,7 @@ function p1_multiply(){
     <p>It is also exactly how a language model scores a sentence. Write the tokens as $w_1,w_2,\\dots,w_L$. The model only ever outputs one conditional distribution, $P(w_t\\mid w_1,\\dots,w_{t-1})$ — the next token given the ones so far — and the chain rule assembles the whole sequence:</p>
     <div class="eqbox">$$P(w_1,\\dots,w_L)=\\prod_{t=1}^{L}P(w_t\\mid w_1,\\dots,w_{t-1}).$$</div>
     <p>For example, if $P(\\text{the})=0.05$, $P(\\text{cat}\\mid\\text{the})=0.01$ and $P(\\text{sat}\\mid\\text{the cat})=0.2$, then $P(\\text{the cat sat})=0.05\\times0.01\\times0.2=10^{-4}$. Products of many small numbers underflow, so models work with $\\log P=\\sum_t\\log P(w_t\\mid w_{\\lt t})$; training a model means making this sum as large as possible on real text (Modules 7 and 12).</p>
-    <div class="task"><b>Exactly two red</b>An urn holds 5 red and 3 blue balls. Draw 3 balls without replacement. What is the probability of exactly two red? Enter a fraction or a decimal.</div>
+    <div class="task"><b>Two trades</b>A trader's first trade wins with probability 0.6. Their results are streaky: after a win, the next trade wins with probability 0.7; after a loss, it wins with probability 0.4. What is the probability that exactly one of the first two trades wins? Enter a decimal.</div>
     ${gateHTML('e.g. 1/2 or 0.5')}</div>`;
 
   const cv=document.getElementById('cvu'),ur=document.getElementById('ur'),ub=document.getElementById('ub');
@@ -1891,11 +1891,11 @@ function p1_multiply(){
     T.leaves.forEach((lf,i)=>{const y=L===1?H/2:24+(H-44)*i/(L-1);const d=Math.abs(y-Y);if(d<bd){bd=d;best=i;}});
     if(best>=0){sel=T.leaves[best].path.map(s=>s.c).join('');draw();}e.preventDefault();});
   draw();
-  numChk(document.getElementById('gate'),15/28,()=>{addReveal(`<div class="rh">✓ 15/28 ≈ 0.536</div>
-    <p>Three paths have exactly two reds: RRB, RBR, BRR. Multiply along each:</p>
-    <div class="eqbox">$$\\text{RRB}:\\ \\tfrac58\\cdot\\tfrac47\\cdot\\tfrac36,\\qquad\\text{RBR}:\\ \\tfrac58\\cdot\\tfrac37\\cdot\\tfrac46,\\qquad\\text{BRR}:\\ \\tfrac38\\cdot\\tfrac57\\cdot\\tfrac46.$$</div>
-    <p>Each product is $\\frac{5\\cdot4\\cdot3}{8\\cdot7\\cdot6}=\\frac{60}{336}$ — the same factors in a different order — so the total is $3\\cdot\\frac{60}{336}=\\frac{180}{336}=\\frac{15}{28}$. Counting agrees: $\\binom52\\binom31\\big/\\binom83=\\frac{10\\cdot3}{56}=\\frac{15}{28}$.</p>`);},snapTo(15/28,0.0015));
-  setHints([`Exactly two red means one of three orders: RRB, RBR, BRR. Multiply along each path, then add the three paths.`,`Each path is (5·4·3)/(8·7·6) = 60/336, and there are 3 of them: 180/336 = 15/28.`]);
+  numChk(document.getElementById('gate'),0.34,()=>{addReveal(`<div class="rh">✓ 0.34</div>
+    <p>Draw the tree: the first trade wins (W) or loses (L), and the second-stage branches use the conditional probabilities. Exactly one win happens along two paths:</p>
+    <div class="eqbox">$$P(\\text{WL})=0.6\\times(1-0.7)=0.18,\\qquad P(\\text{LW})=0.4\\times0.4=0.16,\\qquad P(\\text{exactly one win})=0.18+0.16=0.34.$$</div>
+    <p>There is nothing to count here — the four paths are not equally likely — so the tree's two operations, multiply along a path and add across paths, are the whole method. Ignoring the streakiness and using $0.6$ for both trades would give $2\\times0.6\\times0.4=0.48$, a different answer to a different question.</p>`);},snapTo(0.34,0.0015));
+  setHints([`Two paths give exactly one win: win then loss, and loss then win. The second branch on each path uses the probability after the first result.`,`WL: 0.6 × 0.3 = 0.18. LW: 0.4 × 0.4 = 0.16. Add them: 0.34.`]);
 }
 
 /* ---------- Beat 4: total probability ---------- */
@@ -1917,8 +1917,9 @@ function p1_total(){
     <div class="defn"><span class="dt">Law of total probability</span>If $B_1,\\dots,B_m$ partition $\\Omega$ and each $P(B_i)\\gt0$, then for any event $A$
       $$P(A)=\\sum_{i=1}^{m}P(A\\cap B_i)=\\sum_{i=1}^{m}P(B_i)\\,P(A\\mid B_i).$$</div>
     <p>So $P(A)$ is a <b>weighted average</b> of the conditional probabilities $P(A\\mid B_i)$, with the weights $P(B_i)$ adding to 1. Switch on <b>level the shading</b> above: the dashed line at height $P(A)$ is where the shading would sit if it were spread evenly across the whole square — same total area, one common height. A weighted average always lies between the smallest and largest of the values it averages.</p>
+    <p>Total probability also settles a question from the urn. With 5 red and 3 blue balls, is the <em>second</em> ball drawn red as often as the first? Split by the first ball: $\\tfrac58\\cdot\\tfrac47+\\tfrac38\\cdot\\tfrac57=\\tfrac{35}{56}=\\tfrac58$. Exactly the same. Learning the first ball changes the second's chances, but not knowing it leaves them where they were — every position in a random order is equally likely to hold any given ball.</p>
     <p>The pattern — split into cases, solve each case, recombine — runs through the rest of the course. Regime-switching models of markets (Module 9) compute exactly this sum with the regimes hidden; mixture models (Module 13) do it for densities; and in a Bayesian network (Module 11), summing a variable out of a joint distribution is total probability.</p>
-    <div class="task"><b>The second ball</b>An urn holds 5 red and 3 blue balls. Draw two balls without replacement and look only at the second one. What is the probability that it is red? Enter a fraction or a decimal.</div>
+    <div class="task"><b>A word in the inbox</b>40% of incoming email is spam. The word "free" appears in 25% of spam emails and in 2% of legitimate ones. What fraction of all emails contain "free"? Enter a decimal.</div>
     ${gateHTML('e.g. 1/2 or 0.5')}</div>`;
 
   const cv=document.getElementById('cvt4');const pl=plot(cv,{xmin:-0.09,xmax:1.05,ymin:-0.1,ymax:1.04*1.04});
@@ -1960,11 +1961,11 @@ function p1_total(){
   const end=()=>drag=null;cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
   p0Seg('seglv',[['off','shading as is'],['on','level the shading']],'off',k=>{level=k==='on';draw();});
   draw();
-  numChk(document.getElementById('gate'),5/8,()=>{addReveal(`<div class="rh">✓ 5/8 — the same as for the first ball</div>
-    <p>Split by what the first ball was — red or blue, a partition — and use total probability:</p>
-    <div class="eqbox">$$P(\\text{2nd red})=P(\\text{1st red})\\,P(\\text{2nd red}\\mid\\text{1st red})+P(\\text{1st blue})\\,P(\\text{2nd red}\\mid\\text{1st blue})=\\tfrac58\\cdot\\tfrac47+\\tfrac38\\cdot\\tfrac57=\\tfrac{20+15}{56}=\\tfrac58.$$</div>
-    <p>The second ball is red with exactly the same probability as the first. Knowing the first ball changes the second's chances, but <em>not</em> knowing it leaves them where they were: by symmetry, every position in a random order of the 8 balls is equally likely to hold any given ball, so each position is red with probability $\\tfrac58$. A dealt card's chances do not depend on its place in the deal unless you look at the cards before it.</p>`);},snapTo(5/8,0.0015));
-  setHints([`Split by the first ball: it was red (probability 5/8) or blue (3/8). In each case, what is the chance the second is red? Combine with total probability.`,`5/8 · 4/7 + 3/8 · 5/7 = 35/56 = 5/8.`]);
+  numChk(document.getElementById('gate'),0.112,()=>{addReveal(`<div class="rh">✓ 0.112</div>
+    <p>Spam and legitimate email partition the inbox. In the square, the spam strip has width 0.4 and shading 0.25; the legitimate strip has width 0.6 and shading 0.02:</p>
+    <div class="eqbox">$$P(\\text{free})=P(\\text{spam})\\,P(\\text{free}\\mid\\text{spam})+P(\\text{legit})\\,P(\\text{free}\\mid\\text{legit})=0.4\\times0.25+0.6\\times0.02=0.100+0.012=0.112.$$</div>
+    <p>About 11% of emails contain the word, and most of them are spam: 0.100 of the 0.112. The next beat turns that around and asks the question a spam filter needs — <em>given</em> that an email contains "free", how likely is it to be spam?</p>`);},snapTo(0.112,0.0015));
+  setHints([`Split the inbox into spam (width 0.4) and legitimate (width 0.6). In each strip, what fraction contains "free"? Add the two shaded areas.`,`0.4 × 0.25 + 0.6 × 0.02 = 0.100 + 0.012 = 0.112.`]);
 }
 
 /* ================= boot ================= */
