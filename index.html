@@ -144,7 +144,7 @@ const MODULES=[
   beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply,p0_combinations,p0_coins,p0_spaces,p0_birthday,p0_inclusion,p0_derangements,p0_problems]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:true,
   outro:`Conditioning restricts the sample space to what you know: $P(A\\mid B)=P(A\\cap B)/P(B)$, the long-run share of $A$ among the trials where $B$ happened.`,
-  beats:[p1_recall,p1_conditional,p1_multiply]},
+  beats:[p1_recall,p1_conditional,p1_multiply,p1_total]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
@@ -1819,7 +1819,7 @@ function p1_multiply(){
     <div class="defn"><span class="dt">Multiplication rule</span>$$P(A\\cap B)=P(A)\\,P(B\\mid A).$$
       In words: the probability that both happen is the probability that the first happens, times the probability that the second happens <em>given</em> the first.</div>
     <p>For the aces, with $A$ = "first card is an ace" and $B$ = "second card is an ace": $P(A\\cap B)=\\frac4{52}\\cdot\\frac3{51}=\\frac{12}{2652}=\\frac1{221}$. Counting from Module 1 agrees: $\\binom42\\big/\\binom{52}2=\\frac{6}{1326}=\\frac1{221}$. The rule is the multiplication principle with probabilities in place of counts — and, unlike the counting version, it does not need the stages to have equally likely outcomes.</p>
-    <p><b>Step 2: draw it as a tree.</b> Below, an urn holds red and blue balls, and you draw from it in stages. Each branch is labeled with its conditional probability given the path so far, and each node shows how many of a large number of equally likely draw sequences pass through it — the same story told as counts. <b>Tap a leaf</b> to multiply along its path.</p>
+    <p><b>Step 2: draw the stages as a tree.</b> Module 1 used trees to <em>count</em>: each branch was an option, and the leaves were the outcomes. Here each branch also carries a <b>probability</b> — the chance of taking that branch, given the path that led to its node — and multiplying along a path gives that path's probability. The tree below shows both. An urn holds red and blue balls; draw from it without replacement.</p>
     <div class="ctrls"><span class="slabel" id="urL">red = 5</span><input type="range" id="ur" min="1" max="8" step="1" value="5"></div>
     <div class="ctrls" style="margin-top:4px"><span class="slabel" id="ubL">blue = 3</span><input type="range" id="ub" min="1" max="8" step="1" value="3"></div>
     <div class="slabel" style="margin-top:10px">draws</div><div class="seg" id="segud" style="margin-top:4px"></div>
@@ -1827,8 +1827,12 @@ function p1_multiply(){
     <canvas id="cvu" width="640" height="440" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">tapped path</div><div class="v" id="u1">—</div></div><div class="rdc"><div class="k">product along the path</div><div class="v" id="u2" style="font-size:14px">—</div></div><div class="rdc"><div class="k">all leaves added</div><div class="v" id="u3">—</div></div></div>
     <p class="small" id="u4" style="margin-top:8px"></p>
-    <p style="margin-top:14px">Switch to <b>with replacement</b>: each ball goes back before the next draw, the urn never changes, and every stage has the same branch probabilities. Without replacement, the second-stage branches depend on what the first draw took. Multiplying the unconditional probabilities in that case — $\\frac4{52}\\cdot\\frac4{52}$ for two aces — is a common error: it answers the question for a deck that is reshuffled between draws.</p>
-    <p>Every leaf's probability is a product along its path, and all the leaves together add to 1: each draw sequence ends at exactly one leaf. An event made of several leaves — "exactly two red", say — is a disjoint union of paths, so its probability is the <b>sum</b> of their products. Multiply along a path, add across paths.</p>
+    <p style="margin-top:14px"><b>Walk through the default</b> (5 red, 3 blue, 2 draws, without replacement):</p>
+    <p>The first branch to R is labeled $\\tfrac58$: 5 of the 8 balls are red. Follow it. One red ball is gone, so the urn now holds 4 red and 3 blue, and the next branch to R is labeled $\\tfrac47$ — the probability of a second red <em>given</em> the first was red. <b>Tap the leaf RR</b>: its probability is $\\tfrac58\\cdot\\tfrac47=\\tfrac{20}{56}$, the multiplication rule.</p>
+    <p>The grey numbers under the nodes tell the same story as counts. There are $8\\cdot7=56$ equally likely ordered draws; 35 of them start with red, and $5\\cdot4=20$ go red then red. So $P(\\text{RR})=\\tfrac{20}{56}$ is also a Module 1 count: the probability along a path is the share of draw sequences that follow it.</p>
+    <p><b>Step 3: add across paths.</b> "Exactly one red" happens along two paths, RB and BR. <b>Tap each</b>: RB is $\\tfrac58\\cdot\\tfrac37=\\tfrac{15}{56}$ and BR is $\\tfrac38\\cdot\\tfrac57=\\tfrac{15}{56}$. A draw sequence follows exactly one path, so the paths are disjoint events and their probabilities add: $P(\\text{exactly one red})=\\tfrac{30}{56}\\approx0.536$, as the readout under the tree shows. Multiply along a path, add across paths — and all the leaves together add to 1.</p>
+    <p><b>Step 4: switch to with replacement.</b> Now each ball goes back before the next draw. Look at the second-stage branches: after R they read $\\tfrac58$ and $\\tfrac38$, and after B they read $\\tfrac58$ and $\\tfrac38$ too. The urn never changes, so knowing the first draw tells you nothing about the second: $P(\\text{2nd red}\\mid\\text{1st red})=P(\\text{2nd red})=\\tfrac58$. Conditioning changes nothing, and the rule reduces to multiplying the plain probabilities. Events with this property are called <b>independent</b> (beat 7).</p>
+    <p>That is also where a common error comes from. For two aces <em>without</em> replacement, $\\tfrac4{52}\\cdot\\tfrac4{52}$ uses the plain probability at the second draw, as if the first ace had been put back. The correct second factor is the conditional one, $\\tfrac3{51}$.</p>
 
     <h2 style="margin-top:22px">The chain rule</h2>
     <p>With three stages, apply the rule twice. Treat "first two" as one event, then split it again:</p>
@@ -1892,6 +1896,75 @@ function p1_multiply(){
     <div class="eqbox">$$\\text{RRB}:\\ \\tfrac58\\cdot\\tfrac47\\cdot\\tfrac36,\\qquad\\text{RBR}:\\ \\tfrac58\\cdot\\tfrac37\\cdot\\tfrac46,\\qquad\\text{BRR}:\\ \\tfrac38\\cdot\\tfrac57\\cdot\\tfrac46.$$</div>
     <p>Each product is $\\frac{5\\cdot4\\cdot3}{8\\cdot7\\cdot6}=\\frac{60}{336}$ — the same factors in a different order — so the total is $3\\cdot\\frac{60}{336}=\\frac{180}{336}=\\frac{15}{28}$. Counting agrees: $\\binom52\\binom31\\big/\\binom83=\\frac{10\\cdot3}{56}=\\frac{15}{28}$.</p>`);},snapTo(15/28,0.0015));
   setHints([`Exactly two red means one of three orders: RRB, RBR, BRR. Multiply along each path, then add the three paths.`,`Each path is (5·4·3)/(8·7·6) = 60/336, and there are 3 of them: 180/336 = 15/28.`]);
+}
+
+/* ---------- Beat 4: total probability ---------- */
+function p1_total(){
+  stage.innerHTML=`<div class="card"><h2>Total probability: averaging over cases</h2>
+    <p>A trading strategy wins more often in some markets than others. Suppose you know how often each kind of day occurs, and how often the strategy wins on each kind. What is its overall win rate?</p>
+    <div class="defn"><span class="dt">The objects</span>
+      $B_1,B_2,B_3$ — the kind of day: up, flat, or down. Every day is exactly one kind, so these events form a <b>partition</b> of $\\Omega$.<br>
+      $P(B_i)$ — how often days of kind $i$ occur.<br>
+      $A$ — "the strategy wins that day"; $P(A\\mid B_i)$ is its win rate on days of kind $i$.</div>
+    <p>The square below has area 1, the whole sample space of days. Each vertical strip is one kind of day: its <b>width</b> is $P(B_i)$. The shaded part of a strip is the winning days of that kind: its <b>height</b> is $P(A\\mid B_i)$. <b>Drag</b> the white handles on the strip borders to change how often each kind of day occurs, and the tops of the shaded bars to change the win rates.</p>
+    <canvas id="cvt4" width="640" height="440" style="margin-top:10px"></canvas>
+    <div class="seg" id="seglv" style="margin-top:8px"></div>
+    <div class="readout"><div class="rdc"><div class="k">shaded area: up</div><div class="v" id="t1">—</div></div><div class="rdc"><div class="k">shaded area: flat</div><div class="v" id="t2">—</div></div><div class="rdc"><div class="k">shaded area: down</div><div class="v" id="t3">—</div></div><div class="rdc"><div class="k">P(A) = all shaded area</div><div class="v" id="t4">—</div></div></div>
+    <p class="small" id="t5" style="margin-top:8px"></p>
+    <p style="margin-top:14px"><b>A first guess.</b> With the starting values the win rates are 0.7, 0.5, and 0.2. Their plain average is $\\frac{0.7+0.5+0.2}3\\approx0.47$, but the readout says 0.54. Drag the borders until the three strips have equal widths, and the two numbers agree. The plain average treats every kind of day as equally common; the real answer weighs each win rate by how often its kind of day occurs.</p>
+    <p><b>Step 1: count it.</b> Picture 1000 days with the starting values. Half are up days: 500, of which 70% are wins, 350. Flat days: 300, half wins, 150. Down days: 200, of which 20% are wins, 40. Wins in all: $350+150+40=540$ out of 1000, a win rate of $0.54$.</p>
+    <p><b>Step 2: read it as area.</b> Each shaded rectangle has area width $\\times$ height $=P(B_i)\\,P(A\\mid B_i)$, which by the multiplication rule is $P(A\\cap B_i)$ — the share of days that are both of kind $i$ and winning. The strips do not overlap and together they fill the square, so the winning days are split into three disjoint pieces, and additivity adds them:</p>
+    <div class="defn"><span class="dt">Law of total probability</span>If $B_1,\\dots,B_m$ partition $\\Omega$ and each $P(B_i)\\gt0$, then for any event $A$
+      $$P(A)=\\sum_{i=1}^{m}P(A\\cap B_i)=\\sum_{i=1}^{m}P(B_i)\\,P(A\\mid B_i).$$</div>
+    <p>So $P(A)$ is a <b>weighted average</b> of the conditional probabilities $P(A\\mid B_i)$, with the weights $P(B_i)$ adding to 1. Switch on <b>level the shading</b> above: the dashed line at height $P(A)$ is where the shading would sit if it were spread evenly across the whole square — same total area, one common height. A weighted average always lies between the smallest and largest of the values it averages.</p>
+    <p>The pattern — split into cases, solve each case, recombine — runs through the rest of the course. Regime-switching models of markets (Module 9) compute exactly this sum with the regimes hidden; mixture models (Module 13) do it for densities; and in a Bayesian network (Module 11), summing a variable out of a joint distribution is total probability.</p>
+    <div class="task"><b>The second ball</b>An urn holds 5 red and 3 blue balls. Draw two balls without replacement and look only at the second one. What is the probability that it is red? Enter a fraction or a decimal.</div>
+    ${gateHTML('e.g. 1/2 or 0.5')}</div>`;
+
+  const cv=document.getElementById('cvt4');const pl=plot(cv,{xmin:-0.09,xmax:1.05,ymin:-0.1,ymax:1.04*1.04});
+  let w=[0.5,0.3,0.2],h=[0.7,0.5,0.2],level=false,drag=null;
+  const NAMES=['up','flat','down'],COL=['#3fb98f','#7ab8ff','#e2664f'];
+  const edges=()=>[0,w[0],w[0]+w[1],1];
+  function draw(){const ctx=pl.ctx,E=edges();let tot=0;
+    if(ctx){ctx.clearRect(0,0,pl.W,pl.H);
+      const R=(x0,y0,x1,y1,f)=>{ctx.fillStyle=f;ctx.fillRect(pl.px(x0),pl.py(y1),pl.px(x1)-pl.px(x0),pl.py(y0)-pl.py(y1));};
+      R(0,0,1,1,'#0f1724');
+      for(let i=0;i<3;i++){R(E[i],0,E[i+1],h[i],COL[i]+'88');
+        ctx.strokeStyle=COL[i];ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(pl.px(E[i])+2,pl.py(h[i]));ctx.lineTo(pl.px(E[i+1])-2,pl.py(h[i]));ctx.stroke();
+        ctx.fillStyle='#e9eef6';ctx.beginPath();ctx.arc(pl.px((E[i]+E[i+1])/2),pl.py(h[i]),6,0,7);ctx.fill();
+        ctx.font=p0Font(12);ctx.fillStyle=COL[i];ctx.textAlign='center';ctx.fillText(NAMES[i]+'  '+w[i].toFixed(2),pl.px((E[i]+E[i+1])/2),pl.py(0)+16);
+        ctx.font=p0Font(11);ctx.fillStyle='#e9eef6';ctx.fillText(h[i].toFixed(2),pl.px((E[i]+E[i+1])/2),pl.py(h[i])-10);}
+      ctx.strokeStyle='#2b3a4f';ctx.lineWidth=1.5;ctx.strokeRect(pl.px(0),pl.py(1),pl.px(1)-pl.px(0),pl.py(0)-pl.py(1));
+      for(let k=1;k<=2;k++){const x=pl.px(E[k]);ctx.strokeStyle='#e9eef6';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,pl.py(1));ctx.lineTo(x,pl.py(0));ctx.stroke();
+        ctx.fillStyle='#e9eef6';ctx.fillRect(x-6,pl.py(1)-14,12,12);}
+      const PA=w[0]*h[0]+w[1]*h[1]+w[2]*h[2];
+      if(level){ctx.setLineDash([7,5]);ctx.strokeStyle='#e8b84b';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(pl.px(0),pl.py(PA));ctx.lineTo(pl.px(1),pl.py(PA));ctx.stroke();ctx.setLineDash([]);
+        ctx.font=p0Font(12);ctx.fillStyle='#e8b84b';ctx.textAlign='left';ctx.fillStyle='rgba(10,17,27,.75)';ctx.fillRect(pl.px(0)+4,pl.py(PA)-20,104,16);ctx.fillStyle='#e8b84b';ctx.fillText('P(A) = '+PA.toFixed(3),pl.px(0)+8,pl.py(PA)-7);}
+      ctx.textAlign='left';ctx.font=p0Font(11);ctx.fillStyle='#5d6f85';ctx.fillText('width = P(kind of day)    height of shading = P(win | kind)',pl.px(0),pl.py(0)+32);}
+    for(let i=0;i<3;i++){p0Set('t'+(i+1),w[i].toFixed(2)+' × '+h[i].toFixed(2)+' = '+(w[i]*h[i]).toFixed(3));tot+=w[i]*h[i];}
+    p0Set('t4',tot.toFixed(3));
+    p0Set('t5','Of 1000 days: '+[0,1,2].map(i=>Math.round(1000*w[i])+' '+NAMES[i]+' → '+Math.round(1000*w[i]*h[i])+' wins').join(' · ')+' · total '+Math.round(1000*tot)+' wins.   Plain average of the win rates: '+((h[0]+h[1]+h[2])/3).toFixed(3)+'.');}
+  const snap=v=>Math.round(v*100)/100;
+  cv.style.touchAction='none';
+  cv.addEventListener('pointerdown',e=>{const [X,Y]=p0XY(cv,e);const x=pl.mx(X),y=pl.my(Y),E=edges();
+    let best=null;
+    for(let i=0;i<3;i++){if(x>E[i]+0.02&&x<E[i+1]-0.02&&Math.abs(y-h[i])<0.07){best={t:'top',i};break;}}
+    if(!best){let bd=0.045;for(let k=1;k<=2;k++){const d=Math.abs(x-E[k]);if(d<bd){bd=d;best={t:'edge',k};}}}
+    if(!best)return;drag=best;try{cv.setPointerCapture(e.pointerId);}catch(z){}e.preventDefault();move(e);});
+  function move(e){if(!drag)return;const [X,Y]=p0XY(cv,e);const x=pl.mx(X),y=pl.my(Y);
+    if(drag.t==='top'){h[drag.i]=snap(Math.max(0,Math.min(1,y)));}
+    else{const E=edges();const k=drag.k,lo=E[k-1]+0.05,hi=E[k+1]-0.05;const nx=snap(Math.max(lo,Math.min(hi,x)));
+      if(k===1){w[0]=nx;w[1]=snap(E[2]-nx);}else{w[1]=snap(nx-E[1]);w[2]=snap(1-nx);}}
+    draw();}
+  cv.addEventListener('pointermove',e=>{if(drag){e.preventDefault();move(e);}});
+  const end=()=>drag=null;cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  p0Seg('seglv',[['off','shading as is'],['on','level the shading']],'off',k=>{level=k==='on';draw();});
+  draw();
+  numChk(document.getElementById('gate'),5/8,()=>{addReveal(`<div class="rh">✓ 5/8 — the same as for the first ball</div>
+    <p>Split by what the first ball was — red or blue, a partition — and use total probability:</p>
+    <div class="eqbox">$$P(\\text{2nd red})=P(\\text{1st red})\\,P(\\text{2nd red}\\mid\\text{1st red})+P(\\text{1st blue})\\,P(\\text{2nd red}\\mid\\text{1st blue})=\\tfrac58\\cdot\\tfrac47+\\tfrac38\\cdot\\tfrac57=\\tfrac{20+15}{56}=\\tfrac58.$$</div>
+    <p>The second ball is red with exactly the same probability as the first. Knowing the first ball changes the second's chances, but <em>not</em> knowing it leaves them where they were: by symmetry, every position in a random order of the 8 balls is equally likely to hold any given ball, so each position is red with probability $\\tfrac58$. A dealt card's chances do not depend on its place in the deal unless you look at the cards before it.</p>`);},snapTo(5/8,0.0015));
+  setHints([`Split by the first ball: it was red (probability 5/8) or blue (3/8). In each case, what is the chance the second is red? Combine with total probability.`,`5/8 · 4/7 + 3/8 · 5/7 = 35/56 = 5/8.`]);
 }
 
 /* ================= boot ================= */
