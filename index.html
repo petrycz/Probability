@@ -144,7 +144,7 @@ const MODULES=[
   beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply,p0_combinations,p0_coins,p0_spaces,p0_birthday,p0_inclusion,p0_derangements,p0_problems]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:true,
   outro:`Conditioning restricts the sample space to what you know: $P(A\\mid B)=P(A\\cap B)/P(B)$, the long-run share of $A$ among the trials where $B$ happened.`,
-  beats:[p1_recall,p1_conditional]},
+  beats:[p1_recall,p1_conditional,p1_multiply]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
@@ -1809,6 +1809,89 @@ function p1_conditional(){
     <div class="eqbox">$$P(\\text{both }6\\mid\\text{at least one }6)=\\frac{P(\\text{both }6)}{P(\\text{at least one }6)}=\\frac{1/36}{11/36}=\\frac1{11}.$$</div>
     <p>Not $\\tfrac16$: being told "at least one 6" does not say <em>which</em> die, so it leaves 11 outcomes in play, not 6. Had you been told "the red die shows 6", the answer would be $\\tfrac16$ — a different condition, a different restricted world. Set $B$ to "at least one 6" and $A$ to "both 6" above to check.</p>`);},snapTo(1/11,0.0015));
   setHints([`Zoom into B = "at least one 6". How many of the 36 outcomes are in it, and how many of those are (6,6)?`,`B has 6 + 6 − 1 = 11 outcomes, and only (6,6) is a double six: the answer is 1/11.`]);
+}
+
+/* ---------- Beat 3: the multiplication rule and the chain rule ---------- */
+function p1_multiply(){
+  stage.innerHTML=`<div class="card"><h2>The multiplication rule: probabilities in stages</h2>
+    <p>Draw two cards from a shuffled deck, one after the other, without putting the first back. What is the probability that both are aces? The first card is an ace with probability $\\tfrac4{52}$. Once it is drawn, the deck has changed — 51 cards, 3 aces — so the second card is an ace with probability $\\tfrac3{51}$, <em>given</em> the first was. The answer combines the two stages.</p>
+    <p><b>Step 1: rearrange the definition.</b> Conditional probability was defined as $P(B\\mid A)=\\frac{P(A\\cap B)}{P(A)}$. Multiply both sides by $P(A)$:</p>
+    <div class="defn"><span class="dt">Multiplication rule</span>$$P(A\\cap B)=P(A)\\,P(B\\mid A).$$
+      In words: the probability that both happen is the probability that the first happens, times the probability that the second happens <em>given</em> the first.</div>
+    <p>For the aces, with $A$ = "first card is an ace" and $B$ = "second card is an ace": $P(A\\cap B)=\\frac4{52}\\cdot\\frac3{51}=\\frac{12}{2652}=\\frac1{221}$. Counting from Module 1 agrees: $\\binom42\\big/\\binom{52}2=\\frac{6}{1326}=\\frac1{221}$. The rule is the multiplication principle with probabilities in place of counts — and, unlike the counting version, it does not need the stages to have equally likely outcomes.</p>
+    <p><b>Step 2: draw it as a tree.</b> Below, an urn holds red and blue balls, and you draw from it in stages. Each branch is labeled with its conditional probability given the path so far, and each node shows how many of a large number of equally likely draw sequences pass through it — the same story told as counts. <b>Tap a leaf</b> to multiply along its path.</p>
+    <div class="ctrls"><span class="slabel" id="urL">red = 5</span><input type="range" id="ur" min="1" max="8" step="1" value="5"></div>
+    <div class="ctrls" style="margin-top:4px"><span class="slabel" id="ubL">blue = 3</span><input type="range" id="ub" min="1" max="8" step="1" value="3"></div>
+    <div class="slabel" style="margin-top:10px">draws</div><div class="seg" id="segud" style="margin-top:4px"></div>
+    <div class="seg" id="segum" style="margin-top:7px"></div>
+    <canvas id="cvu" width="640" height="440" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">tapped path</div><div class="v" id="u1">—</div></div><div class="rdc"><div class="k">product along the path</div><div class="v" id="u2" style="font-size:14px">—</div></div><div class="rdc"><div class="k">all leaves added</div><div class="v" id="u3">—</div></div></div>
+    <p class="small" id="u4" style="margin-top:8px"></p>
+    <p style="margin-top:14px">Switch to <b>with replacement</b>: each ball goes back before the next draw, the urn never changes, and every stage has the same branch probabilities. Without replacement, the second-stage branches depend on what the first draw took. Multiplying the unconditional probabilities in that case — $\\frac4{52}\\cdot\\frac4{52}$ for two aces — is a common error: it answers the question for a deck that is reshuffled between draws.</p>
+    <p>Every leaf's probability is a product along its path, and all the leaves together add to 1: each draw sequence ends at exactly one leaf. An event made of several leaves — "exactly two red", say — is a disjoint union of paths, so its probability is the <b>sum</b> of their products. Multiply along a path, add across paths.</p>
+
+    <h2 style="margin-top:22px">The chain rule</h2>
+    <p>With three stages, apply the rule twice. Treat "first two" as one event, then split it again:</p>
+    <div class="eqbox">$$P(A_1\\cap A_2\\cap A_3)=P(A_1\\cap A_2)\\,P(A_3\\mid A_1\\cap A_2)=P(A_1)\\,P(A_2\\mid A_1)\\,P(A_3\\mid A_1\\cap A_2).$$</div>
+    <p>Repeating this for $n$ events gives the <b>chain rule</b>: each event is conditioned on everything before it.</p>
+    <div class="defn"><span class="dt">Chain rule</span>$$P(A_1\\cap A_2\\cap\\cdots\\cap A_n)=P(A_1)\\,P(A_2\\mid A_1)\\,P(A_3\\mid A_1\\cap A_2)\\cdots P(A_n\\mid A_1\\cap\\cdots\\cap A_{n-1}).$$</div>
+    <p>The birthday problem was already a chain rule. With $A_j$ = "person $j$ avoids the birthdays of persons $1,\\dots,j-1$", each factor $1-\\frac{j-1}{365}$ was a conditional probability given that everyone before had different birthdays.</p>
+    <p>It is also exactly how a language model scores a sentence. Write the tokens as $w_1,w_2,\\dots,w_L$. The model only ever outputs one conditional distribution, $P(w_t\\mid w_1,\\dots,w_{t-1})$ — the next token given the ones so far — and the chain rule assembles the whole sequence:</p>
+    <div class="eqbox">$$P(w_1,\\dots,w_L)=\\prod_{t=1}^{L}P(w_t\\mid w_1,\\dots,w_{t-1}).$$</div>
+    <p>For example, if $P(\\text{the})=0.05$, $P(\\text{cat}\\mid\\text{the})=0.01$ and $P(\\text{sat}\\mid\\text{the cat})=0.2$, then $P(\\text{the cat sat})=0.05\\times0.01\\times0.2=10^{-4}$. Products of many small numbers underflow, so models work with $\\log P=\\sum_t\\log P(w_t\\mid w_{\\lt t})$; training a model means making this sum as large as possible on real text (Modules 7 and 12).</p>
+    <div class="task"><b>Exactly two red</b>An urn holds 5 red and 3 blue balls. Draw 3 balls without replacement. What is the probability of exactly two red? Enter a fraction or a decimal.</div>
+    ${gateHTML('e.g. 1/2 or 0.5')}</div>`;
+
+  const cv=document.getElementById('cvu'),ur=document.getElementById('ur'),ub=document.getElementById('ub');
+  let draws=2,repl=false,sel=null;
+  const fr=(a,b)=>a+'/'+b;
+  function tree(){const R=+ur.value,B=+ub.value,N=R+B;const leaves=[];
+    const rec=(path,r,b,num,den)=>{if(path.length===draws){leaves.push({path,num,den});return;}
+      const n=r+b;[['R',r],['B',b]].forEach(([c,k])=>{if(k<=0)return;rec(path.concat([{c,k,n}]),repl?R:(c==='R'?r-1:r),repl?B:(c==='B'?b-1:b),num*k,den*n);});};
+    rec([],R,B,1,1);return {R,B,N,leaves};}
+  function falling(n,k){let p=1;for(let i=0;i<k;i++)p*=repl?n:(n-i);return p;}
+  function draw(){const T=tree();const ctx=cv.getContext&&cv.getContext('2d');const L=T.leaves.length;
+    const tot=falling(T.N,draws);
+    document.getElementById('urL').textContent='red = '+T.R;document.getElementById('ubL').textContent='blue = '+T.B;
+    if(ctx){const W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);const x0=40,x1=W-150,top=24,bot=H-20;
+      const lx=d=>x0+(x1-x0)*d/draws;
+      const leafY=i=>L===1?H/2:top+(bot-top)*i/(L-1);
+      // nodes: compute y as average of descendant leaves
+      const nodes={};T.leaves.forEach((lf,i)=>{for(let d=0;d<=draws;d++){const key=lf.path.slice(0,d).map(s=>s.c).join('');(nodes[key]=nodes[key]||{ys:[],d,cnt:0}).ys.push(leafY(i));}});
+      Object.values(nodes).forEach(nd=>nd.y=nd.ys.reduce((a,b)=>a+b,0)/nd.ys.length);
+      const selKey=sel;
+      // count of sequences through node = product of chosen counts along prefix * remaining falling
+      const countAt=key=>{let r=T.R,b=T.B,c=1;for(const ch of key){const k=ch==='R'?r:b;c*=k;if(!repl){if(ch==='R')r--;else b--;}}let n=repl?T.N:(T.N-key.length),rest=1;for(let i=key.length;i<draws;i++){rest*=n;if(!repl)n--;}return c*rest;};
+      Object.keys(nodes).forEach(key=>{if(!key)return;const par=key.slice(0,-1),a=nodes[par],b=nodes[key];const on=selKey&&selKey.startsWith(key);
+        ctx.strokeStyle=on?'#e8b84b':(key.endsWith('R')?'rgba(226,102,79,.7)':'rgba(122,184,255,.7)');ctx.lineWidth=on?3:1.6;ctx.beginPath();ctx.moveTo(lx(a.d)+6,a.y);ctx.lineTo(lx(b.d)-6,b.y);ctx.stroke();
+        // branch label: conditional probability
+        let r=T.R,bb=T.B;for(const ch of par){if(!repl){if(ch==='R')r--;else bb--;}}const n=r+bb,k=key.endsWith('R')?r:bb;
+        ctx.font=p0Font(L>4?11:12);ctx.fillStyle=on?'#e8b84b':'#9fb0c4';ctx.textAlign='center';ctx.fillText(fr(k,n),(lx(a.d)+lx(b.d))/2,(a.y+b.y)/2-5);});
+      Object.keys(nodes).forEach(key=>{const nd=nodes[key];const on=selKey&&selKey.startsWith(key);ctx.fillStyle=on||!key?'#e8b84b':'#d6e0ee';ctx.beginPath();ctx.arc(lx(nd.d),nd.y,4.5,0,7);ctx.fill();
+        ctx.font=p0Font(10);ctx.fillStyle='#5d6f85';ctx.textAlign='center';ctx.fillText(String(countAt(key)),lx(nd.d),nd.y+15);});
+      T.leaves.forEach((lf,i)=>{const key=lf.path.map(s=>s.c).join(''),on=selKey===key,y=leafY(i);ctx.textAlign='left';ctx.font=p0Font(13);
+        ctx.fillStyle=on?'#e8b84b':'#d6e0ee';ctx.fillText(key.split('').join(' '),x1+14,y+4);ctx.font=p0Font(11);ctx.fillStyle=on?'#e8b84b':'#9fb0c4';ctx.fillText(fr(lf.num,lf.den)+' = '+(lf.num/lf.den).toFixed(3),x1+60,y+4);});
+      ctx.textAlign='left';ctx.font=p0Font(11);ctx.fillStyle='#5d6f85';ctx.fillText('numbers under nodes: of '+tot+' equally likely draw sequences, how many pass through',8,H-4);}
+    let sum=0;T.leaves.forEach(lf=>sum+=lf.num/lf.den);p0Set('u3',sum.toFixed(4));
+    const lf=T.leaves.find(l=>l.path.map(s=>s.c).join('')===sel);
+    if(lf){p0Set('u1',lf.path.map(s=>s.c).join(' '));p0Set('u2',lf.path.map(s=>s.k+'/'+s.n).join(' · ')+' = '+lf.num+'/'+lf.den+' = '+(lf.num/lf.den).toFixed(4));}
+    else{p0Set('u1','—');p0Set('u2','—');}
+    const byK={};T.leaves.forEach(l=>{const k=l.path.filter(s=>s.c==='R').length;byK[k]=(byK[k]||0)+l.num/l.den;});
+    if(!T.leaves.length){p0Set('u4','Not enough balls for '+draws+' draws without replacement.');return;}
+    p0Set('u4','Exactly k red, adding the paths with k reds: '+Object.keys(byK).sort().map(k=>'k = '+k+': '+byK[k].toFixed(4)).join(' · '));}
+  function reset(){sel=null;draw();}
+  ur.oninput=reset;ub.oninput=reset;
+  p0Seg('segud',[['1','1 draw'],['2','2 draws'],['3','3 draws']],String(draws),k=>{draws=+k;reset();});
+  p0Seg('segum',[['no','without replacement'],['yes','with replacement']],'no',k=>{repl=k==='yes';reset();});
+  cv.addEventListener('pointerdown',e=>{const [X,Y]=p0XY(cv,e);const T=tree(),L=T.leaves.length,H=cv.height;let best=-1,bd=1e9;
+    T.leaves.forEach((lf,i)=>{const y=L===1?H/2:24+(H-44)*i/(L-1);const d=Math.abs(y-Y);if(d<bd){bd=d;best=i;}});
+    if(best>=0){sel=T.leaves[best].path.map(s=>s.c).join('');draw();}e.preventDefault();});
+  draw();
+  numChk(document.getElementById('gate'),15/28,()=>{addReveal(`<div class="rh">✓ 15/28 ≈ 0.536</div>
+    <p>Three paths have exactly two reds: RRB, RBR, BRR. Multiply along each:</p>
+    <div class="eqbox">$$\\text{RRB}:\\ \\tfrac58\\cdot\\tfrac47\\cdot\\tfrac36,\\qquad\\text{RBR}:\\ \\tfrac58\\cdot\\tfrac37\\cdot\\tfrac46,\\qquad\\text{BRR}:\\ \\tfrac38\\cdot\\tfrac57\\cdot\\tfrac46.$$</div>
+    <p>Each product is $\\frac{5\\cdot4\\cdot3}{8\\cdot7\\cdot6}=\\frac{60}{336}$ — the same factors in a different order — so the total is $3\\cdot\\frac{60}{336}=\\frac{180}{336}=\\frac{15}{28}$. Counting agrees: $\\binom52\\binom31\\big/\\binom83=\\frac{10\\cdot3}{56}=\\frac{15}{28}$.</p>`);},snapTo(15/28,0.0015));
+  setHints([`Exactly two red means one of three orders: RRB, RBR, BRR. Multiply along each path, then add the three paths.`,`Each path is (5·4·3)/(8·7·6) = 60/336, and there are 3 of them: 180/336 = 15/28.`]);
 }
 
 /* ================= boot ================= */
