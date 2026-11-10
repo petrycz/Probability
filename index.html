@@ -144,7 +144,7 @@ const MODULES=[
   beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply,p0_combinations,p0_coins,p0_spaces,p0_birthday,p0_inclusion,p0_derangements,p0_problems]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:true,
   outro:`Conditioning restricts the sample space to what you know: $P(A\\mid B)=P(A\\cap B)/P(B)$, the long-run share of $A$ among the trials where $B$ happened.`,
-  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_independence]},
+  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_independence,p1_mutual]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
@@ -2209,6 +2209,79 @@ function p1_independence(){
     <div class="eqbox">$$P(A\\cup B)=P(A)+P(B)-P(A)\\,P(B)=0.02+0.05-0.02\\times0.05=0.07-0.001=0.069.$$</div>
     <p>The complement gives the same: no warning means both feeds work, $P(A^{c}\\cap B^{c})=0.98\\times0.95=0.931$ — independence carries over to the complements (Step 2) — and $1-0.931=0.069$. If the feeds shared a cause of failure (the same data vendor, say), they would not be independent, the overlap would be larger than $0.001$, and the warning rate lower.</p>`);},snapTo(0.069,0.0006));
   setHints([`A warning is "A fails or B fails". Use the union rule, and get P(both fail) from independence.`,`0.02 + 0.05 − 0.02 × 0.05 = 0.069.`]);
+}
+
+/* ---------- Beat 8: independence of many events ---------- */
+function p1_mutual(){
+  stage.innerHTML=`<div class="card"><h2>Independence of many events</h2>
+    <p>With two events, independence is one equation. With three or more, is it enough to check them two at a time? Toss two fair coins. The four outcomes HH, HT, TH, TT are equally likely, each $\\tfrac14$. Define</p>
+    <div class="defn"><span class="dt">The objects</span>
+      $A$ — the first coin is heads: $\\{HH,HT\\}$.<br>
+      $B$ — the second coin is heads: $\\{HH,TH\\}$.<br>
+      $C$ — the two coins match: $\\{HH,TT\\}$. (Tap the cells below to redefine $C$.)</div>
+    <canvas id="cvm8" width="640" height="300" style="margin-top:10px"></canvas>
+    <div style="overflow-x:auto;margin:10px 0"><table id="mt8" style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.6;text-align:center"></table></div>
+    <p class="small" id="m8v" style="min-height:20px"></p>
+    <p style="margin-top:12px"><b>What to notice.</b> With the starting $C$, every pair passes: each event has probability $\\tfrac12$, and each pairwise intersection is a single outcome, $\\tfrac14=\\tfrac12\\cdot\\tfrac12$. But all three together happen only on HH: $P(A\\cap B\\cap C)=\\tfrac14$, while $P(A)P(B)P(C)=\\tfrac18$. Knowing $A$ and $B$ <em>together</em> settles $C$ completely — both heads means they match — even though each one alone tells you nothing about $C$.</p>
+    <p><b>Step 1: the definition.</b> So independence of a collection must include every group, not just pairs:</p>
+    <div class="defn"><span class="dt">Mutual independence</span>Events $A_1,\\dots,A_n$ are <b>mutually independent</b> when, for <em>every</em> group of two or more of them, the probability that all in the group happen is the product of their probabilities. For three events, that is four equations:
+      $$P(A\\cap B)=P(A)P(B),\\quad P(A\\cap C)=P(A)P(C),\\quad P(B\\cap C)=P(B)P(C),\\quad P(A\\cap B\\cap C)=P(A)P(B)P(C).$$</div>
+    <p><b>Step 2: how many conditions.</b> A group is a subset of the $n$ events, and there are $2^n$ subsets (each event in or out). The empty subset and the $n$ single events say nothing, so the conditions number $2^n-1-n$. For $n=3$: $8-1-3=4$, the four equations above. Neither kind implies the other: the coins show pairs holding while the triple fails, and the triple can hold while a pair fails: if $A$ and $B$ are the same event with probability $\\tfrac12$ and $C$ is impossible ($P(C)=0$), the triple equation reads $0=0$, but $P(A\\cap B)=P(A)=\\tfrac12\\neq\\tfrac12\\cdot\\tfrac12$.</p>
+
+    <h2 style="margin-top:22px">Independent trials</h2>
+    <p>Most independence in practice comes from repeating an experiment so that no repetition influences another: coin tosses, dice, Monte Carlo samples, separate trades assumed unrelated. Each repetition is a <b>trial</b>, and the trials are modelled as mutually independent. Then the probability of any sequence of results is the product of the per-trial probabilities — the chain rule with every conditional replaced by a plain probability. This is the assumption behind every product in Module 1: the binomial $p^kq^{n-k}$, the $\\tfrac1{36}$ of a dice cell, the birthday factors.</p>
+    <p><b>At least one success in $n$ trials.</b> Each trial succeeds with probability $p$. "At least one success" is the complement of "all fail", and all $n$ failures together have probability $(1-p)^n$ by mutual independence:</p>
+    <div class="eqbox">$$P(\\text{at least one success})=1-(1-p)^n.$$</div>
+    <p>A tempting shortcut adds the chances, $n\\cdot p$. That is the union bound from Module 1 — an upper limit, exact only when the successes cannot overlap. Compare the two below.</p>
+    <div class="ctrls"><span class="slabel" id="mpL">p = 0.05</span><input type="range" id="mp" min="0.01" max="0.5" step="0.01" value="0.05"></div>
+    <div class="ctrls" style="margin-top:4px"><span class="slabel" id="mnL">n = 20</span><input type="range" id="mn" min="1" max="60" step="1" value="20"></div>
+    <canvas id="cvn8" width="640" height="300" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">1 − (1 − p)ⁿ</div><div class="v" id="n1">—</div></div><div class="rdc"><div class="k">n · p (shortcut)</div><div class="v" id="n2">—</div></div><div class="rdc"><div class="k">all n fail: (1 − p)ⁿ</div><div class="v" id="n3">—</div></div></div>
+    <p style="margin-top:12px">With $p=0.05$ and $n=20$: twenty strategies with no real edge, each with a 5% chance of passing a significance test by luck, give $1-0.95^{20}\\approx0.64$ — probably at least one false discovery. The shortcut says $20\\times0.05=1$, a certainty, which is wrong; at $n=30$ it passes 1 altogether. The same formula sizes Bitcoin's risk from the other side: an attacker with 10% of the hash power finds each block with probability 0.1, so finding the next 6 blocks in a row, each independently, has probability $0.1^6=10^{-6}$.</p>
+    <div class="task"><b>A system in series</b>A trading system needs three components to work: a data feed, a model server, and a broker connection. On a given day they fail independently with probabilities 0.1, 0.2, and 0.05. What is the probability that the system works all day? Enter a decimal.</div>
+    ${gateHTML('e.g. 0.5')}</div>`;
+
+  /* ---- two-coin grid ---- */
+  const cv=document.getElementById('cvm8');const OUT=['HH','HT','TH','TT'];
+  const A=new Set(['HH','HT']),B=new Set(['HH','TH']);let C=new Set(['HH','TT']);
+  const cell=i=>{const W=cv.width,cw=(W-60)/2,ch=(cv.height-40)/2;return [30+(i%2)*cw,20+Math.floor(i/2)*ch,cw,ch];};
+  function draw(){const ctx=cv.getContext&&cv.getContext('2d');
+    if(ctx){ctx.clearRect(0,0,cv.width,cv.height);
+      OUT.forEach((o,i)=>{const [x,y,w,h]=cell(i);ctx.fillStyle='#111a28';ctx.fillRect(x+4,y+4,w-8,h-8);ctx.strokeStyle='#2b3a4f';ctx.strokeRect(x+4,y+4,w-8,h-8);
+        ctx.font=p0Font(22);ctx.fillStyle='#e9eef6';ctx.textAlign='center';ctx.fillText(o,x+w/2,y+h/2+2);
+        ctx.font=p0Font(11);ctx.fillStyle='#5d6f85';ctx.fillText('probability 1/4',x+w/2,y+h/2+20);
+        const tags=[[A,'A','#e8b84b'],[B,'B','#7ab8ff'],[C,'C','#3fb98f']].filter(t=>t[0].has(o));
+        tags.forEach((t,j)=>{ctx.fillStyle=t[2];ctx.beginPath();ctx.arc(x+20+j*22,y+22,9,0,7);ctx.fill();ctx.fillStyle='#0a111b';ctx.font=p0Font(11);ctx.fillText(t[1],x+20+j*22,y+26);});});
+      ctx.textAlign='left';}
+    const P=S=>S.size/4,I=(...Ss)=>OUT.filter(o=>Ss.every(S=>S.has(o))).length/4;
+    const rows=[['A, B',I(A,B),P(A)*P(B)],['A, C',I(A,C),P(A)*P(C)],['B, C',I(B,C),P(B)*P(C)],['A, B, C',I(A,B,C),P(A)*P(B)*P(C)]];
+    const f=v=>{const m={0:'0',0.125:'1/8',0.25:'1/4',0.5:'1/2',0.375:'3/8',0.75:'3/4',1:'1',0.0625:'1/16',0.1875:'3/16',0.5625:'9/16'};return m[v]!==undefined?m[v]:v.toFixed(4);};
+    const th='padding:5px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.3px';
+    document.getElementById('mt8').innerHTML=`<tr><td style="${th}">group</td><td style="${th}">P(all happen)</td><td style="${th}">product of P's</td><td style="${th}">equal?</td></tr>`+
+      rows.map(r=>{const eq=Math.abs(r[1]-r[2])<1e-12;return `<tr><td style="padding:5px">${r[0]}</td><td>${f(r[1])}</td><td>${f(r[2])}</td><td style="color:${eq?'#3fb98f':'#e2664f'};font-weight:700">${eq?'yes':'no'}</td></tr>`;}).join('');
+    const pairs=rows.slice(0,3).every(r=>Math.abs(r[1]-r[2])<1e-12),trip=Math.abs(rows[3][1]-rows[3][2])<1e-12;
+    p0Set('m8v','P(C) = '+f(P(C))+'. '+(pairs&&trip?'All four equations hold: A, B, C are mutually independent.':pairs?'Every pair is independent, but the triple equation fails: pairwise independent, not mutually independent.':trip?'The triple equation holds but a pair fails: still not mutually independent.':'Some pair fails: not independent.'));}
+  cv.addEventListener('pointerdown',e=>{const [X,Y]=p0XY(cv,e);OUT.forEach((o,i)=>{const [x,y,w,h]=cell(i);if(X>=x&&X<=x+w&&Y>=y&&Y<=y+h){if(C.has(o))C.delete(o);else C.add(o);}});draw();e.preventDefault();});
+  draw();
+  /* ---- at least one ---- */
+  const mp=document.getElementById('mp'),mn=document.getElementById('mn'),cn=document.getElementById('cvn8');
+  function drawN(){const p=+mp.value,n=+mn.value;p0Set('mpL','p = '+p.toFixed(2));p0Set('mnL','n = '+n);
+    const pl=plot(cn,{xmin:-1.5,xmax:61.5,ymin:-0.08,ymax:1.6});const ctx=pl.ctx;
+    if(ctx){ctx.clearRect(0,0,pl.W,pl.H);ctx.strokeStyle='#16202f';ctx.lineWidth=1;[0.5,1,1.5].forEach(y=>{ctx.beginPath();ctx.moveTo(0,pl.py(y));ctx.lineTo(pl.W,pl.py(y));ctx.stroke();});
+      ctx.strokeStyle='#2b3a4f';ctx.beginPath();ctx.moveTo(0,pl.py(0));ctx.lineTo(pl.W,pl.py(0));ctx.stroke();
+      pl.hline(1,'#5d6f85',true);
+      const line=(f,col,dash)=>{ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.setLineDash(dash||[]);ctx.beginPath();for(let k=0;k<=60;k++){const X=pl.px(k),Y=pl.py(Math.min(1.6,f(k)));if(k)ctx.lineTo(X,Y);else ctx.moveTo(X,Y);}ctx.stroke();ctx.setLineDash([]);};
+      line(k=>k*p,'#e2664f',[6,5]);line(k=>1-Math.pow(1-p,k),'#e8b84b');
+      pl.vline(n,'#5d6f85',true);pl.point(n,1-Math.pow(1-p,n),'#e8b84b',6);pl.point(n,Math.min(1.6,n*p),'#e2664f',5);
+      ctx.font=p0Font(11);ctx.fillStyle='#e8b84b';ctx.fillText('1 − (1 − p)ⁿ',pl.px(44),pl.py(1-Math.pow(1-p,44))+16);ctx.fillStyle='#e2664f';ctx.fillText('n·p',pl.px(Math.min(55,1.45/p)),pl.py(Math.min(1.45,55*p))-8);
+      ctx.fillStyle='#5d6f85';ctx.fillText('n (trials) →',pl.W-74,pl.py(0)+14);ctx.fillText('1',4,pl.py(1)-4);}
+    p0Set('n1',(1-Math.pow(1-p,n)).toFixed(4));p0Set('n2',(n*p).toFixed(2)+(n*p>1?'  (> 1: impossible)':''));p0Set('n3',Math.pow(1-p,n).toFixed(4));}
+  mp.oninput=drawN;mn.oninput=drawN;drawN();
+  numChk(document.getElementById('gate'),0.684,()=>{addReveal(`<div class="rh">✓ 0.684</div>
+    <p>The system works only if all three components work. Each works with probability $1-$(its failure probability), and mutual independence lets the three multiply:</p>
+    <div class="eqbox">$$P(\\text{all work})=0.9\\times0.8\\times0.95=0.684.$$</div>
+    <p>Pairwise independence would not be enough to justify this product — it is a statement about all three together, the fourth equation of the definition. And the system fails on almost a third of days even though no single component fails more than 20% of the time: in series, reliabilities multiply, so they only go down.</p>`);},snapTo(0.684,0.0006));
+  setHints([`The system works only if every component works. Each works with probability 1 − (its failure probability). Mutual independence lets you multiply.`,`0.9 × 0.8 × 0.95 = 0.684.`]);
 }
 
 /* ================= boot ================= */
