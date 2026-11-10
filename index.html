@@ -143,8 +143,8 @@ const MODULES=[
   outro:`A probability is the long-run share of trials on which an event happens. Events are sets of outcomes, combined by not, and, or, and every probability obeys three axioms — nonnegative, total 1, additive over disjoint events — from which the complement, union, and inclusion–exclusion rules follow. With equally likely outcomes, probability is counting: the multiplication principle, ordered selections, and combinations $\\binom nk$, which give the binomial formula, the birthday bound behind hash collisions, and the $1/e$ of derangements.`,
   beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply,p0_combinations,p0_coins,p0_spaces,p0_birthday,p0_inclusion,p0_derangements,p0_problems]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:true,
-  outro:`Conditioning restricts the sample space to what you know: $P(A\\mid B)=P(A\\cap B)/P(B)$, the long-run share of $A$ among the trials where $B$ happened.`,
-  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_independence,p1_mutual,p1_condind,p1_puzzles]},
+  outro:`Conditioning restricts the sample space to what you know: $P(A\\mid B)=P(A\\cap B)/P(B)$. The multiplication and chain rules build joint probabilities from conditional ones, total probability averages over the cases of a partition, and Bayes' rule turns $P(B\\mid A)$ into $P(A\\mid B)$ — in odds form, posterior odds = prior odds × likelihood ratio, which in log-odds makes evidence add up. Independence means a condition changes nothing; for many events it must hold for every group. Conditional independence can appear or vanish when you condition on a common cause or a common effect, which is behind Simpson's paradox, and how evidence was produced is part of the evidence, as Monty Hall shows.`,
+  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_independence,p1_mutual,p1_condind,p1_puzzles,p1_problems]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
@@ -2419,6 +2419,97 @@ function p1_puzzles(){
     <div class="eqbox">$$P(\\text{win by switching})=\\tfrac14\\cdot0+\\tfrac34\\cdot\\tfrac12=\\tfrac38.$$</div>
     <p>Staying wins with probability $\\tfrac14$, so switching is still better — $\\tfrac38\\gt\\tfrac14$ — even though it is a coin flip between two doors. The host's one opened door moved $\\tfrac18$ of probability onto each of the two other closed doors.</p>`);},snapTo(3/8,0.0015));
   setHints([`Split into two cases: your first pick was right (1/4) or wrong (3/4). In each case, what are the two remaining closed doors hiding?`,`If you were right, switching loses; if wrong, one of the two doors has the car, so switching wins half the time: (3/4)(1/2) = 3/8.`]);
+}
+
+/* ---------- Beat 11: Module 2 problem set ---------- */
+function p1_problems(){
+  const P=(lvl,num,q,hint,sol)=>`<div class="prob"><span class="lvl">${lvl}</span><div class="ph">Problem ${num}</div>${q}
+    <details><summary>Hint</summary><div class="sol">${hint}</div></details>
+    <details><summary>Show solution</summary><div class="sol">${sol}</div></details></div>`;
+  stage.innerHTML=`<div class="card"><h2>Problem set</h2>
+    <p>Work each problem on paper first. If you get stuck, open the hint before the solution. The problems follow the order of the module.</p>
+  `+P('conditional probability',1,
+    `<p>On a given day a stock's price goes up with probability $0.55$, its volume is high with probability $0.4$, and both happen with probability $0.3$. Find (a) $P(\\text{up}\\mid\\text{high})$, (b) $P(\\text{high}\\mid\\text{up})$, (c) $P(\\text{up}\\mid\\text{not high})$. (d) Should the answers to (a) and (c) add to 1?</p>`,
+    `<p>Each one is "share of the restricted world": $P(A\\mid B)=P(A\\cap B)/P(B)$. For (c), find $P(\\text{up}\\cap\\text{not high})$ by removing the overlap from $P(\\text{up})$.</p>`,
+    `<p>(a) $P(\\text{up}\\mid\\text{high})=\\frac{0.3}{0.4}=0.75$.</p>
+    <p>(b) $P(\\text{high}\\mid\\text{up})=\\frac{0.3}{0.55}\\approx0.545$. Same intersection, different restricted world, different answer: $P(A\\mid B)\\ne P(B\\mid A)$ in general.</p>
+    <p>(c) "Up" splits into "up and high" plus "up and not high", which are disjoint, so $P(\\text{up}\\cap\\text{not high})=0.55-0.3=0.25$. The world "not high" has probability $1-0.4=0.6$, so $P(\\text{up}\\mid\\text{not high})=\\frac{0.25}{0.6}\\approx0.417$.</p>
+    <p>(d) No: $0.75+0.417\\ne1$. They are shares of two <em>different</em> restricted worlds. What adds to 1 is two outcomes inside the same world: $P(\\text{up}\\mid\\text{high})+P(\\text{not up}\\mid\\text{high})=1$.</p>`)
+  +P('chain rule',2,
+    `<p>A language model gives $P(\\text{The})=0.05$, $P(\\text{cat}\\mid\\text{The})=0.01$, $P(\\text{sat}\\mid\\text{The cat})=0.2$ and $P(\\text{on}\\mid\\text{The cat sat})=0.6$. (a) What probability does it give the sequence "The cat sat on"? (b) Find its log-probability (natural log). (c) Why do models add log-probabilities instead of multiplying probabilities?</p>`,
+    `<p>(a) The chain rule multiplies each token's probability given everything before it. (b) $\\ln(xy)=\\ln x+\\ln y$.</p>`,
+    `<p>(a) By the chain rule, $P(w_1w_2w_3w_4)=P(w_1)P(w_2\\mid w_1)P(w_3\\mid w_1w_2)P(w_4\\mid w_1w_2w_3)$, so $0.05\\cdot0.01\\cdot0.2\\cdot0.6=6\\times10^{-5}$. The rule needs no assumption: it is the definition of conditional probability applied three times.</p>
+    <p>(b) $\\ln0.05+\\ln0.01+\\ln0.2+\\ln0.6\\approx-3.00-4.61-1.61-0.51=-9.72$, and $e^{-9.72}\\approx6\\times10^{-5}$.</p>
+    <p>(c) A long text is a product of thousands of factors below 1. A thousand tokens at about $0.1$ each give about $10^{-1000}$, far below the smallest number a 64-bit float can hold (about $10^{-308}$), so the product would round to 0. The sum of logs, about $-2303$, is an ordinary number. Training a model maximizes this sum, which is why its loss is the average negative log-probability per token.</p>`)
+  +P('total probability',3,
+    `<p>A strategy's chance of a winning day depends on the market regime: $0.6$ in a bull market, $0.5$ in a flat one, $0.3$ in a bear market. The regimes have probabilities $0.3$, $0.5$, $0.2$. (a) What is the probability of a winning day? (b) Today was a winning day. What is the probability the market is bull?</p>`,
+    `<p>(a) The three regimes split the sample space, so weight each regime's win rate by its probability. (b) Bayes: the bull branch's share of the total from (a).</p>`,
+    `<p>(a) Each branch of the tree contributes regime probability × win rate:</p>
+    <div class="eqbox">$$P(W)=0.3\\cdot0.6+0.5\\cdot0.5+0.2\\cdot0.3=0.18+0.25+0.06=0.49.$$</div>
+    <p>A weighted average of $0.6$, $0.5$, $0.3$, so it must lie between $0.3$ and $0.6$.</p>
+    <p>(b) $P(\\text{bull}\\mid W)=\\frac{P(\\text{bull}\\cap W)}{P(W)}=\\frac{0.18}{0.49}\\approx0.367$, up from the prior $0.3$, because a win is more likely in a bull market than on average ($0.6\\gt0.49$).</p>`)
+  +P('Bayes and base rates',4,
+    `<p>0.5% of card transactions are fraud. A detector flags 98% of fraudulent transactions and 2% of legitimate ones. (a) A transaction is flagged. What is the probability it is fraud? (b) A second detector with the same rates also flags it. Assume the two detectors' errors are independent once you know whether the transaction is fraud. Now what is the probability?</p>`,
+    `<p>(a) Use natural frequencies: picture 100,000 transactions. (b) Use odds: the posterior odds from (a) times the second detector's likelihood ratio $\\frac{0.98}{0.02}$.</p>`,
+    `<p>(a) Of 100,000 transactions, 500 are fraud and 99,500 legitimate. Flagged: $500\\times0.98=490$ fraud and $99{,}500\\times0.02=1{,}990$ legitimate. So</p>
+    <div class="eqbox">$$P(\\text{fraud}\\mid\\text{flag})=\\frac{490}{490+1990}=\\frac{490}{2480}\\approx0.198.$$</div>
+    <p>Four out of five flags are false alarms: the 2% error rate applies to a group 199 times larger.</p>
+    <p>(b) After the first flag the odds are $\\frac{490}{1990}\\approx0.246$. Because the detectors are conditionally independent, the second flag multiplies the odds by its own likelihood ratio, $\\frac{P(\\text{flag}\\mid\\text{fraud})}{P(\\text{flag}\\mid\\text{legit})}=\\frac{0.98}{0.02}=49$: odds $0.246\\times49\\approx12.1$, so $P=\\frac{12.1}{13.1}\\approx0.92$. Check with counts: $490\\times0.98\\approx480$ fraud and $1990\\times0.02\\approx40$ legitimate transactions are flagged twice, and $\\frac{480}{520}\\approx0.92$.</p>`)
+  +P('prosecutor’s fallacy',5,
+    `<p>A DNA trace matches a suspect. The chance that a random innocent person matches is 1 in 1,000, and the true source always matches. The prosecutor says: "The chance he is innocent is 1 in 1,000." Find the probability he is the source if (a) other evidence shows the source was one of the 50 people in a building, he among them, and nothing else singles him out; (b) the only evidence is the match, and he was found by searching a city of 1,000,000.</p>`,
+    `<p>Posterior odds = prior odds × likelihood ratio. The likelihood ratio is $\\frac{1}{1/1000}=1000$ in both cases; only the prior changes.</p>`,
+    `<p>(a) Prior odds that he is the source: 1 to 49. Posterior odds: $\\frac1{49}\\times1000\\approx20.4$, so $P\\approx\\frac{20.4}{21.4}\\approx0.953$. In counts: the 49 innocent people produce $49\\times\\frac1{1000}\\approx0.05$ chance matches on average, against 1 true source.</p>
+    <p>(b) Prior odds: 1 to 999,999. Posterior odds: $\\frac{1000}{999{,}999}\\approx0.001$, so $P\\approx0.001$. In counts: about 1,000 innocent people in the city match by chance, plus the true source, so he is one of about 1,001 matches.</p>
+    <p>The prosecutor's figure is $P(\\text{match}\\mid\\text{innocent})$, the same in both cases. $P(\\text{innocent}\\mid\\text{match})$ is about $0.05$ in (a) and $0.999$ in (b): the same evidence, very different conclusions, because the prior differs.</p>`)
+  +P('log-odds',6,
+    `<p>Before testing, you give a strategy a 20% chance of having an edge. With an edge it wins each trade with probability $0.55$; without one, $0.5$. Trades are independent given which is true. Over 100 trades it wins 60. (a) What is the probability it has an edge now? (b) Does the order of the wins and losses matter?</p>`,
+    `<p>Work in log-odds: each win adds $\\ln\\frac{0.55}{0.5}=\\ln1.1$ and each loss adds $\\ln\\frac{0.45}{0.5}=\\ln0.9$.</p>`,
+    `<p>(a) A single trade's likelihood ratio is $\\frac{0.55}{0.5}=1.1$ for a win and $\\frac{0.45}{0.5}=0.9$ for a loss. Given each hypothesis the trades are independent, so the probability of the whole record is a product, and so is the ratio: $\\mathrm{LR}=1.1^{60}\\cdot0.9^{40}$. In logs:</p>
+    <div class="eqbox">$$\\ln\\mathrm{LR}=60\\ln1.1+40\\ln0.9\\approx5.719-4.214=1.504,$$</div>
+    <p>using $\\ln1.1\\approx0.0953$ and $\\ln0.9\\approx-0.1054$. So $\\mathrm{LR}=e^{1.504}\\approx4.50$. Prior odds $\\frac{0.2}{0.8}=0.25$; posterior odds $0.25\\times4.50\\approx1.13$; $P=\\frac{1.13}{2.13}\\approx0.53$.</p>
+    <p>A 60% win rate over 100 trades, against an edge that predicts 55%, only moves you from 20% to about 53%. Each win adds $0.095$ to the log-odds and each loss subtracts $0.105$, so a win and a loss together subtract $0.010$: the evidence favours the edge only if wins exceed about 52.5% of trades.</p>
+    <p>(b) No. Each trade adds its own term to the log-odds, and a sum does not depend on order. Only the counts, 60 and 40, matter.</p>`)
+  +P('independent vs disjoint',7,
+    `<p>(a) $P(A)=0.3$ and $P(B)=0.4$. Find $P(A\\cup B)$ if $A$ and $B$ are disjoint, and if they are independent. Can they be both? (b) Roll two dice. Is "the sum is 7" independent of "the first die shows 4"? Is "the sum is 8"?</p>`,
+    `<p>(a) The union rule needs $P(A\\cap B)$: 0 for disjoint, $P(A)P(B)$ for independent. (b) Compare $P(\\text{sum}\\mid\\text{first}=4)$ with $P(\\text{sum})$.</p>`,
+    `<p>(a) Disjoint: $P(A\\cup B)=0.3+0.4-0=0.7$. Independent: $P(A\\cap B)=0.3\\times0.4=0.12$, so $P(A\\cup B)=0.3+0.4-0.12=0.58$. Both at once would need $P(A\\cap B)=0$ and $P(A)P(B)=0.12$ — impossible. Disjoint events with positive probabilities are always dependent: if one happens, the other cannot.</p>
+    <p>(b) $P(\\text{sum }7)=\\frac6{36}=\\frac16$. Given the first die is 4, the sum is 7 only if the second is 3: $P(\\text{sum }7\\mid\\text{first}=4)=\\frac16$. Equal, so independent. Every first value leaves exactly one second value that makes 7, so the first die tells you nothing.</p>
+    <p>$P(\\text{sum }8)=\\frac5{36}$ (2+6, 3+5, 4+4, 5+3, 6+2). Given the first die is 4, the second must be 4: $\\frac16=\\frac6{36}\\ne\\frac5{36}$. Dependent: a first die of 1 would make 8 impossible, so the first die does carry information.</p>`)
+  +P('mutual vs pairwise',8,
+    `<p>Roll two dice. $A$ = "the first die is odd", $B$ = "the second die is odd", $C$ = "the sum is odd". Show that each pair is independent but the three are not mutually independent. What is $P(C\\mid A\\cap B)$?</p>`,
+    `<p>Each event has probability $\\frac12$. For $A\\cap C$: if the first die is odd, when is the sum odd? Then check all three together.</p>`,
+    `<p>Each die is odd with probability $\\frac12$, independently, and the sum is odd exactly when one die is odd and the other even: $P(C)=\\frac12\\cdot\\frac12+\\frac12\\cdot\\frac12=\\frac12$.</p>
+    <p>Pairs: $P(A\\cap B)=\\frac14=P(A)P(B)$. $A\\cap C$ = first odd and sum odd = first odd and second even, probability $\\frac14=P(A)P(C)$. By the same argument $P(B\\cap C)=\\frac14$. All three pairs pass.</p>
+    <p>All three: if both dice are odd, the sum is even, so $A\\cap B\\cap C$ is impossible and $P(A\\cap B\\cap C)=0\\ne\\frac18$. Not mutually independent. $P(C\\mid A\\cap B)=0$: either die alone says nothing about $C$, but both together settle it. This is how a parity bit works — it is independent of each data bit and determined by all of them.</p>`)
+  +P('common cause',9,
+    `<p>A coin is either fair or biased with $P(H)=0.9$, each with probability $\\frac12$. It is flipped twice; given which coin it is, the flips are independent. (a) Find $P(H_1)$, $P(H_1\\cap H_2)$ and $P(H_2\\mid H_1)$. Are the flips independent? (b) After two heads, what is the probability the coin is biased?</p>`,
+    `<p>Use total probability over the two coins. Inside each coin the flips multiply: $0.5^2$ or $0.9^2$.</p>`,
+    `<p>(a) $P(H_1)=\\frac12(0.5)+\\frac12(0.9)=0.7$. $P(H_1\\cap H_2)=\\frac12(0.25)+\\frac12(0.81)=0.53$. So $P(H_2\\mid H_1)=\\frac{0.53}{0.7}\\approx0.757$, not $0.7$: the flips are <b>not</b> independent, although they are independent given the coin.</p>
+    <p>Why: a first head is evidence for the biased coin, $P(\\text{biased}\\mid H_1)=\\frac{0.5\\cdot0.9}{0.7}\\approx0.643$, up from $0.5$. The second flip's chance is the average over coins with these updated weights: $0.357(0.5)+0.643(0.9)\\approx0.757$. The hidden coin is a common cause of both flips.</p>
+    <p>(b) $P(\\text{biased}\\mid H_1\\cap H_2)=\\frac{\\frac12(0.81)}{0.53}\\approx0.764$. Learning about a hidden cause from data that depend on it is how every Bayesian model learns its parameters.</p>`)
+  +P('explaining away',10,
+    `<p>A server is slow exactly when there is a bug, a load spike, or both. A bug happens with probability $0.1$ and a load spike with probability $0.2$, independently. (a) The server is slow. What is the probability of a bug? (b) You then learn there is a load spike. Now what is the probability of a bug? (c) What if you learn there is no load spike?</p>`,
+    `<p>(a) $P(\\text{slow})=1-P(\\text{no bug and no spike})$, and "bug" is inside "slow". (b) Given a spike the server is slow for sure, so "slow" adds nothing.</p>`,
+    `<p>(a) $P(\\text{slow})=1-0.9\\times0.8=0.28$. A bug always makes it slow, so $\\text{bug}\\cap\\text{slow}=\\text{bug}$ and $P(\\text{bug}\\mid\\text{slow})=\\frac{0.1}{0.28}\\approx0.357$.</p>
+    <p>(b) A spike already makes the server slow, so $\\text{slow}\\cap\\text{spike}=\\text{spike}$, and $P(\\text{bug}\\mid\\text{slow}\\cap\\text{spike})=\\frac{P(\\text{bug}\\cap\\text{spike})}{P(\\text{spike})}=\\frac{0.1\\times0.2}{0.2}=0.1$ — back to the prior.</p>
+    <p>(c) Slow with no spike can only be a bug: probability 1.</p>
+    <p>The two causes are independent, but given their common effect they are dependent: learning about one changes the other. The spike <b>explains away</b> the slowness.</p>`)
+  +P('Simpson’s paradox',11,
+    `<p>Two models are tested on easy and hard examples. Model A: 18 of 20 easy right, 60 of 200 hard right. Model B: 160 of 200 easy right, 4 of 20 hard right. (a) Compare them on each kind of example and overall. (b) In deployment, half the examples will be easy and half hard. Which model is better?</p>`,
+    `<p>Each overall rate is a weighted average of the easy and hard rates. What are each model's weights?</p>`,
+    `<p>(a) Easy: A $\\frac{18}{20}=0.9$, B $\\frac{160}{200}=0.8$. Hard: A $\\frac{60}{200}=0.3$, B $\\frac4{20}=0.2$. A is better on both. Overall: A $\\frac{78}{220}\\approx0.35$, B $\\frac{164}{220}\\approx0.75$ — B looks far better.</p>
+    <p>Why: A was tested mostly on hard examples (200 of its 220), B mostly on easy ones. The overall rate is $P(\\text{right})=P(\\text{easy})P(\\text{right}\\mid\\text{easy})+P(\\text{hard})P(\\text{right}\\mid\\text{hard})$, with different weights for the two models.</p>
+    <p>(b) With the same weights for both: A $0.5(0.9)+0.5(0.3)=0.6$, B $0.5(0.8)+0.5(0.2)=0.5$. A is better. Compare models on the same mix of examples, or within each kind.</p>`)
+  +P('challenge — Monty Hall',12,
+    `<p>You pick door 1. The host knows where the car is and always opens a goat door you did not pick, but when he can choose (the car is behind door 1), he always opens door 3. (a) He opens door 3. What is the probability that switching wins? (b) He opens door 2? (c) Over all games, what is the probability that "always switch" wins?</p>`,
+    `<p>Write the likelihoods $P(H_3\\mid C_i)$ from his rule: with the car behind 1 he now opens 3 with probability 1, not $\\frac12$.</p>`,
+    `<p>(a) Likelihoods: $P(H_3\\mid C_1)=1$ (his preference), $P(H_3\\mid C_2)=1$ (his only goat door), $P(H_3\\mid C_3)=0$. So $P(H_3)=\\frac13+\\frac13+0=\\frac23$ and</p>
+    <div class="eqbox">$$P(C_1\\mid H_3)=\\frac{\\frac13\\cdot1}{\\frac23}=\\tfrac12,\\qquad P(C_2\\mid H_3)=\\frac{\\frac13\\cdot1}{\\frac23}=\\tfrac12.$$</div>
+    <p>Switching wins with probability $\\frac12$.</p>
+    <p>(b) He opens door 2 only if he had no choice — door 3 holds the car: $P(C_3\\mid H_2)=1$. Switching wins for sure.</p>
+    <p>(c) Total probability over what he opens: $P(H_3)\\cdot\\frac12+P(H_2)\\cdot1=\\frac23\\cdot\\frac12+\\frac13\\cdot1=\\frac23$. Still $\\frac23$: switching wins exactly when your first pick was wrong, whatever his rule. His rule changes only how that $\\frac23$ is spread over the doors he might open.</p>`)
+  +`</div>`;
+  setHints([]);unlock();
 }
 
 /* ================= boot ================= */
