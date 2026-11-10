@@ -144,7 +144,7 @@ const MODULES=[
   beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply,p0_combinations,p0_coins,p0_spaces,p0_birthday,p0_inclusion,p0_derangements,p0_problems]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:true,
   outro:`Conditioning restricts the sample space to what you know: $P(A\\mid B)=P(A\\cap B)/P(B)$, the long-run share of $A$ among the trials where $B$ happened.`,
-  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update]},
+  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_independence]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
@@ -2130,6 +2130,85 @@ function p1_update(){
     $$\\text{posterior odds}=\\tfrac23\\times12.5\\times0.2=\\tfrac53,\\qquad P(\\text{spam}\\mid\\text{both})=\\frac{5/3}{1+5/3}=\\frac58=0.625.$$</div>
     <p>"Free" pushes toward spam by a factor of 12.5; "meeting" pulls back by a factor of 5. In log-odds the two simply add: $\\log_{10}12.5+\\log_{10}0.2\\approx1.10-0.70=0.40$. This is exactly how the naive-Bayes spam filter in the capstone scores an email, one word at a time.</p>`);},snapTo(0.625,0.0015));
   setHints([`Convert the prior to odds (0.4/0.6), then multiply by each word's likelihood ratio: P(word | spam) / P(word | legit). Convert back with P = O/(1+O).`,`Odds = (2/3) × 12.5 × 0.2 = 5/3, so P = (5/3)/(1 + 5/3) = 5/8 = 0.625.`]);
+}
+
+/* ---------- Beat 7: independence ---------- */
+function p1_independence(){
+  stage.innerHTML=`<div class="card"><h2>Independence: when knowing one tells you nothing</h2>
+    <p>Sometimes learning that $B$ happened changes the probability of $A$ — a positive test raised the chance of disease. Sometimes it changes nothing — a coin does not remember the last toss. Events of the second kind are <b>independent</b>.</p>
+    <p><b>See it in the square.</b> As before, the strip on the left is $B$ (width $P(B)$) and the rest is $B^{c}$. The shading is $A$: its height inside $B$ is $P(A\\mid B)$, and inside $B^{c}$ it is $P(A\\mid B^{c})$. Drag the strip border and the two bar tops, or pick a preset.</p>
+    <div class="seg" id="segip"></div>
+    <canvas id="cvi7" width="640" height="400" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">P(A | B)</div><div class="v" id="i1">—</div></div><div class="rdc"><div class="k">P(A)</div><div class="v" id="i2">—</div></div><div class="rdc"><div class="k">P(A ∩ B)</div><div class="v" id="i3">—</div></div><div class="rdc"><div class="k">P(A) · P(B)</div><div class="v" id="i4">—</div></div></div>
+    <p class="small" id="i5" style="margin-top:8px;min-height:20px"></p>
+    <p style="margin-top:14px"><b>What to notice.</b> $P(A)$ is the level of the shading spread over the whole square — the weighted average of the two heights (beat 4). When the two heights are equal, the shading is <em>flat</em>, the average equals both heights, and $P(A\\mid B)=P(A)$: learning $B$ does not move the probability of $A$. Whenever the heights differ, it does.</p>
+    <p><b>Step 1: the definition.</b> "Learning $B$ does not change $A$" is $P(A\\mid B)=P(A)$. Substitute the definition of $P(A\\mid B)$ and multiply both sides by $P(B)$:</p>
+    <div class="eqbox">$$\\frac{P(A\\cap B)}{P(B)}=P(A)\\quad\\Longleftrightarrow\\quad P(A\\cap B)=P(A)\\,P(B).$$</div>
+    <div class="defn"><span class="dt">Independence</span>Events $A$ and $B$ are <b>independent</b> when $P(A\\cap B)=P(A)\\,P(B)$.</div>
+    <p>The product form is the one used as the definition, for two reasons: it treats $A$ and $B$ symmetrically, so it also gives $P(B\\mid A)=P(B)$ — dividing by $P(A)$ instead — and it still makes sense when $P(B)=0$, where $P(A\\mid B)$ is undefined. In the square, $P(A\\cap B)$ is the shaded part of the $B$ strip, width $P(B)$ times height $P(A\\mid B)$; the readouts show it matching $P(A)P(B)$ exactly when the shading is flat.</p>
+    <p><b>Step 2: the complement comes along.</b> If $A$ and $B$ are independent, so are $A$ and $B^{c}$. Split $A$ into its parts inside and outside $B$ — disjoint, so they add — and substitute:</p>
+    <div class="eqbox">$$P(A\\cap B^{c})=P(A)-P(A\\cap B)=P(A)-P(A)P(B)=P(A)\\,\\big(1-P(B)\\big)=P(A)\\,P(B^{c}).$$</div>
+    <p>In the square: flat shading is flat in both strips at once.</p>
+
+    <h2 style="margin-top:22px">Independent is not disjoint</h2>
+    <p>Choose the <b>disjoint</b> preset: $A$ lies entirely outside $B$, so the shading in the $B$ strip has height 0. The events cannot happen together, $P(A\\cap B)=0$. But $P(A)P(B)\\gt0$ whenever both events are possible, so the product rule fails: disjoint events are <em>dependent</em>, about as strongly as possible — learning $B$ drops the probability of $A$ to zero. "Independent" means the shading is flat across the border; "disjoint" means there is no shading at all on one side of it.</p>
+
+    <h2 style="margin-top:22px">Testing events on the dice</h2>
+    <p>Independence is a numerical fact, not something visible in how events are described. Pick two events about two dice and compare $P(A\\mid B)$ with $P(A)$.</p>
+    <div class="slabel" style="margin-top:10px">A =</div><div class="seg" id="segia" style="margin-top:4px"></div>
+    <div class="slabel" style="margin-top:10px">B =</div><div class="seg" id="segib" style="margin-top:4px"></div>
+    <div class="readout"><div class="rdc"><div class="k">P(A)</div><div class="v" id="d1">—</div></div><div class="rdc"><div class="k">P(A | B)</div><div class="v" id="d2">—</div></div><div class="rdc"><div class="k">P(A ∩ B) vs P(A)P(B)</div><div class="v" id="d3" style="font-size:14px">—</div></div><div class="rdc"><div class="k">verdict</div><div class="v" id="d4">—</div></div></div>
+    <p style="margin-top:12px">"Red is even" and "the sum is 7" are independent, though the sum involves the red die: $P(\\text{red even})=\\tfrac12$, and of the six sum-7 outcomes $(1,6),(2,5),(3,4),(4,3),(5,2),(6,1)$ exactly three have red even, so $P(\\text{red even}\\mid\\text{sum }7)=\\tfrac36=\\tfrac12$. Whatever red shows, exactly one blue face makes 7, so the sum being 7 says nothing about red. "Red is 6" and "the sum is 8" are dependent: $P(\\text{red }6\\mid\\text{sum }8)=\\tfrac15\\ne\\tfrac16$.</p>
+
+    <h2 style="margin-top:22px">Independence is what made Module 1's products valid</h2>
+    <p>The binomial formula gave a sequence like HHT the probability $p\\cdot p\\cdot q$, and the two-dice grid gave each of the 36 cells probability $\\tfrac16\\cdot\\tfrac16$. Both multiplied the probabilities of separate tosses or dice. By the chain rule the exact probability is $P(H_1)\\,P(H_2\\mid H_1)\\,P(T_3\\mid H_1\\cap H_2)$; the tosses are modelled as independent — no toss influences another — so each conditional equals the plain probability and the product is just $p\\cdot p\\cdot q$. Independence is an assumption about the experiment, and it is the assumption that the streaky trader of beat 3 broke.</p>
+    <div class="task"><b>Two data feeds</b>A trading system uses two data feeds that fail independently: feed A on 2% of days, feed B on 5%. The system raises a warning on any day at least one feed fails. On what fraction of days is there a warning? Enter a decimal.</div>
+    ${gateHTML('e.g. 0.05')}</div>`;
+
+  const cv=document.getElementById('cvi7');const pl=plot(cv,{xmin:-0.06,xmax:1.06,ymin:-0.14,ymax:1.08});
+  let wB=0.4,hB=0.5,hC=0.5,drag=null;
+  function draw(){const ctx=pl.ctx;const PA=wB*hB+(1-wB)*hC,PAB=wB*hB;
+    if(ctx){ctx.clearRect(0,0,pl.W,pl.H);const R=(x0,y0,x1,y1,f)=>{ctx.fillStyle=f;ctx.fillRect(pl.px(x0),pl.py(y1),pl.px(x1)-pl.px(x0),pl.py(y0)-pl.py(y1));};
+      R(0,0,1,1,'#0f1724');R(0,0,wB,hB,'rgba(232,184,75,.70)');R(wB,0,1,hC,'rgba(232,184,75,.38)');
+      ctx.setLineDash([6,5]);ctx.strokeStyle='#e9eef6';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(pl.px(0),pl.py(PA));ctx.lineTo(pl.px(1),pl.py(PA));ctx.stroke();ctx.setLineDash([]);
+      ctx.strokeStyle='#e9eef6';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(pl.px(wB),pl.py(0));ctx.lineTo(pl.px(wB),pl.py(1));ctx.stroke();ctx.fillStyle='#e9eef6';ctx.fillRect(pl.px(wB)-6,pl.py(1)-14,12,12);
+      [[wB/2,hB],[(1+wB)/2,hC]].forEach(([x,y])=>{ctx.beginPath();ctx.arc(pl.px(x),pl.py(y),6,0,7);ctx.fill();});
+      ctx.strokeStyle='#2b3a4f';ctx.strokeRect(pl.px(0),pl.py(1),pl.px(1)-pl.px(0),pl.py(0)-pl.py(1));
+      ctx.font=p0Font(12);ctx.textAlign='center';ctx.fillStyle='#e8b84b';ctx.fillText('B   width '+wB.toFixed(2),pl.px(wB/2),pl.py(0)+16);ctx.fillStyle='#9fb0c4';ctx.fillText('Bᶜ   width '+(1-wB).toFixed(2),pl.px((1+wB)/2),pl.py(0)+16);
+      ctx.fillStyle='#e9eef6';ctx.fillText(hB.toFixed(2),pl.px(wB/2),pl.py(hB)-10);ctx.fillText(hC.toFixed(2),pl.px((1+wB)/2),pl.py(hC)-10);
+      ctx.textAlign='left';ctx.fillText('dashed: P(A) = '+PA.toFixed(3),pl.px(0)+6,pl.py(PA)-6);}
+    p0Set('i1',hB.toFixed(3));p0Set('i2',PA.toFixed(3));p0Set('i3',PAB.toFixed(3));p0Set('i4',(PA*wB).toFixed(3));
+    const ind=Math.abs(hB-hC)<1e-9;
+    p0Set('i5',hB===0&&hC>0?'Disjoint: A never happens inside B, so P(A ∩ B) = 0 while P(A)P(B) > 0. Learning B rules A out — strongly dependent.':(ind?'Flat shading: P(A | B) = P(A), and P(A ∩ B) = P(A)P(B). Independent.':'Shading not flat: learning B moves the probability of A from '+PA.toFixed(3)+' to '+hB.toFixed(3)+'. Dependent.'));}
+  const snap=v=>Math.round(v*100)/100;
+  cv.style.touchAction='none';
+  cv.addEventListener('pointerdown',e=>{const [X,Y]=p0XY(cv,e);const x=pl.mx(X),y=pl.my(Y);
+    if(x<wB-0.02&&Math.abs(y-hB)<0.07)drag='hB';else if(x>wB+0.02&&Math.abs(y-hC)<0.07)drag='hC';else if(Math.abs(x-wB)<0.05)drag='w';else return;
+    try{cv.setPointerCapture(e.pointerId);}catch(z){}move(e);e.preventDefault();});
+  function move(e){if(!drag)return;const [X,Y]=p0XY(cv,e);const x=pl.mx(X),y=pl.my(Y);
+    if(drag==='w')wB=snap(Math.max(0.05,Math.min(0.95,x)));else if(drag==='hB')hB=snap(Math.max(0,Math.min(1,y)));else hC=snap(Math.max(0,Math.min(1,y)));
+    document.querySelectorAll('#segip .segb').forEach(b=>b.classList.remove('on'));draw();}
+  cv.addEventListener('pointermove',e=>{if(drag){e.preventDefault();move(e);}});
+  const end=()=>drag=null;cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  p0Seg('segip',[['ind','independent'],['dep','dependent'],['dis','disjoint']],'ind',k=>{if(k==='ind'){wB=0.4;hB=0.5;hC=0.5;}else if(k==='dep'){wB=0.4;hB=0.8;hC=0.3;}else{wB=0.4;hB=0;hC=0.6;}draw();});
+  draw();
+  /* dice tester */
+  const DA=[['reven','red even',(r,b)=>r%2===0],['r6','red = 6',(r,b)=>r===6],['b5','blue ≥ 5',(r,b)=>b>=5],['dbl','doubles',(r,b)=>r===b]];
+  const DB=[['s7','sum = 7',(r,b)=>r+b===7],['s8','sum = 8',(r,b)=>r+b===8],['beven','blue even',(r,b)=>b%2===0],['six','at least one 6',(r,b)=>r===6||b===6]];
+  let ka='reven',kb='s7';
+  function test(){const A=DA.find(x=>x[0]===ka)[2],B=DB.find(x=>x[0]===kb)[2];let na=0,nb=0,nab=0;
+    for(let r=1;r<=6;r++)for(let b=1;b<=6;b++){const a=A(r,b),c=B(r,b);if(a)na++;if(c)nb++;if(a&&c)nab++;}
+    p0Set('d1',na+'/36 = '+(na/36).toFixed(4));p0Set('d2',nab+'/'+nb+' = '+(nab/nb).toFixed(4));
+    p0Set('d3',(nab/36).toFixed(4)+' vs '+(na*nb/1296).toFixed(4));
+    p0Set('d4',nab*36===na*nb?'independent':'dependent');}
+  p0Seg('segia',DA.map(x=>[x[0],x[1]]),ka,k=>{ka=k;test();});
+  p0Seg('segib',DB.map(x=>[x[0],x[1]]),kb,k=>{kb=k;test();});
+  test();
+  numChk(document.getElementById('gate'),0.069,()=>{addReveal(`<div class="rh">✓ 0.069</div>
+    <p>A warning is the union "A fails or B fails". The union rule needs $P(\\text{both fail})$, and independence supplies it as a product:</p>
+    <div class="eqbox">$$P(A\\cup B)=P(A)+P(B)-P(A)\\,P(B)=0.02+0.05-0.02\\times0.05=0.07-0.001=0.069.$$</div>
+    <p>The complement gives the same: no warning means both feeds work, $P(A^{c}\\cap B^{c})=0.98\\times0.95=0.931$ — independence carries over to the complements (Step 2) — and $1-0.931=0.069$. If the feeds shared a cause of failure (the same data vendor, say), they would not be independent, the overlap would be larger than $0.001$, and the warning rate lower.</p>`);},snapTo(0.069,0.0006));
+  setHints([`A warning is "A fails or B fails". Use the union rule, and get P(both fail) from independence.`,`0.02 + 0.05 − 0.02 × 0.05 = 0.069.`]);
 }
 
 /* ================= boot ================= */
