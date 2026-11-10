@@ -144,7 +144,7 @@ const MODULES=[
   beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply,p0_combinations,p0_coins,p0_spaces,p0_birthday,p0_inclusion,p0_derangements,p0_problems]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:true,
   outro:`Conditioning restricts the sample space to what you know: $P(A\\mid B)=P(A\\cap B)/P(B)$, the long-run share of $A$ among the trials where $B$ happened.`,
-  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_independence,p1_mutual]},
+  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_independence,p1_mutual,p1_condind]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
@@ -2282,6 +2282,70 @@ function p1_mutual(){
     <div class="eqbox">$$P(\\text{all work})=0.9\\times0.8\\times0.95=0.684.$$</div>
     <p>Pairwise independence would not be enough to justify this product — it is a statement about all three together, the fourth equation of the definition. And the system fails on almost a third of days even though no single component fails more than 20% of the time: in series, reliabilities multiply, so they only go down.</p>`);},snapTo(0.684,0.0006));
   setHints([`The system works only if every component works. Each works with probability 1 − (its failure probability). Mutual independence lets you multiply.`,`0.9 × 0.8 × 0.95 = 0.684.`]);
+}
+
+/* ---------- Beat 9: conditional independence and Simpson's paradox ---------- */
+function p1_condind(){
+  stage.innerHTML=`<div class="card"><h2>Conditional independence and Simpson's paradox</h2>
+    <p>Beat 6 assumed two test results were unrelated "once disease status is fixed". That is a different statement from independence, and the difference matters: knowing one thing can create or destroy a link between two others.</p>
+    <div class="defn"><span class="dt">Conditional independence</span>$A$ and $B$ are <b>conditionally independent given $C$</b> when they are independent inside the restricted world $C$:
+      $$P(A\\cap B\\mid C)=P(A\\mid C)\\,P(B\\mid C).$$
+      Dividing both sides by $P(B\\mid C)$ gives the equivalent form $P(A\\mid B\\cap C)=P(A\\mid C)$: once $C$ is known, learning $B$ adds nothing about $A$.</div>
+
+    <p><b>A common cause makes independent things look linked.</b> Take the screening test, with $P(D)=0.01$, $P(+\\mid D)=0.9$, $P(+\\mid D^{c})=0.09$, and two tests whose errors are conditionally independent given $D$ and given $D^{c}$. Does a first positive change the chance of a second positive? Count 100,000 people:</p>
+    <div style="overflow-x:auto;margin:10px 0"><table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.6;text-align:center">
+      <tr style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.3px"><td style="padding:5px;border-bottom:1px solid var(--line)"></td><td style="padding:5px;border-bottom:1px solid var(--line)">people</td><td style="padding:5px;border-bottom:1px solid var(--line)">1st test +</td><td style="padding:5px;border-bottom:1px solid var(--line)">both tests +</td></tr>
+      <tr><td style="padding:5px;text-align:left">sick ($D$)</td><td>1,000</td><td>$1000\\times0.9=900$</td><td>$900\\times0.9=810$</td></tr>
+      <tr><td style="padding:5px;text-align:left">healthy ($D^{c}$)</td><td>99,000</td><td>$99000\\times0.09=8{,}910$</td><td>$8910\\times0.09\\approx802$</td></tr>
+      <tr><td style="padding:5px;text-align:left;border-top:1px solid var(--line)">total</td><td style="border-top:1px solid var(--line)">100,000</td><td style="border-top:1px solid var(--line)">9,810</td><td style="border-top:1px solid var(--line)">1,612</td></tr></table></div>
+    <p>Inside each row the second test ignores the first — the "both +" column is the "1st +" column times the same rate. But across the whole population, $P(\\text{2nd}+)=\\frac{9810}{100000}\\approx0.098$, while $P(\\text{2nd}+\\mid\\text{1st}+)=\\frac{1612}{9810}\\approx0.164$. A first positive makes it more likely you are sick, and being sick makes a second positive more likely. The two results are <em>dependent</em>, linked through their common cause, and <em>conditionally independent given</em> that cause. This is also the structure a naive-Bayes spam filter assumes: words dependent overall, independent given spam or not.</p>
+    <p><b>A common effect makes independent things look linked.</b> Toss two fair coins, independent. Now learn only that at least one is heads. If the first turns out to be tails, the second <em>must</em> be heads: given the common effect "at least one head", the coins become dependent. A Bayesian network (Module 11) is a diagram of exactly these patterns — which variables become linked or unlinked when others are observed.</p>
+
+    <h2 style="margin-top:22px">Simpson's paradox</h2>
+    <p>Two strategies are compared over their trading history. Each traded in calm markets and in volatile markets. Each square below is one strategy: its strips are the two kinds of market, with <b>width</b> = the share of that strategy's trades made in that market, and <b>shading height</b> = its win rate there. The dashed line is its overall win rate. Drag the borders.</p>
+    <canvas id="cvs9" width="640" height="360" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">calm: A vs B</div><div class="v" id="s1">—</div></div><div class="rdc"><div class="k">volatile: A vs B</div><div class="v" id="s2">—</div></div><div class="rdc"><div class="k">overall: A vs B</div><div class="v" id="s3">—</div></div></div>
+    <p class="small" id="s4" style="margin-top:8px;min-height:20px"></p>
+    <p style="margin-top:14px"><b>What to notice.</b> With the starting numbers, A wins more often than B in calm markets (93% vs 87%) <em>and</em> in volatile markets (73% vs 69%) — yet B wins more often overall (83% vs 78%). (These are the numbers of a well-known 1986 medical study comparing two kidney-stone treatments, relabelled.) Drag both borders to the same position and the reversal disappears.</p>
+    <p><b>Why it happens.</b> Each overall rate is a weighted average of the two strip heights (total probability, beat 4), and the two strategies use <em>different weights</em>. A made 75% of its trades in volatile markets, where everything wins less often; B made 77% of its trades in calm markets. B's overall rate is pulled toward the easy strip, A's toward the hard one:</p>
+    <div class="eqbox">$$\\text{A}: 0.25\\times0.93+0.75\\times0.73\\approx0.78,\\qquad \\text{B}: 0.77\\times0.87+0.23\\times0.69\\approx0.83.$$</div>
+    <p>The market type is a <b>confounder</b>: it affects both which strategy was used and how often trades win. Comparing overall rates mixes the strategies' skill with the markets they happened to trade in. Conditioning on the market — comparing within each strip — removes that mix, and here it is the fair comparison. Which comparison is right in general depends on what causes what, not on the numbers alone; that question returns with Bayesian networks. In backtesting, this is why a strategy's overall Sharpe ratio can mislead if it traded mostly in favorable periods.</p>
+    <div class="task"><b>A second opinion</b>A disease has prevalence 10%. A test is positive for 80% of sick people and 10% of healthy people, and two tests are conditionally independent given disease status. A first test comes back positive. What is the probability that a second test is also positive? Enter a decimal.</div>
+    ${gateHTML('e.g. 0.5')}</div>`;
+
+  const cv=document.getElementById('cvs9');
+  const H={A:[0.93,0.73],B:[0.87,0.69]};let w={A:0.25,B:0.77},drag=null;
+  const box=k=>{const W=cv.width,gap=24,bw=(W-gap-40)/2,x0=20+(k==='A'?0:bw+gap);return {x0,x1:x0+bw,y0:34,y1:cv.height-44};};
+  function draw(){const ctx=cv.getContext&&cv.getContext('2d');const ov={};
+    ['A','B'].forEach(k=>ov[k]=w[k]*H[k][0]+(1-w[k])*H[k][1]);
+    if(ctx){ctx.clearRect(0,0,cv.width,cv.height);
+      ['A','B'].forEach(k=>{const b=box(k),xm=b.x0+(b.x1-b.x0)*w[k],yy=v=>b.y1-(b.y1-b.y0)*v;
+        ctx.fillStyle='#0f1724';ctx.fillRect(b.x0,b.y0,b.x1-b.x0,b.y1-b.y0);
+        ctx.fillStyle='rgba(63,185,143,.65)';ctx.fillRect(b.x0,yy(H[k][0]),xm-b.x0,b.y1-yy(H[k][0]));
+        ctx.fillStyle='rgba(226,102,79,.6)';ctx.fillRect(xm,yy(H[k][1]),b.x1-xm,b.y1-yy(H[k][1]));
+        ctx.strokeStyle='#e9eef6';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xm,b.y0);ctx.lineTo(xm,b.y1);ctx.stroke();ctx.fillStyle='#e9eef6';ctx.fillRect(xm-6,b.y0-14,12,12);
+        ctx.setLineDash([6,5]);ctx.strokeStyle='#e8b84b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(b.x0,yy(ov[k]));ctx.lineTo(b.x1,yy(ov[k]));ctx.stroke();ctx.setLineDash([]);
+        ctx.strokeStyle='#2b3a4f';ctx.strokeRect(b.x0,b.y0,b.x1-b.x0,b.y1-b.y0);
+        ctx.font=p0Font(14);ctx.fillStyle='#e9eef6';ctx.textAlign='left';ctx.fillText('Strategy '+k,b.x0,22);
+        ctx.font=p0Font(11);ctx.textAlign='center';ctx.fillStyle='#3fb98f';ctx.fillText('calm '+Math.round(w[k]*100)+'%',(b.x0+xm)/2,b.y1+16);ctx.fillStyle='#e2664f';ctx.fillText('volatile '+Math.round((1-w[k])*100)+'%',(xm+b.x1)/2,b.y1+16);
+        ctx.fillStyle='#e9eef6';ctx.fillText(Math.round(H[k][0]*100)+'%',(b.x0+xm)/2,yy(H[k][0])-6);ctx.fillText(Math.round(H[k][1]*100)+'%',(xm+b.x1)/2,yy(H[k][1])-6);
+        ctx.fillStyle='#e8b84b';ctx.textAlign='left';ctx.fillText('overall '+(ov[k]*100).toFixed(1)+'%',b.x0+4,b.y1+34);});
+      ctx.textAlign='left';}
+    p0Set('s1','93% vs 87%');p0Set('s2','73% vs 69%');p0Set('s3',(ov.A*100).toFixed(1)+'% vs '+(ov.B*100).toFixed(1)+'%');
+    p0Set('s4',ov.B>ov.A?'Reversal: A is better in each kind of market, but B is better overall, because B traded mostly in calm markets.':'No reversal: A is better in each kind of market and overall.');}
+  cv.style.touchAction='none';
+  const which=X=>{for(const k of ['A','B']){const b=box(k);if(X>=b.x0-10&&X<=b.x1+10)return k;}return null;};
+  function move(e){const [X]=p0XY(cv,e);const b=box(drag);w[drag]=Math.round(Math.max(0.05,Math.min(0.95,(X-b.x0)/(b.x1-b.x0)))*100)/100;draw();}
+  cv.addEventListener('pointerdown',e=>{const [X]=p0XY(cv,e);const k=which(X);if(!k)return;drag=k;try{cv.setPointerCapture(e.pointerId);}catch(z){}move(e);e.preventDefault();});
+  cv.addEventListener('pointermove',e=>{if(drag){e.preventDefault();move(e);}});
+  const end=()=>drag=null;cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  draw();
+  numChk(document.getElementById('gate'),0.073/0.17,()=>{addReveal(`<div class="rh">✓ about 0.43</div>
+    <p>$P(\\text{2nd}+\\mid\\text{1st}+)=\\frac{P(\\text{both}+)}{P(\\text{1st}+)}$. Split both by disease status (total probability), and use conditional independence inside each group to multiply the two tests:</p>
+    <div class="eqbox">$$P(\\text{1st}+)=0.1\\times0.8+0.9\\times0.1=0.17,\\qquad P(\\text{both}+)=0.1\\times0.8^2+0.9\\times0.1^2=0.064+0.009=0.073,$$
+    $$P(\\text{2nd}+\\mid\\text{1st}+)=\\frac{0.073}{0.17}\\approx0.43.$$</div>
+    <p>Without the first result, a test is positive with probability 0.17. After a positive, a second positive is 0.43 — more than twice as likely — because the first positive shifted the odds toward "sick". The tests are conditionally independent given disease status, but not independent.</p>`);},snapTo(0.073/0.17,0.0015));
+  setHints([`Write P(2nd + | 1st +) = P(both +) / P(1st +). Find each by splitting into sick and healthy; inside each group, the two tests multiply.`,`P(1st +) = 0.1·0.8 + 0.9·0.1 = 0.17 and P(both +) = 0.1·0.64 + 0.9·0.01 = 0.073, so the answer is 0.073 / 0.17 ≈ 0.43.`]);
 }
 
 /* ================= boot ================= */
