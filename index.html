@@ -144,7 +144,7 @@ const MODULES=[
   beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply,p0_combinations,p0_coins,p0_spaces,p0_birthday,p0_inclusion,p0_derangements,p0_problems]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:true,
   outro:`Conditioning restricts the sample space to what you know: $P(A\\mid B)=P(A\\cap B)/P(B)$, the long-run share of $A$ among the trials where $B$ happened.`,
-  beats:[p1_recall,p1_conditional,p1_multiply,p1_total]},
+  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
@@ -1981,6 +1981,80 @@ function p1_total(){
     <div class="eqbox">$$P(\\text{free})=P(\\text{spam})\\,P(\\text{free}\\mid\\text{spam})+P(\\text{legit})\\,P(\\text{free}\\mid\\text{legit})=0.4\\times0.25+0.6\\times0.02=0.100+0.012=0.112.$$</div>
     <p>About 11% of emails contain the word, and most of them are spam: 0.100 of the 0.112. The next beat turns that around and asks the question a spam filter needs — <em>given</em> that an email contains "free", how likely is it to be spam?</p>`);},snapTo(0.112,0.0015));
   setHints([`Split the inbox into spam (width 0.4) and legitimate (width 0.6). In each strip, what fraction contains "free"? Add the two shaded areas.`,`0.4 × 0.25 + 0.6 × 0.02 = 0.100 + 0.012 = 0.112.`]);
+}
+
+/* ---------- Beat 5: Bayes' theorem ---------- */
+function p1_bayes(){
+  stage.innerHTML=`<div class="card"><h2>Bayes' theorem: turning a conditional around</h2>
+    <p>A disease affects 1% of people. A screening test comes back positive for 90% of people who have it, and also, falsely, for 9% of people who do not. You test positive. How likely is it that you have the disease? Guess before reading on.</p>
+    <div class="seg" id="segbg"></div>
+    <p class="small" id="bgout" style="margin-top:6px;min-height:18px"></p>
+    <div class="defn"><span class="dt">The objects</span>
+      $D$ — "has the disease"; $D^{c}$ — "does not". They partition the population.<br>
+      $+$ — "tests positive".<br>
+      Given: $P(D)=0.01$, $P(+\\mid D)=0.9$, $P(+\\mid D^{c})=0.09$. Asked: $P(D\\mid +)$ — the conditional the other way round.</div>
+    <p><b>Step 1: count 1000 people.</b> Switch the picture between the people, the unit square, and the positives alone, and move the sliders.</p>
+    <div class="seg" id="segbv"></div>
+    <canvas id="cvb5" width="640" height="420" style="margin-top:10px"></canvas>
+    <div class="ctrls"><span class="slabel" id="bpL">P(D) = 0.010</span><input type="range" id="bp" min="0.005" max="0.5" step="0.005" value="0.01"></div>
+    <div class="ctrls" style="margin-top:4px"><span class="slabel" id="bsL">P(+ | D) = 0.90</span><input type="range" id="bs" min="0.5" max="1" step="0.01" value="0.9"></div>
+    <div class="ctrls" style="margin-top:4px"><span class="slabel" id="bfL">P(+ | Dᶜ) = 0.09</span><input type="range" id="bf" min="0" max="0.3" step="0.01" value="0.09"></div>
+    <div class="readout"><div class="rdc"><div class="k">sick and positive</div><div class="v" id="b51">—</div></div><div class="rdc"><div class="k">healthy and positive</div><div class="v" id="b52">—</div></div><div class="rdc"><div class="k">all positives</div><div class="v" id="b53">—</div></div><div class="rdc"><div class="k">P(D | +)</div><div class="v" id="b54">—</div></div></div>
+    <p style="margin-top:14px">With the starting numbers: of 1000 people, $1000\\times0.01=10$ have the disease, and $10\\times0.9=9$ of them test positive. The other 990 are healthy, and $990\\times0.09\\approx89$ of them test positive too. So 98 people test positive, and only 9 of them are sick:</p>
+    <div class="eqbox">$$P(D\\mid +)\\approx\\frac{9}{9+89}=\\frac{9}{98}\\approx0.09.$$</div>
+    <p>About 9%, not 90%. The test is good, but the disease is rare: the healthy group is 99 times larger, so even its small false-positive rate produces ten times as many positives as the sick group does.</p>
+    <p><b>Step 2: see it in the square.</b> In the <b>unit square</b> view, the strips are $D$ (width $0.01$) and $D^{c}$ (width $0.99$), and the shading in each is the positives, with height $P(+\\mid D)$ or $P(+\\mid D^{c})$. Learning "$+$" means zooming into the shaded area — the <b>positives only</b> view — and $P(D\\mid +)$ is the share of that area lying in the $D$ strip. The $D$ piece is tall but very thin, because the strip it sits in is thin.</p>
+    <p><b>Step 3: derive the formula.</b> By the definition of conditional probability,</p>
+    <div class="eqbox">$$P(D\\mid +)=\\frac{P(D\\cap +)}{P(+)}.$$</div>
+    <p>The numerator is the $D$ piece of the shading: by the multiplication rule, $P(D\\cap +)=P(D)\\,P(+\\mid D)$. The denominator is all the shading: by total probability over the partition $D,D^{c}$, $P(+)=P(D)\\,P(+\\mid D)+P(D^{c})\\,P(+\\mid D^{c})$. Substituting both:</p>
+    <div class="defn"><span class="dt">Bayes' theorem</span>
+      $$P(D\\mid +)=\\frac{P(D)\\,P(+\\mid D)}{P(D)\\,P(+\\mid D)+P(D^{c})\\,P(+\\mid D^{c})}=\\frac{0.01\\times0.9}{0.01\\times0.9+0.99\\times0.09}=\\frac{0.009}{0.0981}\\approx0.092.$$
+      For any partition $B_1,\\dots,B_m$ and event $A$ with $P(A)\\gt0$: $\;P(B_j\\mid A)=\\dfrac{P(B_j)\\,P(A\\mid B_j)}{\\sum_i P(B_i)\\,P(A\\mid B_i)}$.</div>
+    <p>The three ingredients have names that recur through the course. $P(D)$ is the <b>prior</b>: the probability before the evidence. $P(+\\mid D)$ is the <b>likelihood</b>: how probable the evidence is under each possibility. $P(D\\mid +)$ is the <b>posterior</b>: the probability after the evidence.</p>
+    <p><b>Step 4: the two directions are different questions.</b> $P(+\\mid D)=0.9$ and $P(D\\mid +)\\approx0.09$ share the same numerator, $P(D\\cap+)$, the thin $D$ piece. The first divides it by the $D$ strip, which it nearly fills; the second divides it by all the shading, which it barely dents. Mixing them up is the confusion of the inverse, and ignoring the prior $P(D)$ is <b>base-rate neglect</b>. Move the $P(D)$ slider to see the prior's effect: at $P(D)=0.1$ the posterior is about 0.53, and at $0.5$ it is about 0.91.</p>
+    <p>The same calculation powers a spam filter. In the last beat, 40% of email was spam and "free" appeared in 25% of spam and 2% of legitimate mail. Bayes turns that around: $P(\\text{spam}\\mid\\text{free})=\\frac{0.4\\times0.25}{0.112}\\approx0.89$ — the probability a filter needs, computed from the probabilities that are easy to measure.</p>
+    <div class="task"><b>A trading signal</b>On 55% of days the market closes up. A signal fires before 60% of up days and before 30% of down days. The signal has just fired. What is the probability that the market closes up? Enter a decimal.</div>
+    ${gateHTML('e.g. 0.5')}</div>`;
+
+  const cv=document.getElementById('cvb5'),bp=document.getElementById('bp'),bs=document.getElementById('bs'),bf=document.getElementById('bf');
+  let view='people';
+  p0Seg('segbg',[['90','about 90%'],['50','about 50%'],['10','about 10%'],['1','about 1%']],'',k=>{document.querySelectorAll('#segbg .segb').forEach(x=>x.classList.toggle('on',x.dataset.k===k));
+    p0Set('bgout','Your guess: about '+k+'%. '+(k==='90'?'That is the most common answer — and the one this beat shows to be far off.':'Keep it in mind for Step 1.'));});
+  const G='#e8b84b',BL='#7ab8ff';
+  function draw(){const P=+bp.value,S=+bs.value,F=+bf.value;
+    p0Set('bpL','P(D) = '+P.toFixed(3));p0Set('bsL','P(+ | D) = '+S.toFixed(2));p0Set('bfL','P(+ | Dᶜ) = '+F.toFixed(2));
+    const nD=Math.round(1000*P),nDp=Math.round(nD*S),nH=1000-nD,nHp=Math.round(nH*F);
+    const post=P*S/(P*S+(1-P)*F||1);
+    const ctx=cv.getContext&&cv.getContext('2d');
+    if(ctx){const W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);ctx.textAlign='left';
+      if(view==='people'){const cols=40,cs=W/cols;let i=0;
+        const put=(n,fill,outline)=>{for(let j=0;j<n;j++,i++){const x=(i%cols)*cs+cs/2,y=Math.floor(i/cols)*cs+cs/2+2;ctx.beginPath();ctx.arc(x,y,cs*0.34,0,7);
+          if(fill){ctx.fillStyle=fill;ctx.fill();}else{ctx.strokeStyle=outline;ctx.lineWidth=1.6;ctx.stroke();}}};
+        put(nDp,G);put(nD-nDp,null,G);put(nHp,BL);put(nH-nHp,'#243246');
+        ctx.font=p0Font(12);const y=H-8;ctx.fillStyle=G;ctx.fillText('● sick & positive: '+nDp,6,y);ctx.fillText('○ sick & negative: '+(nD-nDp),190,y);ctx.fillStyle=BL;ctx.fillText('● healthy & positive: '+nHp,370,y);}
+      else if(view==='square'){const x0=40,x1=W-20,y0=20,y1=H-50,wD=Math.max(5,(x1-x0)*P),xs=x0+wD;
+        const yy=v=>y1-(y1-y0)*v;
+        ctx.fillStyle='#0f1724';ctx.fillRect(x0,y0,x1-x0,y1-y0);
+        ctx.fillStyle=G;ctx.fillRect(x0,yy(S),wD,y1-yy(S));ctx.fillStyle=BL+'aa';ctx.fillRect(xs,yy(F),x1-xs,y1-yy(F));
+        ctx.strokeStyle='#e9eef6';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(xs,y0);ctx.lineTo(xs,y1);ctx.stroke();ctx.strokeStyle='#2b3a4f';ctx.strokeRect(x0,y0,x1-x0,y1-y0);
+        ctx.font=p0Font(12);ctx.fillStyle=G;ctx.fillText('D: width '+P.toFixed(3)+', shading '+S.toFixed(2),x0,y1+18);
+        ctx.fillStyle=BL;ctx.textAlign='right';ctx.fillText('Dᶜ: width '+(1-P).toFixed(3)+', shading '+F.toFixed(2),x1,y1+18);ctx.textAlign='left';
+        ctx.fillStyle='#9fb0c4';ctx.fillText('shaded = positives. Gold area = P(D)P(+|D) = '+(P*S).toFixed(4)+';  blue area = P(Dᶜ)P(+|Dᶜ) = '+((1-P)*F).toFixed(4),x0,y1+38);}
+      else{const x0=40,x1=W-20,y0=70,y1=230,tot=P*S+(1-P)*F||1,xm=x0+(x1-x0)*(P*S/tot);
+        ctx.font=p0Font(13);ctx.fillStyle='#9fb0c4';ctx.fillText('All positives, rescaled to fill the bar (this is the new sample space):',x0,y0-16);
+        ctx.fillStyle=G;ctx.fillRect(x0,y0,Math.max(2,xm-x0),y1-y0);ctx.fillStyle=BL+'aa';ctx.fillRect(xm,y0,x1-xm,y1-y0);ctx.strokeStyle='#2b3a4f';ctx.strokeRect(x0,y0,x1-x0,y1-y0);
+        ctx.font=p0Font(14);ctx.fillStyle=G;ctx.fillText('sick: '+(P*S/tot*100).toFixed(1)+'%',x0,y1+26);ctx.fillStyle=BL;ctx.textAlign='right';ctx.fillText('healthy: '+((1-P)*F/tot*100).toFixed(1)+'%',x1,y1+26);ctx.textAlign='left';
+        ctx.font=p0Font(13);ctx.fillStyle='#e9eef6';ctx.fillText('P(D | +) = '+(P*S).toFixed(4)+' / '+tot.toFixed(4)+' = '+post.toFixed(3),x0,y1+60);
+        ctx.fillStyle='#9fb0c4';ctx.fillText('In counts: '+nDp+' sick positives out of '+(nDp+nHp)+' positives.',x0,y1+84);}}
+    p0Set('b51',nDp+' of '+nD);p0Set('b52',nHp+' of '+nH);p0Set('b53',String(nDp+nHp));p0Set('b54',post.toFixed(3));}
+  [bp,bs,bf].forEach(el=>el.oninput=draw);
+  p0Seg('segbv',[['people','1000 people'],['square','unit square'],['pos','positives only']],view,k=>{view=k;draw();});
+  draw();
+  numChk(document.getElementById('gate'),0.33/0.465,()=>{addReveal(`<div class="rh">✓ about 0.71</div>
+    <p>Prior: $P(\\text{up})=0.55$, $P(\\text{down})=0.45$. Likelihoods: $P(\\text{fire}\\mid\\text{up})=0.6$, $P(\\text{fire}\\mid\\text{down})=0.3$. Bayes:</p>
+    <div class="eqbox">$$P(\\text{up}\\mid\\text{fire})=\\frac{0.55\\times0.6}{0.55\\times0.6+0.45\\times0.3}=\\frac{0.330}{0.330+0.135}=\\frac{0.330}{0.465}\\approx0.71.$$</div>
+    <p>The signal raises the probability of an up day from 0.55 to 0.71. It is not 0.6: that is $P(\\text{fire}\\mid\\text{up})$, the conditional the other way round. In counts: of 1000 days, 550 up with 330 firings, 450 down with 135 firings; 330 of the 465 firings come before up days.</p>`);},snapTo(0.33/0.465,0.0015));
+  setHints([`The prior is P(up) = 0.55. The likelihoods are P(fire | up) = 0.6 and P(fire | down) = 0.3. Numerator: P(up)·P(fire | up). Denominator: all the ways the signal fires.`,`0.55 × 0.6 = 0.330 and 0.45 × 0.3 = 0.135, so the answer is 0.330 / 0.465 ≈ 0.71.`]);
 }
 
 /* ================= boot ================= */
