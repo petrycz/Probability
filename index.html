@@ -144,7 +144,7 @@ const MODULES=[
   beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply,p0_combinations,p0_coins,p0_spaces,p0_birthday,p0_inclusion,p0_derangements,p0_problems]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:true,
   outro:`Conditioning restricts the sample space to what you know: $P(A\\mid B)=P(A\\cap B)/P(B)$, the long-run share of $A$ among the trials where $B$ happened.`,
-  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_independence,p1_mutual,p1_condind]},
+  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_independence,p1_mutual,p1_condind,p1_puzzles]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
@@ -2346,6 +2346,79 @@ function p1_condind(){
     $$P(\\text{2nd}+\\mid\\text{1st}+)=\\frac{0.073}{0.17}\\approx0.43.$$</div>
     <p>Without the first result, a test is positive with probability 0.17. After a positive, a second positive is 0.43 — more than twice as likely — because the first positive shifted the odds toward "sick". The tests are conditionally independent given disease status, but not independent.</p>`);},snapTo(0.073/0.17,0.0015));
   setHints([`Write P(2nd + | 1st +) = P(both +) / P(1st +). Find each by splitting into sick and healthy; inside each group, the two tests multiply.`,`P(1st +) = 0.1·0.8 + 0.9·0.1 = 0.17 and P(both +) = 0.1·0.64 + 0.9·0.01 = 0.073, so the answer is 0.073 / 0.17 ≈ 0.43.`]);
+}
+
+/* ---------- Beat 10: puzzles where intuition fails ---------- */
+function p1_puzzles(){
+  stage.innerHTML=`<div class="card"><h2>Puzzles where intuition fails</h2>
+    <p>Three famous puzzles, each settled by writing down the sample space and conditioning carefully. Each also teaches one lesson about evidence.</p>
+    <h2 style="margin-top:18px">The Monty Hall problem</h2>
+    <p>A car is behind one of three doors, goats behind the others. You pick a door. The host, who <b>knows</b> where the car is, always opens a different door with a goat behind it, then offers you the chance to switch to the remaining closed door. Should you? Most people say it makes no difference: two doors left, so 50–50. Play it.</p>
+    <div class="seg" id="segmd"></div>
+    <div class="seg" id="segmh" style="margin-top:7px"></div>
+    <canvas id="cvm10" width="640" height="230" style="margin-top:10px"></canvas>
+    <p class="small" id="mmsg" style="margin-top:6px;min-height:20px"></p>
+    <div class="ctrls"><button class="btn ghost" id="mstay" style="padding:10px 14px">Stay</button><button class="btn ghost" id="mswitch" style="padding:10px 14px">Switch</button><button class="btn ghost" id="mnew" style="padding:10px 14px">New game</button></div>
+    <div class="seg" id="segmauto" style="margin-top:7px"></div>
+    <div class="readout"><div class="rdc"><div class="k">staying: won / played</div><div class="v" id="m1">—</div></div><div class="rdc"><div class="k">switching: won / played</div><div class="v" id="m2">—</div></div><div class="rdc"><div class="k">games discarded</div><div class="v" id="m3">—</div></div></div>
+    <p style="margin-top:14px">With a knowing host, switching wins about $\\tfrac23$ of the time and staying about $\\tfrac13$. With ten doors, where the host opens eight goat doors, switching wins about 90% of the time.</p>
+    <p><b>The quick reason.</b> Switching wins exactly when your first pick was wrong. Your first pick is wrong with probability $\\tfrac23$ (or $\\tfrac9{10}$ with ten doors), and the host's goat-revealing never changes that: whatever you picked, he can always show a goat.</p>
+    <p><b>The Bayes derivation.</b> Say you pick door 1 and the host opens door 3. Let $C_i$ be "the car is behind door $i$", each with prior $\\tfrac13$, and let $H_3$ be "the host opens door 3". The likelihoods come from the host's rule:</p>
+    <p>• Car behind 1: he may open 2 or 3, choosing at random, so $P(H_3\\mid C_1)=\\tfrac12$.<br>
+    • Car behind 2: door 3 is the only goat door he can open, so $P(H_3\\mid C_2)=1$.<br>
+    • Car behind 3: he never reveals the car, so $P(H_3\\mid C_3)=0$.</p>
+    <div class="eqbox">$$P(H_3)=\\tfrac13\\cdot\\tfrac12+\\tfrac13\\cdot1+\\tfrac13\\cdot0=\\tfrac12,\\qquad P(C_1\\mid H_3)=\\frac{\\tfrac13\\cdot\\tfrac12}{\\tfrac12}=\\tfrac13,\\qquad P(C_2\\mid H_3)=\\frac{\\tfrac13\\cdot1}{\\tfrac12}=\\tfrac23.$$</div>
+    <p><b>The lesson: how the evidence was produced is part of the evidence.</b> Switch the host to <b>doesn't know</b>: he opens a door at random, and games where he happens to reveal the car are thrown out. Now the likelihoods are $P(H_3\\text{ shows a goat}\\mid C_1)=\\tfrac12$ and $P(H_3\\text{ shows a goat}\\mid C_2)=\\tfrac12$ — equal — so the posteriors stay equal and switching wins only half the time. The open door looks the same in both games; the rule that chose it is different.</p>
+
+    <h2 style="margin-top:22px">Boy or girl</h2>
+    <p>A family has two children; each is a boy or a girl with probability $\\tfrac12$, independently. The equally likely outcomes, oldest first, are BB, BG, GB, GG.</p>
+    <p>• Told "the <b>older</b> child is a boy": the outcomes left are BB and BG, so $P(\\text{two boys})=\\tfrac12$.<br>
+    • Told "<b>at least one</b> child is a boy": the outcomes left are BB, BG, GB, so $P(\\text{two boys})=\\tfrac13$.</p>
+    <p>Both statements sound like "one of them is a boy", but they restrict the sample space differently. As with Monty Hall, the answer depends on exactly what was learned and how: if you met one of the children at random and he was a boy, the likelihoods are $1$ for BB and $\\tfrac12$ for BG and GB, and Bayes gives $\\frac{\\frac14\\cdot1}{\\frac14\\cdot1+\\frac14\\cdot\\frac12+\\frac14\\cdot\\frac12}=\\tfrac12$ again.</p>
+
+    <h2 style="margin-top:22px">The time-axis fallacy</h2>
+    <p>An urn holds 2 red and 2 blue balls. Draw two without replacement. You are told the <em>second</em> ball is red. What is the probability that the first was red? A common answer is $\\tfrac12$: "the first draw happened before the second, so the second cannot affect it". But conditioning is about information, not about time:</p>
+    <div class="eqbox">$$P(R_1\\mid R_2)=\\frac{P(R_1\\cap R_2)}{P(R_2)}=\\frac{\\tfrac24\\cdot\\tfrac13}{\\tfrac12}=\\frac{1/6}{1/2}=\\tfrac13.$$</div>
+    <p>Here $P(R_1\\cap R_2)=\\tfrac24\\cdot\\tfrac13$ by the multiplication rule, and $P(R_2)=\\tfrac12$ by the second-ball result of beat 4. Knowing the second ball is red means one of the two reds is accounted for, so the first draw had only one red among the other three balls: $\\tfrac13$. Later observations are evidence about earlier events — which is how a filter infers a past hidden state from later measurements (Module 10).</p>
+    <div class="task"><b>Four doors</b>Monty Hall with four doors: one car, three goats. You pick a door. The host, who knows where the car is, opens one of the other doors that has a goat. You then switch to one of the two remaining closed doors, chosen at random. What is the probability that you win the car? Enter a fraction or a decimal.</div>
+    ${gateHTML('e.g. 1/2 or 0.5')}</div>`;
+
+  const cv=document.getElementById('cvm10');
+  let N=3,know=true,g=null,st={sw:0,sp:0,ww:0,wp:0,disc:0};
+  function newGame(){g={car:Math.floor(Math.random()*N),pick:null,open:[],final:null,phase:'pick'};msg();draw();}
+  function hostOpen(){const others=[...Array(N).keys()].filter(i=>i!==g.pick);let keep;
+    if(know){keep=g.car!==g.pick?g.car:others[Math.floor(Math.random()*others.length)];g.open=others.filter(i=>i!==keep);g.phase='decide';}
+    else{keep=others[Math.floor(Math.random()*others.length)];g.open=others.filter(i=>i!==keep);if(g.open.includes(g.car)){g.phase='void';st.disc++;}else g.phase='decide';}}
+  function finish(sw){if(g.phase!=='decide')return;const rem=[...Array(N).keys()].find(i=>i!==g.pick&&!g.open.includes(i));g.final=sw?rem:g.pick;const won=g.final===g.car;
+    if(sw){st.sp++;if(won)st.sw++;}else{st.wp++;if(won)st.ww++;}g.phase='done';msg();draw();}
+  function auto(n,sw){for(let k=0;k<n;k++){g={car:Math.floor(Math.random()*N),pick:Math.floor(Math.random()*N),open:[],final:null,phase:'pick'};hostOpen();if(g.phase==='decide'){const rem=[...Array(N).keys()].find(i=>i!==g.pick&&!g.open.includes(i));g.final=sw?rem:g.pick;const won=g.final===g.car;if(sw){st.sp++;if(won)st.sw++;}else{st.wp++;if(won)st.ww++;}g.phase='done';}}msg();draw();}
+  function msg(){const m={pick:'Tap a door to pick it.',decide:'The host opened '+(N-2)+' door'+(N>3?'s':'')+' with a goat. Stay or switch?',void:'The host opened the car door by accident — this game is thrown out. Start a new game.',done:g&&g.final===g.car?'You won the car.':'A goat. Start a new game, or run many at once.'};
+    p0Set('mmsg',m[g.phase]);
+    p0Set('m1',st.wp?st.ww+' / '+st.wp+' = '+(st.ww/st.wp).toFixed(3):'—');p0Set('m2',st.sp?st.sw+' / '+st.sp+' = '+(st.sw/st.sp).toFixed(3):'—');p0Set('m3',know?'— (host knows)':String(st.disc));}
+  function doorRect(i){const W=cv.width,gap=8,dw=Math.min(150,(W-20-gap*(N-1))/N),tot=N*dw+(N-1)*gap,x0=(W-tot)/2;return [x0+i*(dw+gap),40,dw,150];}
+  function draw(){const ctx=cv.getContext&&cv.getContext('2d');if(!ctx)return;ctx.clearRect(0,0,cv.width,cv.height);ctx.textAlign='center';
+    for(let i=0;i<N;i++){const [x,y,w,h]=doorRect(i),opened=g.open.includes(i)||g.phase==='done'||g.phase==='void';
+      ctx.fillStyle=opened?'#0f1724':'#3d2f1e';ctx.fillRect(x,y,w,h);ctx.strokeStyle=i===g.pick?'#e8b84b':(i===g.final?'#7ab8ff':'#5d6f85');ctx.lineWidth=i===g.pick||i===g.final?3:1.5;ctx.strokeRect(x,y,w,h);
+      ctx.font=p0Font(N>3?12:16);ctx.fillStyle='#9fb0c4';ctx.fillText(String(i+1),x+w/2,y-8);
+      if(opened){ctx.font=p0Font(N>3?11:15);ctx.fillStyle=i===g.car?'#e8b84b':'#9fb0c4';ctx.fillText(i===g.car?'CAR':'goat',x+w/2,y+h/2+5);}
+      else{ctx.fillStyle='#c99a3a';ctx.beginPath();ctx.arc(x+w*0.8,y+h/2,Math.max(2,w*0.04),0,7);ctx.fill();}
+      if(i===g.pick){ctx.font=p0Font(11);ctx.fillStyle='#e8b84b';ctx.fillText('your pick',x+w/2,y+h+16);}}
+    ctx.textAlign='left';}
+  cv.addEventListener('pointerdown',e=>{if(g.phase!=='pick')return;const [X,Y]=p0XY(cv,e);for(let i=0;i<N;i++){const [x,y,w,h]=doorRect(i);if(X>=x&&X<=x+w&&Y>=y&&Y<=y+h){g.pick=i;hostOpen();msg();draw();break;}}e.preventDefault();});
+  document.getElementById('mstay').onclick=()=>finish(false);document.getElementById('mswitch').onclick=()=>finish(true);document.getElementById('mnew').onclick=newGame;
+  const reset=()=>{st={sw:0,sp:0,ww:0,wp:0,disc:0};newGame();};
+  p0Seg('segmd',[['3','3 doors'],['10','10 doors']],'3',k=>{N=+k;reset();});
+  p0Seg('segmh',[['k','host knows'],['r','host doesn\'t know']],'k',k=>{know=k==='k';reset();});
+  const sa=document.getElementById('segmauto');sa.innerHTML=[['s','+100 games, always stay'],['w','+100 games, always switch'],['c','clear tallies']].map(m=>`<span class="segb" data-k="${m[0]}">${m[1]}</span>`).join('');
+  sa.querySelectorAll('.segb').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(k==='c')reset();else auto(100,k==='w');});
+  newGame();
+  numChk(document.getElementById('gate'),3/8,()=>{addReveal(`<div class="rh">✓ 3/8 = 0.375</div>
+    <p>Split by whether your first pick was right (total probability).</p>
+    <p>• First pick right, probability $\\tfrac14$: both remaining closed doors hide goats, so switching loses.<br>
+    • First pick wrong, probability $\\tfrac34$: the host opened one of the two goat doors you did not pick, so of the two remaining closed doors one hides the car and one a goat. Switching at random wins with probability $\\tfrac12$.</p>
+    <div class="eqbox">$$P(\\text{win by switching})=\\tfrac14\\cdot0+\\tfrac34\\cdot\\tfrac12=\\tfrac38.$$</div>
+    <p>Staying wins with probability $\\tfrac14$, so switching is still better — $\\tfrac38\\gt\\tfrac14$ — even though it is a coin flip between two doors. The host's one opened door moved $\\tfrac18$ of probability onto each of the two other closed doors.</p>`);},snapTo(3/8,0.0015));
+  setHints([`Split into two cases: your first pick was right (1/4) or wrong (3/4). In each case, what are the two remaining closed doors hiding?`,`If you were right, switching loses; if wrong, one of the two doors has the car, so switching wins half the time: (3/4)(1/2) = 3/8.`]);
 }
 
 /* ================= boot ================= */
