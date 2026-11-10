@@ -1901,26 +1901,33 @@ function p1_multiply(){
 /* ---------- Beat 4: total probability ---------- */
 function p1_total(){
   stage.innerHTML=`<div class="card"><h2>Total probability: averaging over cases</h2>
-    <p>A trading strategy wins more often in some markets than others. Suppose you know how often each kind of day occurs, and how often the strategy wins on each kind. What is its overall win rate?</p>
+    <p>A strategy wins on 70% of up days, 50% of flat days, and 20% of down days. Half of all days are up, 30% flat, 20% down. What is its overall win rate?</p>
     <div class="defn"><span class="dt">The objects</span>
-      $B_1,B_2,B_3$ — the kind of day: up, flat, or down. Every day is exactly one kind, so these events form a <b>partition</b> of $\\Omega$.<br>
-      $P(B_i)$ — how often days of kind $i$ occur.<br>
-      $A$ — "the strategy wins that day"; $P(A\\mid B_i)$ is its win rate on days of kind $i$.</div>
-    <p>The square below has area 1, the whole sample space of days. Each vertical strip is one kind of day: its <b>width</b> is $P(B_i)$. The shaded part of a strip is the winning days of that kind: its <b>height</b> is $P(A\\mid B_i)$. <b>Drag</b> the white handles on the strip borders to change how often each kind of day occurs, and the tops of the shaded bars to change the win rates.</p>
+      $B_1,B_2,B_3$ — up, flat, down. Every day is exactly one kind, so they <b>partition</b> $\\Omega$.<br>
+      $P(B_i)$ — how often kind $i$ occurs. &nbsp; $A$ — "the strategy wins". &nbsp; $P(A\\mid B_i)$ — its win rate on kind $i$.</div>
+    <p>In the square below (area 1), each strip is one kind of day with <b>width</b> $P(B_i)$, and its shading has <b>height</b> $P(A\\mid B_i)$. Drag the border handles and the bar tops.</p>
     <canvas id="cvt4" width="640" height="440" style="margin-top:10px"></canvas>
     <div class="seg" id="seglv" style="margin-top:8px"></div>
     <div class="readout"><div class="rdc"><div class="k">shaded area: up</div><div class="v" id="t1">—</div></div><div class="rdc"><div class="k">shaded area: flat</div><div class="v" id="t2">—</div></div><div class="rdc"><div class="k">shaded area: down</div><div class="v" id="t3">—</div></div><div class="rdc"><div class="k">P(A) = all shaded area</div><div class="v" id="t4">—</div></div></div>
     <p class="small" id="t5" style="margin-top:8px"></p>
-    <p style="margin-top:14px"><b>A first guess.</b> With the starting values the win rates are 0.7, 0.5, and 0.2. Their plain average is $\\frac{0.7+0.5+0.2}3\\approx0.47$, but the readout says 0.54. Drag the borders until the three strips have equal widths, and the two numbers agree. The plain average treats every kind of day as equally common; the real answer weighs each win rate by how often its kind of day occurs.</p>
-    <p><b>Step 1: count it.</b> Picture 1000 days with the starting values. Half are up days: 500, of which 70% are wins, 350. Flat days: 300, half wins, 150. Down days: 200, of which 20% are wins, 40. Wins in all: $350+150+40=540$ out of 1000, a win rate of $0.54$.</p>
-    <p><b>Step 2: read it as area.</b> Each shaded rectangle has area width $\\times$ height $=P(B_i)\\,P(A\\mid B_i)$, which by the multiplication rule is $P(A\\cap B_i)$ — the share of days that are both of kind $i$ and winning. The strips do not overlap and together they fill the square, so the winning days are split into three disjoint pieces, and additivity adds them:</p>
-    <div class="defn"><span class="dt">Law of total probability</span>If $B_1,\\dots,B_m$ partition $\\Omega$ and each $P(B_i)\\gt0$, then for any event $A$
-      $$P(A)=\\sum_{i=1}^{m}P(A\\cap B_i)=\\sum_{i=1}^{m}P(B_i)\\,P(A\\mid B_i).$$</div>
-    <p>So $P(A)$ is a <b>weighted average</b> of the conditional probabilities $P(A\\mid B_i)$, with the weights $P(B_i)$ adding to 1. Switch on <b>level the shading</b> above: the dashed line at height $P(A)$ is where the shading would sit if it were spread evenly across the whole square — same total area, one common height. A weighted average always lies between the smallest and largest of the values it averages.</p>
-    <p>Total probability also settles a question from the urn. With 5 red and 3 blue balls, is the <em>second</em> ball drawn red as often as the first? Split by the first ball: $\\tfrac58\\cdot\\tfrac47+\\tfrac38\\cdot\\tfrac57=\\tfrac{35}{56}=\\tfrac58$. Exactly the same. Learning the first ball changes the second's chances, but not knowing it leaves them where they were — every position in a random order is equally likely to hold any given ball.</p>
-    <p>The pattern — split into cases, solve each case, recombine — runs through the rest of the course. Regime-switching models of markets (Module 9) compute exactly this sum with the regimes hidden; mixture models (Module 13) do it for densities; and in a Bayesian network (Module 11), summing a variable out of a joint distribution is total probability.</p>
+    <p style="margin-top:14px"><b>Try first:</b> the plain average of the win rates is $\\frac{0.7+0.5+0.2}{3}\\approx0.47$, but the readout says $0.54$. Drag the strips to equal widths and the two agree — the plain average assumes every kind of day is equally common.</p>
+    <p><b>Count it.</b> Of 1000 days: 500 up with 350 wins, 300 flat with 150, 200 down with 40. That is $540$ wins, a rate of $0.54$.</p>
+    <p><b>Read it as area.</b> Each shaded rectangle is width $\\times$ height $=P(B_i)\\,P(A\\mid B_i)=P(A\\cap B_i)$ by the multiplication rule. The strips are disjoint and fill the square, so they cut $A$ into disjoint pieces, and additivity adds them:</p>
+    <div class="defn"><span class="dt">Law of total probability</span>If $B_1,\\dots,B_m$ partition $\\Omega$, each with $P(B_i)\\gt0$, then
+      $$P(A)=\\sum_{i}P(A\\cap B_i)=\\sum_{i}P(B_i)\\,P(A\\mid B_i).$$
+      $P(A)$ is a <b>weighted average</b> of the $P(A\\mid B_i)$, with weights $P(B_i)$ adding to 1, so it lies between the smallest and largest of them.</div>
+    <p><b>Level the shading</b> above: the dashed line at height $P(A)$ is the shading spread evenly over the whole square — same area, one height. Conditioning on $B_i$ zooms into one strip and reads its height; not conditioning reads the level line.</p>
+
+    <h2 style="margin-top:22px">Example: is the second ball like the first?</h2>
+    <p>An urn holds 5 red and 3 blue balls. Draw two without replacement and look only at the second. Let $R_1,B_1$ be "first ball red / blue" — a partition — and $R_2$ "second ball red". Only 4 of the 7 remaining balls are red <em>if</em> the first was red; if it was blue, 5 are. Not looking leaves both possibilities, so average them:</p>
+    <div class="eqbox">$$P(R_2)=P(R_1)\\,P(R_2\\mid R_1)+P(B_1)\\,P(R_2\\mid B_1)=\\tfrac58\\cdot\\tfrac47+\\tfrac38\\cdot\\tfrac57=\\tfrac{35}{56}=\\tfrac58.$$</div>
+    <p>The same as the first ball. In general, with $r$ red and $b$ blue, $n=r+b$:</p>
+    <div class="eqbox">$$P(R_2)=\\frac rn\\cdot\\frac{r-1}{n-1}+\\frac bn\\cdot\\frac r{n-1}=\\frac{r\\,(r-1+b)}{n\\,(n-1)}=\\frac rn.$$</div>
+    <p><b>By counting.</b> The ordered pairs (first, second) of distinct balls number $n(n-1)$, all equally likely. Those with a red second ball: $r(r-1)$ with a red first, $b\\cdot r$ with a blue first, total $r(n-1)$ — so $\\frac{r(n-1)}{n(n-1)}=\\frac rn$. More generally, a red ball sits in position $k$ in $r\\,(n-1)!$ of the $n!$ orderings, so <em>every</em> position is red with probability $\\frac rn$. Here counting reaches the answer directly; total probability becomes the only route when the cases have unequal, uncountable probabilities, like the trading example above.</p>
+    <p><b>Why.</b> Unlooked-at, the second ball is just another random ball from the urn. Equivalently, the possible updates cancel: red first lowers the second's chance by $\\tfrac3{56}$, blue first raises it by $\\tfrac5{56}$, and $\\tfrac58\\cdot\\tfrac3{56}=\\tfrac38\\cdot\\tfrac5{56}$. This holds generally: averaged over what you might learn, your updated probability equals your current one — you cannot predict which way a belief will move. (The streaky trader's second trade, at $0.58$, is a different event from the first, not an update of it.)</p>
+    <p>Split into cases, solve each, recombine: regime-switching market models (Module 9), mixture models (Module 13), and summing a variable out of a Bayesian network (Module 11) are all this law.</p>
     <div class="task"><b>A word in the inbox</b>40% of incoming email is spam. The word "free" appears in 25% of spam emails and in 2% of legitimate ones. What fraction of all emails contain "free"? Enter a decimal.</div>
-    ${gateHTML('e.g. 1/2 or 0.5')}</div>`;
+    ${gateHTML('e.g. 0.5')}</div>`;
 
   const cv=document.getElementById('cvt4');const pl=plot(cv,{xmin:-0.09,xmax:1.05,ymin:-0.1,ymax:1.04*1.04});
   let w=[0.5,0.3,0.2],h=[0.7,0.5,0.2],level=false,drag=null;
