@@ -2244,41 +2244,25 @@ function p1_independence(){
     <canvas id="cvi7" width="640" height="400" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">P(A | B)</div><div class="v" id="i1">—</div></div><div class="rdc"><div class="k">P(A)</div><div class="v" id="i2">—</div></div><div class="rdc"><div class="k">P(A ∩ B)</div><div class="v" id="i3">—</div></div><div class="rdc"><div class="k">P(A) · P(B)</div><div class="v" id="i4">—</div></div></div>
     <p class="small" id="i5" style="margin-top:8px;min-height:20px"></p>
-    <p style="margin-top:14px"><b>What to notice.</b> $P(A)$ is the level of the shading spread over the whole square — the weighted average of the two heights (beat 4): $P(A)=P(B)\\,P(A\\mid B)+P(B^{c})\\,P(A\\mid B^{c})$. Subtract $P(A\\mid B)=\\big(P(B)+P(B^{c})\\big)P(A\\mid B)$ from it; the $P(B)$ terms cancel:</p>
-    <div class="eqbox">$$P(A)-P(A\\mid B)=P(B^{c})\\big(P(A\\mid B^{c})-P(A\\mid B)\\big).$$</div>
-    <p>For $0\\lt P(B)\\lt1$ this is zero exactly when the two heights are equal. So learning $B$ leaves the probability of $A$ unchanged exactly when the shading is <em>flat</em>: $A$ has the same rate inside $B$ and outside it. Whenever the heights differ, $P(A\\mid B)\\ne P(A)$.</p>
+    <p style="margin-top:14px"><b>What to notice.</b> Pick <b>independent</b>: the two heights are equal, the shading is flat, and the dashed $P(A)$ line sits at that same height, so $P(A\\mid B)=P(A)$. Learning $B$ changes nothing. In every other position the dashed line lies strictly between the two heights, so $P(A\\mid B)\\ne P(A)$.</p>
+    <p><em>Why.</em> $P(A)$ is the weighted average of the two heights (beat 4): $P(A)=P(B)\\,P(A\\mid B)+P(B^{c})\\,P(A\\mid B^{c})$. If both heights equal $h$, then $P(A)=h\\,\\big(P(B)+P(B^{c})\\big)=h$. If they differ, an average with positive weights lies strictly between them, so it equals neither.</p>
     <p><b>Step 1: the definition.</b> "Learning $B$ does not change $A$" is $P(A\\mid B)=P(A)$. Substitute the definition of $P(A\\mid B)$ and multiply both sides by $P(B)$:</p>
     <div class="eqbox">$$\\frac{P(A\\cap B)}{P(B)}=P(A)\\quad\\Longleftrightarrow\\quad P(A\\cap B)=P(A)\\,P(B).$$</div>
     <div class="defn"><span class="dt">Independence</span>Events $A$ and $B$ are <b>independent</b> when $P(A\\cap B)=P(A)\\,P(B)$.</div>
-    <p>The product form is the one used as the definition, for two reasons: it treats $A$ and $B$ alike, so it also gives $P(B\\mid A)=\\frac{P(A\\cap B)}{P(A)}=\\frac{P(A)P(B)}{P(A)}=P(B)$ — learning $A$ does not move $B$ either — and it still makes sense when $P(B)=0$, where $P(A\\mid B)$ is undefined. Conditioning on $B$ still means something for independent events; it just returns $P(A)$.</p>
-    <p><em>The picture.</em> Choose the <b>independent</b> preset. Flat shading makes $A$ a horizontal band of height $P(A)$ across the whole square; $B$ is a vertical strip of width $P(B)$. Independent events are <b>crossed strips</b>: their overlap is a rectangle of area $P(A)\\times P(B)$. A Venn sketch whose areas are not drawn to scale cannot show this, which is why independence never appeared in Module 1's set pictures.</p>
-    <p><b>Step 2: the complement comes along.</b> If $A$ and $B$ are independent, so are $A$ and $B^{c}$. Split $A$ into its parts inside and outside $B$ — disjoint, so they add — and substitute:</p>
+    <p>The product form is the definition for two reasons. It treats $A$ and $B$ alike, so it also gives $P(B\\mid A)=\\frac{P(A)P(B)}{P(A)}=P(B)$: learning $A$ does not move $B$ either. And it still makes sense when $P(B)=0$, where $P(A\\mid B)$ is undefined. (For independent events, conditioning still means something — it just returns $P(A)$.)</p>
+    <p>In pictures, independent events are <b>crossed strips</b>: $B$ a vertical strip of width $P(B)$, $A$ a horizontal band of height $P(A)$ across the whole square, and their overlap a rectangle of area $P(A)\\times P(B)$. A Venn sketch whose areas are not drawn to scale cannot show this, which is why independence never appeared in Module 1's set pictures.</p>
+    <p><b>Step 2: complements are independent too.</b> If $A$ and $B$ are independent, so are $A$ and $B^{c}$. Split $A$ into its parts inside and outside $B$ — disjoint, so they add — and substitute:</p>
     <div class="eqbox">$$P(A\\cap B^{c})=P(A)-P(A\\cap B)=P(A)-P(A)P(B)=P(A)\\,\\big(1-P(B)\\big)=P(A)\\,P(B^{c}).$$</div>
-    <p>In the square: flat shading is flat in both strips at once.</p>
-
-    <h2 style="margin-top:22px">The size of the overlap, not whether there is one</h2>
-    <p>For events with positive probabilities, compare the overlap $P(A\\cap B)$ with $P(A)P(B)$. Dividing both by $P(B)$ turns this into comparing $P(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}$ with $P(A)$:</p>
-    <p>• Overlap larger than $P(A)P(B)$: $P(A\\mid B)\\gt P(A)$. Learning $B$ makes $A$ more likely.<br>
-    • Overlap equal to $P(A)P(B)$: $P(A\\mid B)=P(A)$. Independent.<br>
-    • Overlap smaller than $P(A)P(B)$: $P(A\\mid B)\\lt P(A)$. Learning $B$ makes $A$ less likely.</p>
-    <p>Choose the <b>disjoint</b> preset: the shading in the $B$ strip has height 0, so the overlap is 0 — the most extreme "smaller". Learning $B$ drops the probability of $A$ to zero. So disjoint events with positive probabilities are always <em>dependent</em>, and overlapping events can be any of the three.</p>
-
-    <h2 style="margin-top:22px">Testing events on the dice</h2>
-    <p>Independence is a numerical fact, not something visible in how events are described. Pick two events about two dice and compare $P(A\\mid B)$ with $P(A)$.</p>
-    <div class="slabel" style="margin-top:10px">A =</div><div class="seg" id="segia" style="margin-top:4px"></div>
-    <div class="slabel" style="margin-top:10px">B =</div><div class="seg" id="segib" style="margin-top:4px"></div>
-    <div class="readout"><div class="rdc"><div class="k">P(A)</div><div class="v" id="d1">—</div></div><div class="rdc"><div class="k">P(A | B)</div><div class="v" id="d2">—</div></div><div class="rdc"><div class="k">P(A ∩ B) vs P(A)P(B)</div><div class="v" id="d3" style="font-size:14px">—</div></div><div class="rdc"><div class="k">verdict</div><div class="v" id="d4">—</div></div></div>
-    <p style="margin-top:12px">"Red is even" and "the sum is 7" are independent, though the sum involves the red die: $P(\\text{red even})=\\tfrac12$, and of the six sum-7 outcomes $(1,6),(2,5),(3,4),(4,3),(5,2),(6,1)$ exactly three have red even, so $P(\\text{red even}\\mid\\text{sum }7)=\\tfrac36=\\tfrac12$. Whatever red shows, exactly one blue face makes 7, so the sum being 7 says nothing about red. "Red is 6" and "the sum is 8" are dependent: the five sum-8 outcomes are $(2,6),(3,5),(4,4),(5,3),(6,2)$, one of which has red 6, so $P(\\text{red }6\\mid\\text{sum }8)=\\tfrac15$, while $P(\\text{red }6)=\\tfrac16$. Here the red die matters: a red 1 makes a sum of 8 impossible.</p>
-
-    <h2 style="margin-top:22px">It depends on the probabilities, not just the sets</h2>
-    <p>Roll one die. Let $A$ = "even" $=\\{2,4,6\\}$ and $B$ = "at most 2" $=\\{1,2\\}$. Switch between a fair die and a loaded one (a die whose faces get unequal probabilities, as in Module 1, beat 7); the two sets never change.</p>
-    <div class="seg" id="segld"></div>
-    <canvas id="cvld" width="640" height="200" style="margin-top:10px"></canvas>
-    <div class="readout"><div class="rdc"><div class="k">P(A)</div><div class="v" id="l1">—</div></div><div class="rdc"><div class="k">P(B)</div><div class="v" id="l2">—</div></div><div class="rdc"><div class="k">P(A ∩ B) = P({2})</div><div class="v" id="l3">—</div></div><div class="rdc"><div class="k">P(A) · P(B)</div><div class="v" id="l4">—</div></div></div>
-    <p class="small" id="l5" style="margin-top:8px;min-height:20px"></p>
-    <p style="margin-top:10px">Fair: $P(A)=\\tfrac36=\\tfrac12$, $P(B)=\\tfrac26=\\tfrac13$, $P(A\\cap B)=P(\\{2\\})=\\tfrac16=\\tfrac12\\cdot\\tfrac13$ — independent. Loaded so that 6 comes up half the time and each other face $0.1$: $P(A)=0.1+0.1+0.5=0.7$, $P(B)=0.1+0.1=0.2$, $P(A\\cap B)=0.1$, but $P(A)P(B)=0.14$ — dependent: $P(A\\mid B)=\\frac{0.1}{0.2}=0.5\\lt0.7$. The same two sets of outcomes, opposite verdicts. Independence is a property of the probability assignment, not of which outcomes the events contain.</p>
-    <p><b>So where does independence come from?</b> <em>Checked</em>: given a probability model, compute both sides of $P(A\\cap B)=P(A)P(B)$, as in the dice tester. Or <em>built in</em>: when two parts of an experiment are physically separate — two dice, two coins, two unrelated machines — we choose the model so that they are independent. The two-dice grid gives each cell $\\tfrac1{36}=\\tfrac16\\cdot\\tfrac16$ because the dice were assumed not to influence each other; that assumption is made at the top, together with the sample space. "The feeds fail independently" in the gate below is this kind of statement.</p>
-<div class="conn"><span class="dt">How this connects</span><p><b>Builds on.</b> Conditional probability (beat 2): independence is the case where conditioning on $B$ leaves $P(A)$ unchanged. Total probability (beat 4): the flat shading is beat 4's weighted average with equal heights.</p><p><b>Contrast with Module 1.</b> Disjointness is about the sets: no common outcomes, so probabilities <em>add</em> for a union (the addition axiom). Independence is about the probabilities: the overlap is exactly a product, so probabilities <em>multiply</em> for an intersection.</p><p><b>What it adds.</b> The union rule of Module 1, $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$, needs the overlap, which a description of two separate events usually does not give. Independence supplies it as $P(A)P(B)$ (this beat's gate). It is also the assumption behind Module 1's products — the dice grid's $\\tfrac16\\cdot\\tfrac16$ and the binomial $p^kq^{n-k}$ (derived in beat 10) — and the assumption the streaky trader of beat 3 broke.</p></div>
+    <p><b>Step 3: independent is not disjoint.</b> Independence is about how big the overlap is, not whether there is one. Dividing by $P(B)$ turns "compare $P(A\\cap B)$ with $P(A)P(B)$" into "compare $P(A\\mid B)$ with $P(A)$":</p>
+    <p>• Overlap larger than $P(A)P(B)$: learning $B$ makes $A$ more likely.<br>
+    • Equal: independent.<br>
+    • Smaller: learning $B$ makes $A$ less likely.</p>
+    <p>Disjoint events have overlap 0, the extreme of the last case: learning $B$ rules $A$ out. So disjoint events with positive probabilities are always dependent, and overlapping events can be any of the three.</p>
+    <p><b>Step 4: it depends on the probabilities, not the sets.</b> Roll a die; $A$ = "even" $=\\{2,4,6\\}$, $B$ = "at most 2" $=\\{1,2\\}$.</p>
+    <p>• <em>Fair die.</em> $P(A)=\\tfrac12$, $P(B)=\\tfrac13$, $P(A\\cap B)=P(\\{2\\})=\\tfrac16=\\tfrac12\\cdot\\tfrac13$. Independent.<br>
+    • <em>Loaded die</em> (Module 1, beat 7): 6 comes up with probability $0.5$, each other face $0.1$. $P(A)=0.1+0.1+0.5=0.7$, $P(B)=0.2$, $P(A\\cap B)=0.1$, but $P(A)P(B)=0.14$. Dependent.</p>
+    <p>The same two sets, opposite verdicts. So independence is either <em>checked</em> in a given model, by computing both sides of the product, or <em>built in</em> when the model is made: for physically separate parts of an experiment — two dice, two unrelated machines — we choose probabilities that make them independent. The two-dice grid gives each cell $\\tfrac1{36}=\\tfrac16\\cdot\\tfrac16$ for exactly this reason, and "the feeds fail independently" in the gate below is this kind of statement.</p>
+    <div class="conn"><span class="dt">How this connects</span><p><b>Builds on.</b> Conditional probability (beat 2) and total probability (beat 4): independence is the case where the two heights of beat 4's average are equal.</p><p><b>Contrast with Module 1.</b> Disjoint is about the sets — no common outcomes — and makes probabilities <em>add</em> for a union. Independent is about the probabilities — the overlap is exactly a product — and makes them <em>multiply</em> for an intersection.</p><p><b>What it adds.</b> The union rule $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$ needs the overlap, which a description of two separate events rarely gives; independence supplies it (this beat's gate). It is also the assumption behind Module 1's products (derived in beat 10).</p></div>
         <div class="task"><b>Two data feeds</b>A trading system uses two data feeds that fail independently: feed A on 2% of days, feed B on 5%. The system raises a warning on any day at least one feed fails. On what fraction of days is there a warning? Enter a decimal.</div>
     ${gateHTML('e.g. 0.05')}</div>`;
 
@@ -2309,29 +2293,6 @@ function p1_independence(){
   const end=()=>drag=null;cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
   p0Seg('segip',[['ind','independent'],['dep','dependent'],['dis','disjoint']],'ind',k=>{if(k==='ind'){wB=0.4;hB=0.5;hC=0.5;}else if(k==='dep'){wB=0.4;hB=0.8;hC=0.3;}else{wB=0.4;hB=0;hC=0.6;}draw();});
   draw();
-  /* dice tester */
-  const DA=[['reven','red even',(r,b)=>r%2===0],['r6','red = 6',(r,b)=>r===6],['b5','blue ≥ 5',(r,b)=>b>=5],['dbl','doubles',(r,b)=>r===b]];
-  const DB=[['s7','sum = 7',(r,b)=>r+b===7],['s8','sum = 8',(r,b)=>r+b===8],['beven','blue even',(r,b)=>b%2===0],['six','at least one 6',(r,b)=>r===6||b===6]];
-  let ka='reven',kb='s7';
-  function test(){const A=DA.find(x=>x[0]===ka)[2],B=DB.find(x=>x[0]===kb)[2];let na=0,nb=0,nab=0;
-    for(let r=1;r<=6;r++)for(let b=1;b<=6;b++){const a=A(r,b),c=B(r,b);if(a)na++;if(c)nb++;if(a&&c)nab++;}
-    p0Set('d1',na+'/36 = '+(na/36).toFixed(4));p0Set('d2',nab+'/'+nb+' = '+(nab/nb).toFixed(4));
-    p0Set('d3',(nab/36).toFixed(4)+' vs '+(na*nb/1296).toFixed(4));
-    p0Set('d4',nab*36===na*nb?'independent':'dependent');}
-  p0Seg('segia',DA.map(x=>[x[0],x[1]]),ka,k=>{ka=k;test();});
-  p0Seg('segib',DB.map(x=>[x[0],x[1]]),kb,k=>{kb=k;test();});
-  test();
-  /* loaded die */
-  let loaded=false;
-  function drawLD(){const pr=loaded?[0.1,0.1,0.1,0.1,0.1,0.5]:[1,1,1,1,1,1].map(x=>x/6);const PA=pr[1]+pr[3]+pr[5],PB=pr[0]+pr[1],PAB=pr[1];
-    p0Set('l1',PA.toFixed(3));p0Set('l2',PB.toFixed(3));p0Set('l3',PAB.toFixed(3));p0Set('l4',(PA*PB).toFixed(3));
-    p0Set('l5',Math.abs(PAB-PA*PB)<1e-9?'Equal: independent. P(A | B) = '+(PAB/PB).toFixed(3)+' = P(A).':'Not equal: dependent. P(A | B) = '+(PAB/PB).toFixed(3)+', but P(A) = '+PA.toFixed(3)+'.');
-    const c=document.getElementById('cvld'),ctx=c.getContext&&c.getContext('2d');if(!ctx)return;const W=c.width,H=c.height,bw=(W-80)/6,base=H-40,sc=(H-70)/0.5;ctx.clearRect(0,0,W,H);
-    pr.forEach((q,i)=>{const x=40+i*bw,f=i+1,inA=f%2===0,inB=f<=2;ctx.fillStyle=inA?'rgba(232,184,75,.75)':'#1f2b3c';ctx.fillRect(x+8,base-q*sc,bw-16,q*sc);
-      if(inB){ctx.strokeStyle='#7ab8ff';ctx.lineWidth=3;ctx.strokeRect(x+8,base-q*sc,bw-16,q*sc);}
-      ctx.font=p0Font(13);ctx.textAlign='center';ctx.fillStyle='#e9eef6';ctx.fillText(String(f),x+bw/2,base+18);ctx.font=p0Font(11);ctx.fillStyle='#9fb0c4';ctx.fillText(q.toFixed(3),x+bw/2,base-q*sc-6);});
-    ctx.textAlign='left';ctx.font=p0Font(11);ctx.fillStyle='#e8b84b';ctx.fillText('gold: A (even)',40,16);ctx.fillStyle='#7ab8ff';ctx.fillText('blue outline: B (at most 2)',150,16);}
-  p0Seg('segld',[['f','fair die'],['l','loaded die']],'f',k=>{loaded=k==='l';drawLD();});drawLD();
   numChk(document.getElementById('gate'),0.069,()=>{addReveal(`<div class="rh">✓ 0.069</div>
     <p>A warning is the union "A fails or B fails". The union rule needs $P(\\text{both fail})$, and independence supplies it as a product:</p>
     <div class="eqbox">$$P(A\\cup B)=P(A)+P(B)-P(A)\\,P(B)=0.02+0.05-0.02\\times0.05=0.07-0.001=0.069.$$</div>
