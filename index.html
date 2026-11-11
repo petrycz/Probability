@@ -58,6 +58,9 @@
   .defn{background:rgba(122,184,255,.07);border:1px solid rgba(122,184,255,.30);border-radius:11px;padding:12px 14px;margin:13px 0;font-size:14.5px;line-height:1.6;color:#dbe6f4;}
   .defn .dt{color:var(--accent);font-size:11px;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:6px;font-weight:700;}
   .defn+.defn{margin-top:9px;}
+.conn{background:rgba(63,185,143,.07);border:1px solid rgba(63,185,143,.30);border-radius:11px;padding:12px 14px;margin:16px 0 13px;font-size:14.5px;line-height:1.6;color:#dbe6f4;}
+.conn .dt{color:#3fb98f;font-size:11px;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:6px;font-weight:700;}
+.conn p{margin:6px 0 0;}
   .entry{display:flex;gap:9px;align-items:center;margin-top:12px;}
   .entry input{flex:1;background:var(--panel2);border:1.5px solid var(--line);border-radius:11px;color:var(--ink);font-family:var(--mono);font-size:16px;padding:12px 13px;outline:none;min-width:0;}
   .entry input:focus{border-color:var(--accent);}
@@ -144,7 +147,7 @@ const MODULES=[
   beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply,p0_combinations,p0_coins,p0_spaces,p0_birthday,p0_inclusion,p0_derangements,p0_problems]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:true,
   outro:`Conditioning restricts the sample space to what you know: $P(A\\mid B)=P(A\\cap B)/P(B)$. The multiplication and chain rules build joint probabilities from conditional ones, total probability averages over the cases of a partition, and Bayes' rule turns $P(B\\mid A)$ into $P(A\\mid B)$ — in odds form, posterior odds = prior odds × likelihood ratio, which in log-odds makes evidence add up. Independence means a condition changes nothing; for many events it must hold for every group. Conditional independence can appear or vanish when you condition on a common cause or a common effect, which is behind Simpson's paradox, and how evidence was produced is part of the evidence, as Monty Hall shows.`,
-  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_odds,p1_logodds,p1_independence,p1_mutual,p1_condind,p1_puzzles,p1_problems]},
+  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_odds,p1_logodds,p1_independence,p1_mutual,p1_condind,p1_explain,p1_simpson,p1_puzzles,p1_problems]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
@@ -2121,14 +2124,17 @@ function p1_update(){
     <p><b>Step 3: a negative result.</b> A negative is evidence too, with likelihoods $P(-\\mid D)=1-0.9=0.1$ and $P(-\\mid D^{c})=1-0.09=0.91$. After the two positives, $P(D)\\approx0.5025$; a negative third result gives</p>
     <div class="eqbox">$$P(D\\mid ++-)=\\frac{0.5025\\times0.1}{0.5025\\times0.1+0.4975\\times0.91}=\\frac{0.0503}{0.0503+0.4527}\\approx0.10.$$</div>
     <p>Every update so far needed the whole formula, including the total-probability sum in the denominator. The next beat removes that sum.</p>
-    <div class="task"><b>A different second test</b>A patient tests positive on the screening test above ($P(D)=0.01$, $P(+\\mid D)=0.9$, $P(+\\mid D^{c})=0.09$), so $P(D\\mid +)\\approx0.0917$. A second, different test is then done: it is positive for 80% of sick people and 20% of healthy people, and its errors are unrelated to the first test's once disease status is fixed. It comes back <b>negative</b>. What is the probability of disease now? Enter a decimal.</div>
+    <div class="task"><b>A different second test</b>A patient tests positive on the screening test above ($P(D)=0.01$, $P(+\\mid D)=0.9$, $P(+\\mid D^{c})=0.09$), so $P(D\\mid +)\\approx0.0917$. A second, different test is then done.<br>
+      • <em>How test 2 behaves:</em> positive for 80% of sick people and 20% of healthy people. Its errors are unrelated to test 1's once disease status is fixed.<br>
+      • <em>This patient's result on test 2:</em> <b>negative</b>.<br>
+      What is the probability of disease now? Enter a decimal.</div>
     ${gateHTML('e.g. 0.05')}</div>`;
   p1UpdWire('u','p');
   numChk(document.getElementById('gate'),0.02463,()=>{addReveal(`<div class="rh">✓ ≈ 0.0246</div>
-    <p>Use the first posterior as the prior (Step 2). The second test is negative, so its likelihoods are $P(-\\mid D)=1-0.8=0.2$ and $P(-\\mid D^{c})=1-0.2=0.8$:</p>
+    <p>Use the first posterior as the prior (Step 2). The evidence is the patient's <em>negative</em> result, so the likelihoods are the chances of a negative in each group, the complements of the test's positive rates: $P(-\\mid D)=1-0.8=0.2$ and $P(-\\mid D^{c})=1-0.2=0.8$:</p>
     <div class="eqbox">$$P(D\\mid +,-)=\\frac{0.0917\\times0.2}{0.0917\\times0.2+0.9083\\times0.8}=\\frac{0.0183}{0.0183+0.7266}\\approx0.0246.$$</div>
     <p>The same in one step from the definition (Step 1): $\\frac{0.01\\times0.9\\times0.2}{0.01\\times0.9\\times0.2+0.99\\times0.09\\times0.8}=\\frac{0.0018}{0.0018+0.07128}\\approx0.0246$. The negative undid most of the positive: the belief is back near its starting $0.01$.</p>`);},snapTo(0.02463,0.0008));
-  setHints([`Use 0.0917 as the prior. The result is negative, so the likelihoods are P(− | D) = 1 − 0.8 = 0.2 and P(− | Dᶜ) = 1 − 0.2 = 0.8.`,`0.0917 × 0.2 / (0.0917 × 0.2 + 0.9083 × 0.8) = 0.0183 / 0.7449 ≈ 0.0246.`]);
+  setHints([`Use 0.0917 as the prior. The evidence is this patient's negative result, so you need how likely a negative is in each group: sick people read negative 20% of the time, P(− | D) = 1 − 0.8 = 0.2; healthy people 80% of the time, P(− | Dᶜ) = 1 − 0.2 = 0.8.`,`0.0917 × 0.2 / (0.0917 × 0.2 + 0.9083 × 0.8) = 0.0183 / 0.7449 ≈ 0.0246.`]);
 }
 
 /* ---------- Beat 7: odds and the likelihood ratio ---------- */
@@ -2167,6 +2173,7 @@ function p1_odds(){
     • <b>Likelihood ratio</b> of a match: $\\frac{P(\\text{match}\\mid\\text{source})}{P(\\text{match}\\mid\\text{not source})}=\\frac{1}{10^{-6}}=10^{6}$.<br>
     • <b>Posterior odds</b>: $10^{-7}\\times10^{6}=0.1$, so $P=\\frac{0.1}{1.1}\\approx0.09$.</p>
     <p>In counts: among 10 million people, about 10 innocent people match by chance, plus the true source, so a match alone leaves roughly a 1-in-11 chance. Strong evidence multiplies the odds by a million, but a tiny prior can absorb it. The same mistake reads a small p-value as the probability that a result is a fluke (Module 14).</p>
+    <div class="conn"><span class="dt">How this connects</span><p><b>Builds on.</b> Bayes' theorem (beat 5): the odds form is that theorem written once for $D$ and once for $D^{c}$, then divided, so the total-probability denominator (beat 4) cancels. The bars are beat 5's natural-frequency picture with only the ratio kept.</p><p><b>What it adds.</b> Beat 5's form needs $P(+)$, which needs both likelihoods separately. The odds form needs only their ratio — often the only number reported for a test (this beat's gate). And beat 6's repeated updates, each a full Bayes formula, become one multiplication per result.</p></div>
     <div class="task"><b>Only the ratio is known</b>A diagnostic report says only that a positive result has a likelihood ratio of 8. Before the test, a doctor puts the patient's chance of disease at 20%. The test is positive. What is the probability of disease now? Enter a fraction or a decimal.</div>
     ${gateHTML('e.g. 0.5')}</div>`;
   const cv=document.getElementById('cvod'),dp=document.getElementById('dp'),ds=document.getElementById('ds'),df=document.getElementById('df');
@@ -2213,6 +2220,7 @@ function p1_logodds(){
     <div class="eqbox">$$L=L_0+k\\cdot1+m\\cdot(-0.96).$$</div>
     <p>Each result contributes its own fixed amount, so the order does not matter, and one positive and one negative nearly cancel ($1-0.96=0.04$).</p>
     <p><em>Where you will see this again.</em> Machine learning uses natural logs, $\\ln O$, called the <b>logit</b>. Converting back: $P=\\frac{O}{1+O}$; divide top and bottom by $O$ to get $P=\\frac1{1+1/O}=\\frac1{1+e^{-\\ln O}}$ — the <b>sigmoid</b> function, the S-curve above with $e$ in place of 10. A logistic-regression classifier computes a logit as a weighted sum of features and passes it through the sigmoid: each feature adds its evidence to the log-odds, just as each test result does here. A naive-Bayes spam filter adds up the log-likelihood-ratios of the words in an email.</p>
+    <div class="conn"><span class="dt">How this connects</span><p><b>Builds on.</b> The odds form (beat 7) and the log of a product (Calculus, Module 1). The chart is beat 6's chart with a different axis.</p><p><b>What it adds.</b> Beat 6 showed that one piece of evidence moves the probability by different amounts depending on where you start. On the log-odds scale each piece of evidence has one fixed size, $\\log_{10}\\mathrm{LR}$, wherever you start, so evidence can be compared and totalled. Long runs of evidence, whose likelihood products become unmanageably small, turn into sums of ordinary numbers.</p></div>
     <div class="task"><b>A day of checks</b>A machine is faulty with prior probability $0.01$. An automatic check raises an alarm with probability $\\tfrac{10}{11}$ if the machine is faulty and $\\tfrac1{11}$ if it is fine, and the checks are conditionally independent given the machine's state. Over one day, 42 checks give 23 alarms and 19 all-clears, in some order. What is the probability the machine is faulty? Enter a decimal.</div>
     ${gateHTML('e.g. 0.5')}</div>`;
   p1UpdWire('g','L');
@@ -2236,17 +2244,24 @@ function p1_independence(){
     <canvas id="cvi7" width="640" height="400" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">P(A | B)</div><div class="v" id="i1">—</div></div><div class="rdc"><div class="k">P(A)</div><div class="v" id="i2">—</div></div><div class="rdc"><div class="k">P(A ∩ B)</div><div class="v" id="i3">—</div></div><div class="rdc"><div class="k">P(A) · P(B)</div><div class="v" id="i4">—</div></div></div>
     <p class="small" id="i5" style="margin-top:8px;min-height:20px"></p>
-    <p style="margin-top:14px"><b>What to notice.</b> $P(A)$ is the level of the shading spread over the whole square — the weighted average of the two heights (beat 4): $P(A)=P(B)\\,P(A\\mid B)+P(B^{c})\\,P(A\\mid B^{c})$. When the two heights are equal, say both are $h$, the shading is <em>flat</em> and $P(A)=P(B)\\,h+P(B^{c})\\,h=h\\,\\big(P(B)+P(B^{c})\\big)=h$. So $P(A\\mid B)=h=P(A)$: learning $B$ does not move the probability of $A$. When the heights differ, $P(A)$ is a weighted average strictly between them, so $P(A\\mid B)\\ne P(A)$.</p>
+    <p style="margin-top:14px"><b>What to notice.</b> $P(A)$ is the level of the shading spread over the whole square — the weighted average of the two heights (beat 4): $P(A)=P(B)\\,P(A\\mid B)+P(B^{c})\\,P(A\\mid B^{c})$. Subtract $P(A\\mid B)=\\big(P(B)+P(B^{c})\\big)P(A\\mid B)$ from it; the $P(B)$ terms cancel:</p>
+    <div class="eqbox">$$P(A)-P(A\\mid B)=P(B^{c})\\big(P(A\\mid B^{c})-P(A\\mid B)\\big).$$</div>
+    <p>For $0\\lt P(B)\\lt1$ this is zero exactly when the two heights are equal. So learning $B$ leaves the probability of $A$ unchanged exactly when the shading is <em>flat</em>: $A$ has the same rate inside $B$ and outside it. Whenever the heights differ, $P(A\\mid B)\\ne P(A)$.</p>
     <p><b>Step 1: the definition.</b> "Learning $B$ does not change $A$" is $P(A\\mid B)=P(A)$. Substitute the definition of $P(A\\mid B)$ and multiply both sides by $P(B)$:</p>
     <div class="eqbox">$$\\frac{P(A\\cap B)}{P(B)}=P(A)\\quad\\Longleftrightarrow\\quad P(A\\cap B)=P(A)\\,P(B).$$</div>
     <div class="defn"><span class="dt">Independence</span>Events $A$ and $B$ are <b>independent</b> when $P(A\\cap B)=P(A)\\,P(B)$.</div>
-    <p>The product form is the one used as the definition, for two reasons: it treats $A$ and $B$ alike, so it also gives $P(B\\mid A)=\\frac{P(A\\cap B)}{P(A)}=\\frac{P(A)P(B)}{P(A)}=P(B)$ — learning $A$ does not move $B$ either — and it still makes sense when $P(B)=0$, where $P(A\\mid B)$ is undefined. In the square, $P(A\\cap B)$ is the shaded part of the $B$ strip, width $P(B)$ times height $P(A\\mid B)$; the readouts show it matching $P(A)P(B)$ exactly when the shading is flat.</p>
+    <p>The product form is the one used as the definition, for two reasons: it treats $A$ and $B$ alike, so it also gives $P(B\\mid A)=\\frac{P(A\\cap B)}{P(A)}=\\frac{P(A)P(B)}{P(A)}=P(B)$ — learning $A$ does not move $B$ either — and it still makes sense when $P(B)=0$, where $P(A\\mid B)$ is undefined. Conditioning on $B$ still means something for independent events; it just returns $P(A)$.</p>
+    <p><em>The picture.</em> Choose the <b>independent</b> preset. Flat shading makes $A$ a horizontal band of height $P(A)$ across the whole square; $B$ is a vertical strip of width $P(B)$. Independent events are <b>crossed strips</b>: their overlap is a rectangle of area $P(A)\\times P(B)$. A Venn sketch whose areas are not drawn to scale cannot show this, which is why independence never appeared in Module 1's set pictures.</p>
     <p><b>Step 2: the complement comes along.</b> If $A$ and $B$ are independent, so are $A$ and $B^{c}$. Split $A$ into its parts inside and outside $B$ — disjoint, so they add — and substitute:</p>
     <div class="eqbox">$$P(A\\cap B^{c})=P(A)-P(A\\cap B)=P(A)-P(A)P(B)=P(A)\\,\\big(1-P(B)\\big)=P(A)\\,P(B^{c}).$$</div>
     <p>In the square: flat shading is flat in both strips at once.</p>
 
-    <h2 style="margin-top:22px">Independent is not disjoint</h2>
-    <p>Choose the <b>disjoint</b> preset: $A$ lies entirely outside $B$, so the shading in the $B$ strip has height 0. The events cannot happen together, $P(A\\cap B)=0$. But $P(A)P(B)\\gt0$ whenever both events are possible, so the product rule fails: disjoint events are <em>dependent</em>, about as strongly as possible — learning $B$ drops the probability of $A$ to zero. "Independent" means the shading is flat across the border; "disjoint" means there is no shading at all on one side of it.</p>
+    <h2 style="margin-top:22px">The size of the overlap, not whether there is one</h2>
+    <p>For events with positive probabilities, compare the overlap $P(A\\cap B)$ with $P(A)P(B)$. Dividing both by $P(B)$ turns this into comparing $P(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}$ with $P(A)$:</p>
+    <p>• Overlap larger than $P(A)P(B)$: $P(A\\mid B)\\gt P(A)$. Learning $B$ makes $A$ more likely.<br>
+    • Overlap equal to $P(A)P(B)$: $P(A\\mid B)=P(A)$. Independent.<br>
+    • Overlap smaller than $P(A)P(B)$: $P(A\\mid B)\\lt P(A)$. Learning $B$ makes $A$ less likely.</p>
+    <p>Choose the <b>disjoint</b> preset: the shading in the $B$ strip has height 0, so the overlap is 0 — the most extreme "smaller". Learning $B$ drops the probability of $A$ to zero. So disjoint events with positive probabilities are always <em>dependent</em>, and overlapping events can be any of the three.</p>
 
     <h2 style="margin-top:22px">Testing events on the dice</h2>
     <p>Independence is a numerical fact, not something visible in how events are described. Pick two events about two dice and compare $P(A\\mid B)$ with $P(A)$.</p>
@@ -2255,9 +2270,16 @@ function p1_independence(){
     <div class="readout"><div class="rdc"><div class="k">P(A)</div><div class="v" id="d1">—</div></div><div class="rdc"><div class="k">P(A | B)</div><div class="v" id="d2">—</div></div><div class="rdc"><div class="k">P(A ∩ B) vs P(A)P(B)</div><div class="v" id="d3" style="font-size:14px">—</div></div><div class="rdc"><div class="k">verdict</div><div class="v" id="d4">—</div></div></div>
     <p style="margin-top:12px">"Red is even" and "the sum is 7" are independent, though the sum involves the red die: $P(\\text{red even})=\\tfrac12$, and of the six sum-7 outcomes $(1,6),(2,5),(3,4),(4,3),(5,2),(6,1)$ exactly three have red even, so $P(\\text{red even}\\mid\\text{sum }7)=\\tfrac36=\\tfrac12$. Whatever red shows, exactly one blue face makes 7, so the sum being 7 says nothing about red. "Red is 6" and "the sum is 8" are dependent: the five sum-8 outcomes are $(2,6),(3,5),(4,4),(5,3),(6,2)$, one of which has red 6, so $P(\\text{red }6\\mid\\text{sum }8)=\\tfrac15$, while $P(\\text{red }6)=\\tfrac16$. Here the red die matters: a red 1 makes a sum of 8 impossible.</p>
 
-    <h2 style="margin-top:22px">Independence is what made Module 1's products valid</h2>
-    <p>The binomial formula gave a sequence like HHT the probability $p\\cdot p\\cdot q$, and the two-dice grid gave each of the 36 cells probability $\\tfrac16\\cdot\\tfrac16$. Both multiplied the probabilities of separate tosses or dice. By the chain rule the exact probability is $P(H_1)\\,P(H_2\\mid H_1)\\,P(T_3\\mid H_1\\cap H_2)$; the tosses are modelled as independent — no toss influences another — so each conditional equals the plain probability and the product is just $p\\cdot p\\cdot q$. (For the third factor this needs the third toss to be independent of the first two <em>together</em>, $P(T_3\\mid H_1\\cap H_2)=P(T_3)$ — independence of more than two events, the next beat.) Independence is an assumption about the experiment, and it is the assumption that the streaky trader of beat 3 broke.</p>
-    <div class="task"><b>Two data feeds</b>A trading system uses two data feeds that fail independently: feed A on 2% of days, feed B on 5%. The system raises a warning on any day at least one feed fails. On what fraction of days is there a warning? Enter a decimal.</div>
+    <h2 style="margin-top:22px">It depends on the probabilities, not just the sets</h2>
+    <p>Roll one die. Let $A$ = "even" $=\\{2,4,6\\}$ and $B$ = "at most 2" $=\\{1,2\\}$. Switch between a fair die and a loaded one (a die whose faces get unequal probabilities, as in Module 1, beat 7); the two sets never change.</p>
+    <div class="seg" id="segld"></div>
+    <canvas id="cvld" width="640" height="200" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">P(A)</div><div class="v" id="l1">—</div></div><div class="rdc"><div class="k">P(B)</div><div class="v" id="l2">—</div></div><div class="rdc"><div class="k">P(A ∩ B) = P({2})</div><div class="v" id="l3">—</div></div><div class="rdc"><div class="k">P(A) · P(B)</div><div class="v" id="l4">—</div></div></div>
+    <p class="small" id="l5" style="margin-top:8px;min-height:20px"></p>
+    <p style="margin-top:10px">Fair: $P(A)=\\tfrac36=\\tfrac12$, $P(B)=\\tfrac26=\\tfrac13$, $P(A\\cap B)=P(\\{2\\})=\\tfrac16=\\tfrac12\\cdot\\tfrac13$ — independent. Loaded so that 6 comes up half the time and each other face $0.1$: $P(A)=0.1+0.1+0.5=0.7$, $P(B)=0.1+0.1=0.2$, $P(A\\cap B)=0.1$, but $P(A)P(B)=0.14$ — dependent: $P(A\\mid B)=\\frac{0.1}{0.2}=0.5\\lt0.7$. The same two sets of outcomes, opposite verdicts. Independence is a property of the probability assignment, not of which outcomes the events contain.</p>
+    <p><b>So where does independence come from?</b> <em>Checked</em>: given a probability model, compute both sides of $P(A\\cap B)=P(A)P(B)$, as in the dice tester. Or <em>built in</em>: when two parts of an experiment are physically separate — two dice, two coins, two unrelated machines — we choose the model so that they are independent. The two-dice grid gives each cell $\\tfrac1{36}=\\tfrac16\\cdot\\tfrac16$ because the dice were assumed not to influence each other; that assumption is made at the top, together with the sample space. "The feeds fail independently" in the gate below is this kind of statement.</p>
+<div class="conn"><span class="dt">How this connects</span><p><b>Builds on.</b> Conditional probability (beat 2): independence is the case where conditioning on $B$ leaves $P(A)$ unchanged. Total probability (beat 4): the flat shading is beat 4's weighted average with equal heights.</p><p><b>Contrast with Module 1.</b> Disjointness is about the sets: no common outcomes, so probabilities <em>add</em> for a union (the addition axiom). Independence is about the probabilities: the overlap is exactly a product, so probabilities <em>multiply</em> for an intersection.</p><p><b>What it adds.</b> The union rule of Module 1, $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$, needs the overlap, which a description of two separate events usually does not give. Independence supplies it as $P(A)P(B)$ (this beat's gate). It is also the assumption behind Module 1's products — the dice grid's $\\tfrac16\\cdot\\tfrac16$ and the binomial $p^kq^{n-k}$ (derived in beat 10) — and the assumption the streaky trader of beat 3 broke.</p></div>
+        <div class="task"><b>Two data feeds</b>A trading system uses two data feeds that fail independently: feed A on 2% of days, feed B on 5%. The system raises a warning on any day at least one feed fails. On what fraction of days is there a warning? Enter a decimal.</div>
     ${gateHTML('e.g. 0.05')}</div>`;
 
   const cv=document.getElementById('cvi7');const pl=plot(cv,{xmin:-0.06,xmax:1.06,ymin:-0.14,ymax:1.08});
@@ -2299,6 +2321,17 @@ function p1_independence(){
   p0Seg('segia',DA.map(x=>[x[0],x[1]]),ka,k=>{ka=k;test();});
   p0Seg('segib',DB.map(x=>[x[0],x[1]]),kb,k=>{kb=k;test();});
   test();
+  /* loaded die */
+  let loaded=false;
+  function drawLD(){const pr=loaded?[0.1,0.1,0.1,0.1,0.1,0.5]:[1,1,1,1,1,1].map(x=>x/6);const PA=pr[1]+pr[3]+pr[5],PB=pr[0]+pr[1],PAB=pr[1];
+    p0Set('l1',PA.toFixed(3));p0Set('l2',PB.toFixed(3));p0Set('l3',PAB.toFixed(3));p0Set('l4',(PA*PB).toFixed(3));
+    p0Set('l5',Math.abs(PAB-PA*PB)<1e-9?'Equal: independent. P(A | B) = '+(PAB/PB).toFixed(3)+' = P(A).':'Not equal: dependent. P(A | B) = '+(PAB/PB).toFixed(3)+', but P(A) = '+PA.toFixed(3)+'.');
+    const c=document.getElementById('cvld'),ctx=c.getContext&&c.getContext('2d');if(!ctx)return;const W=c.width,H=c.height,bw=(W-80)/6,base=H-40,sc=(H-70)/0.5;ctx.clearRect(0,0,W,H);
+    pr.forEach((q,i)=>{const x=40+i*bw,f=i+1,inA=f%2===0,inB=f<=2;ctx.fillStyle=inA?'rgba(232,184,75,.75)':'#1f2b3c';ctx.fillRect(x+8,base-q*sc,bw-16,q*sc);
+      if(inB){ctx.strokeStyle='#7ab8ff';ctx.lineWidth=3;ctx.strokeRect(x+8,base-q*sc,bw-16,q*sc);}
+      ctx.font=p0Font(13);ctx.textAlign='center';ctx.fillStyle='#e9eef6';ctx.fillText(String(f),x+bw/2,base+18);ctx.font=p0Font(11);ctx.fillStyle='#9fb0c4';ctx.fillText(q.toFixed(3),x+bw/2,base-q*sc-6);});
+    ctx.textAlign='left';ctx.font=p0Font(11);ctx.fillStyle='#e8b84b';ctx.fillText('gold: A (even)',40,16);ctx.fillStyle='#7ab8ff';ctx.fillText('blue outline: B (at most 2)',150,16);}
+  p0Seg('segld',[['f','fair die'],['l','loaded die']],'f',k=>{loaded=k==='l';drawLD();});drawLD();
   numChk(document.getElementById('gate'),0.069,()=>{addReveal(`<div class="rh">✓ 0.069</div>
     <p>A warning is the union "A fails or B fails". The union rule needs $P(\\text{both fail})$, and independence supplies it as a product:</p>
     <div class="eqbox">$$P(A\\cup B)=P(A)+P(B)-P(A)\\,P(B)=0.02+0.05-0.02\\times0.05=0.07-0.001=0.069.$$</div>
@@ -2322,6 +2355,7 @@ function p1_mutual(){
     <div class="defn"><span class="dt">Mutual independence</span>Events $A_1,\\dots,A_n$ are <b>mutually independent</b> when, for <em>every</em> group of two or more of them, the probability that all in the group happen is the product of their probabilities. For three events, that is four equations:
       $$P(A\\cap B)=P(A)P(B),\\quad P(A\\cap C)=P(A)P(C),\\quad P(B\\cap C)=P(B)P(C),\\quad P(A\\cap B\\cap C)=P(A)P(B)P(C).$$</div>
     <p><b>Step 2: how many conditions.</b> A group is a subset of the $n$ events, and there are $2^n$ subsets (each event in or out: two choices for each of the $n$ events, multiplication principle, Module 1). The empty subset and the $n$ single events say nothing, so the conditions number $2^n-1-n$. For $n=3$: $8-1-3=4$, the four equations above. Neither kind implies the other: the coins show pairs holding while the triple fails, and the triple can hold while a pair fails: if $A$ and $B$ are the same event with probability $\\tfrac12$ and $C$ is impossible ($P(C)=0$), the triple equation reads $0=0$, but $P(A\\cap B)=P(A)=\\tfrac12\\neq\\tfrac12\\cdot\\tfrac12$.</p>
+    <p><b>Why the list cannot be shortened.</b> Module 1's formulas — the complement rule, inclusion–exclusion, De Morgan's laws — follow from how the sets are built, using only the axioms, so they hold for every probability assignment. A product equation is different: it is a claim about numbers that the sets cannot force (beat 9's loaded die: the same two sets, opposite verdicts). So no product equation follows from the others, and the two examples above show that leaving out either the pairs or the triple really does let one fail. Each subset has to be required separately.</p>
 
     <h2 style="margin-top:22px">Independent trials</h2>
     <p>Most independence in practice comes from repeating an experiment so that no repetition influences another: coin tosses, dice, Monte Carlo samples, separate trades assumed unrelated. Each repetition is a <b>trial</b>, and the trials are modelled as mutually independent. Then the probability of any sequence of results is the product of the per-trial probabilities. To see it, write $R_k$ for the result of trial $k$ and apply the chain rule (beat 3):</p>
@@ -2335,7 +2369,8 @@ function p1_mutual(){
     <canvas id="cvn8" width="640" height="300" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">1 − (1 − p)ⁿ</div><div class="v" id="n1">—</div></div><div class="rdc"><div class="k">n · p (shortcut)</div><div class="v" id="n2">—</div></div><div class="rdc"><div class="k">all n fail: (1 − p)ⁿ</div><div class="v" id="n3">—</div></div></div>
     <p style="margin-top:12px">With $p=0.05$ and $n=20$: twenty strategies with no real edge, each with a 5% chance of passing a significance test by luck, give $1-0.95^{20}\\approx0.64$ — probably at least one false discovery. The shortcut says $20\\times0.05=1$, a certainty, which is wrong; at $n=30$ it passes 1 altogether. The same formula sizes Bitcoin's risk from the other side: an attacker with 10% of the hash power finds each block with probability 0.1, so finding the next 6 blocks in a row, each independently, has probability $0.1^6=10^{-6}$.</p>
-    <div class="task"><b>A system in series</b>A trading system needs three components to work: a data feed, a model server, and a broker connection. On a given day they fail independently with probabilities 0.1, 0.2, and 0.05. What is the probability that the system works all day? Enter a decimal.</div>
+<div class="conn"><span class="dt">How this connects</span><p><b>Builds on.</b> Independence of two events (beat 9), the chain rule (beat 3), and from Module 1 the complement rule, inclusion–exclusion and the union bound.</p><p><b>What it adds.</b> The chain rule needs every conditional $P(R_k\\mid R_1\\cap\\cdots\\cap R_{k-1})$; mutual independence turns each into a plain probability, so a long run of trials needs only the per-trial numbers. "At least one" — inclusion–exclusion over $n$ events, $2^n-1$ terms in Module 1 — becomes one line, $1-(1-p)^n$.</p></div>
+        <div class="task"><b>A system in series</b>A trading system needs three components to work: a data feed, a model server, and a broker connection. On a given day they fail independently with probabilities 0.1, 0.2, and 0.05. What is the probability that the system works all day? Enter a decimal.</div>
     ${gateHTML('e.g. 0.5')}</div>`;
 
   /* ---- two-coin grid ---- */
@@ -2377,44 +2412,139 @@ function p1_mutual(){
   numChk(document.getElementById('gate'),0.684,()=>{addReveal(`<div class="rh">✓ 0.684</div>
     <p>The system works only if all three components work. Each works with probability $1-$(its failure probability), and mutual independence lets the three multiply:</p>
     <div class="eqbox">$$P(\\text{all work})=0.9\\times0.8\\times0.95=0.684.$$</div>
-    <p>Pairwise independence would not be enough to justify this product — it is a statement about all three together, the fourth equation of the definition. And the system fails on almost a third of days even though no single component fails more than 20% of the time: in series, reliabilities multiply, so they only go down.</p>`);},snapTo(0.684,0.0006));
+    <p>Pairwise independence would not be enough to justify this product — it is a statement about all three together, the fourth equation of the definition. And the system fails on almost a third of days even though no single component fails more than 20% of the time: in series, reliabilities multiply, so they only go down.</p>
+    <p><b>Another route: through the union.</b> "Works all day" is the complement of "at least one component fails", so $P(\\text{all work})=1-P(F_1\\cup F_2\\cup F_3)$. Inclusion–exclusion (Module 1) gives singles minus pairs plus the triple:</p>
+    <div class="eqbox">$$P(F_1\\cup F_2\\cup F_3)=(0.1+0.2+0.05)-(0.1\\cdot0.2+0.1\\cdot0.05+0.2\\cdot0.05)+0.1\\cdot0.2\\cdot0.05=0.35-0.035+0.001=0.316,$$</div>
+    <p>and $1-0.316=0.684$. The same answer, but it needs every overlap — three pairs and the triple — each supplied by independence (the triple by the fourth equation), seven terms instead of three factors. Taking the complement turns a union of failures into an intersection of successes, which mutual independence multiplies directly.</p>`);},snapTo(0.684,0.0006));
   setHints([`The system works only if every component works. Each works with probability 1 − (its failure probability). Mutual independence lets you multiply.`,`0.9 × 0.8 × 0.95 = 0.684.`]);
 }
 
-/* ---------- Beat 11: conditional independence and Simpson's paradox ---------- */
+/* ---------- Beat 11: conditional independence ---------- */
 function p1_condind(){
-  stage.innerHTML=`<div class="card"><h2>Conditional independence and Simpson's paradox</h2>
-    <p>Beat 6 assumed two test results were unrelated "once disease status is fixed". That is a different statement from independence, and the difference matters: knowing one thing can create or destroy a link between two others.</p>
-    <div class="defn"><span class="dt">Conditional independence</span>$A$ and $B$ are <b>conditionally independent given $C$</b> when they are independent inside the restricted world $C$:
-      $$P(A\\cap B\\mid C)=P(A\\mid C)\\,P(B\\mid C).$$
-      Equivalently, $P(A\\mid B\\cap C)=P(A\\mid C)$: once $C$ is known, learning $B$ adds nothing about $A$. To get it, divide both sides by $P(B\\mid C)$ and write each conditional with the definition:
-      $$\\frac{P(A\\cap B\\mid C)}{P(B\\mid C)}=\\frac{P(A\\cap B\\cap C)/P(C)}{P(B\\cap C)/P(C)}=\\frac{P(A\\cap B\\cap C)}{P(B\\cap C)}=P(A\\mid B\\cap C),$$
-      so the left side becomes $P(A\\mid B\\cap C)$ and the right side $P(A\\mid C)$.</div>
-
-    <p><b>A common cause makes independent things look linked.</b> Take the screening test, with $P(D)=0.01$, $P(+\\mid D)=0.9$, $P(+\\mid D^{c})=0.09$, and two tests whose errors are conditionally independent given $D$ and given $D^{c}$. Does a first positive change the chance of a second positive? Count 100,000 people:</p>
+  stage.innerHTML=`<div class="card"><h2>Conditional independence</h2>
+    <p>Beat 6 multiplied two test results, $P(++\\mid D)=0.9\\times0.9$, on the assumption that once disease status is fixed, the second test ignores the first. Does that make the two tests independent? Explore before answering. The test is the usual one: $P(D)=0.01$, $P(+\\mid D)=0.9$, $P(+\\mid D^{c})=0.09$.</p>
+    <p><b>Try it.</b> The square shows one group of people, drawn as in beat 9. The left strip is the people whose <em>first</em> test is positive (width = their share of the group), the right strip those whose first test is negative. The shading height in each strip is the share whose <em>second</em> test is positive. Flat shading means the first result tells you nothing about the second. Pick a group.</p>
+    <div class="seg" id="segcg"></div>
+    <canvas id="cvci" width="640" height="360" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">P(2nd + | 1st +)</div><div class="v" id="c1">—</div></div><div class="rdc"><div class="k">P(2nd + | 1st −)</div><div class="v" id="c2">—</div></div><div class="rdc"><div class="k">verdict in this group</div><div class="v" id="c3">—</div></div></div>
+    <p style="margin-top:14px"><b>What to notice.</b> Among the sick only, the shading is flat at $0.9$: inside that group the first result tells you nothing about the second. Among the healthy only, flat at $0.09$. But for everyone together it is <em>not</em> flat: $0.164$ after a first positive, $0.091$ after a first negative. Each group on its own has no link between the tests; putting the groups together creates one.</p>
+    <p><b>Step 1: the same thing in counts.</b> Take 100,000 people: 1,000 sick and 99,000 healthy.</p>
     <div style="overflow-x:auto;margin:10px 0"><table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.6;text-align:center">
-      <tr style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.3px"><td style="padding:5px;border-bottom:1px solid var(--line)"></td><td style="padding:5px;border-bottom:1px solid var(--line)">people</td><td style="padding:5px;border-bottom:1px solid var(--line)">1st test +</td><td style="padding:5px;border-bottom:1px solid var(--line)">both tests +</td></tr>
-      <tr><td style="padding:5px;text-align:left">sick ($D$)</td><td>1,000</td><td>$1000\\times0.9=900$</td><td>$900\\times0.9=810$</td></tr>
-      <tr><td style="padding:5px;text-align:left">healthy ($D^{c}$)</td><td>99,000</td><td>$99000\\times0.09=8{,}910$</td><td>$8910\\times0.09\\approx802$</td></tr>
-      <tr><td style="padding:5px;text-align:left;border-top:1px solid var(--line)">total</td><td style="border-top:1px solid var(--line)">100,000</td><td style="border-top:1px solid var(--line)">9,810</td><td style="border-top:1px solid var(--line)">1,612</td></tr></table></div>
-    <p>Inside each row the second test ignores the first — the "both +" column is the "1st +" column times the same rate. But across the whole population, the second test on its own is positive for $1000\\times0.9+99000\\times0.09=9{,}810$ people, the same as the first, so $P(\\text{2nd}+)=\\frac{9810}{100000}\\approx0.098$. Among the 9,810 with a first positive, 1,612 have a second positive: $P(\\text{2nd}+\\mid\\text{1st}+)=\\frac{1612}{9810}\\approx0.164$.</p>
-    <p><em>Why the first result matters.</em> A first positive raises the chance of being sick from $0.01$ to $P(D\\mid\\text{1st}+)=\\frac{900}{9810}\\approx0.092$ (beat 5). The second test's chance of a positive is then a weighted average over sick and healthy (total probability, beat 4), with these updated weights:
-    $$P(\\text{2nd}+\\mid\\text{1st}+)=0.092\\times0.9+0.908\\times0.09\\approx0.083+0.082=0.164.$$
-    Before any result the weights were $0.01$ and $0.99$, giving $0.01\\times0.9+0.99\\times0.09\\approx0.098$. The two results are <em>dependent</em>, linked through their common cause, and <em>conditionally independent given</em> that cause. This is also the structure a naive-Bayes spam filter assumes: words dependent overall, independent given spam or not.</p>
-    <p><b>A common effect makes independent things look linked.</b> Toss two fair coins, independent. Without other information, $P(\\text{2nd H}\\mid\\text{1st T})=P(\\text{2nd H})=\\tfrac12$. Now learn only that at least one is heads: the outcomes left are HH, HT, TH, each $\\tfrac13$, so $P(\\text{2nd H})=\\tfrac23$. If the first then turns out to be tails, only TH is left, and the second <em>must</em> be heads: $P(\\text{2nd H}\\mid\\text{1st T})=1\\ne\\tfrac23$. Given the common effect "at least one head", the coins are dependent. A Bayesian network (Module 11) is a diagram of exactly these patterns — which variables become linked or unlinked when others are observed.</p>
+      <tr style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.3px"><td style="padding:5px;border-bottom:1px solid var(--line)"></td><td style="padding:5px;border-bottom:1px solid var(--line)">people</td><td style="padding:5px;border-bottom:1px solid var(--line)">1st test +</td><td style="padding:5px;border-bottom:1px solid var(--line)">1st + and 2nd +</td></tr>
+      <tr><td style="padding:5px;text-align:left">sick</td><td>1,000</td><td>$1000\\times0.9=900$</td><td>$900\\times0.9=810$</td></tr>
+      <tr><td style="padding:5px;text-align:left">healthy</td><td>99,000</td><td>$99000\\times0.09=8{,}910$</td><td>$8910\\times0.09\\approx802$</td></tr>
+      <tr><td style="padding:5px;text-align:left;border-top:1px solid var(--line)">everyone</td><td style="border-top:1px solid var(--line)">100,000</td><td style="border-top:1px solid var(--line)">9,810</td><td style="border-top:1px solid var(--line)">1,612</td></tr></table></div>
+    <p>• <em>Sick only.</em> Of the 900 with a first positive, 810 have a second positive: $\\frac{810}{900}=0.9$. Among all 1,000 sick people the second test is positive for $0.9$ too. Same number: knowing the first result changes nothing.<br>
+    • <em>Healthy only.</em> Of the 8,910 with a first positive, about 802 have a second positive: $\\frac{802}{8910}=0.09$, the same as among all healthy people.<br>
+    • <em>Everyone.</em> Of the 9,810 with a first positive, 1,612 have a second positive: $\\frac{1612}{9810}\\approx0.164$. Among all 100,000, the second test is positive for $900+8910=9{,}810$ people, $\\frac{9810}{100000}\\approx0.098$. Different numbers: a first positive makes a second positive more likely.</p>
+    <p><b>Step 2: why the groups combine into a link.</b> In the "everyone" group, the second test's chance of a positive is a weighted average of $0.9$ (sick) and $0.09$ (healthy), weighted by how many people in the group are sick (total probability, beat 4).</p>
+    <p>• Before any result, the weights are $0.01$ and $0.99$: $0.01\\times0.9+0.99\\times0.09\\approx0.098$.<br>
+    • After a first positive, the share who are sick is $\\frac{900}{9810}\\approx0.092$ (Bayes, beat 5), so the weights are $0.092$ and $0.908$: $0.092\\times0.9+0.908\\times0.09\\approx0.083+0.082=0.164$.</p>
+    <p>The first result does not act on the second test. It changes what you believe about the hidden cause — disease status — and the cause is what both tests depend on. A <b>common cause</b> links two results that are unlinked within each group.</p>
+    <p><b>Step 3: the definition.</b> Conditioning on $C$ restricts attention to the world where $C$ happened (beat 2), and $P(\\cdot\\mid C)$ is a probability in that world. Conditional independence is beat 9's definition, applied inside that world:</p>
+    <div class="defn"><span class="dt">Conditional independence</span>$A$ and $B$ are <b>conditionally independent given $C$</b> when $$P(A\\cap B\\mid C)=P(A\\mid C)\\,P(B\\mid C).$$</div>
+    <p>Check it on the tests. Given sick: $P(\\text{both}+\\mid D)=\\frac{810}{1000}=0.81=0.9\\times0.9$. Holds. Given healthy: $\\frac{802}{99000}\\approx0.0081=0.09\\times0.09$. Holds. Without conditioning: $P(\\text{both}+)=\\frac{1612}{100000}\\approx0.0161$, but $P(\\text{1st}+)P(\\text{2nd}+)\\approx0.098\\times0.098\\approx0.0096$. Fails. Conditionally independent given disease status, but not independent.</p>
+    <p><em>An equivalent form.</em> Beat 9 turned $P(A\\cap B)=P(A)P(B)$ into "$P(A\\mid B)=P(A)$". The same works inside $C$: divide both sides of the definition by $P(B\\mid C)$. The right side becomes $P(A\\mid C)$. For the left side, write each conditional with its definition; the $P(C)$s cancel:</p>
+    <div class="eqbox">$$\\frac{P(A\\cap B\\mid C)}{P(B\\mid C)}=\\frac{P(A\\cap B\\cap C)\\,/\\,P(C)}{P(B\\cap C)\\,/\\,P(C)}=\\frac{P(A\\cap B\\cap C)}{P(B\\cap C)}=P(A\\mid B\\cap C).$$</div>
+    <p>So the definition says $P(A\\mid B\\cap C)=P(A\\mid C)$: once $C$ is known, learning $B$ adds nothing about $A$. For the tests: once you know the person is sick, the first result adds nothing about the second.</p>
+    <p><b>Summary.</b> The two tests are <em>conditionally independent given disease status</em>, but <em>not independent</em>: a common cause links results that are unlinked within each group. A naive-Bayes spam filter makes the same assumption about words: linked overall, independent once you know whether the email is spam. The next beat shows the reverse pattern.</p>
+    `+'<div class="conn"><span class="dt">How this connects</span><p><b>Builds on.</b> Independence (beat 9), applied inside the restricted world of conditioning (beat 2). The common-cause calculation is total probability (beat 4) with weights updated by Bayes (beat 5), and the picture is beat 9\'s square.</p><p><b>What it adds.</b> Beats 6 and 7 multiplied the likelihoods of two results, $0.9\\times0.9$. That step is justified by conditional independence given disease status — not by independence, which the tests do not have. It also explains how two things can be linked overall but unlinked within every group.</p></div>'+`
+    <div class="task"><b>A second opinion</b>A disease has prevalence 10%. A test is positive for 80% of sick people and 10% of healthy people, and two tests are conditionally independent given disease status. A first test comes back positive. What is the probability that a second test is also positive? Enter a decimal.</div>
+    ${gateHTML('e.g. 0.5')}</div>`;
+  const G={sick:{w:0.9,h1:0.9,h0:0.9,lab:'sick only'},healthy:{w:0.09,h1:0.09,h0:0.09,lab:'healthy only'},all:{w:0.0981,h1:1612/9810,h0:8198/90190,lab:'everyone'}};
+  const pl=plot(document.getElementById('cvci'),{xmin:-0.06,xmax:1.06,ymin:-0.14,ymax:1.08});
+  function draw(k){const g=G[k];p0Set('c1',g.h1.toFixed(3));p0Set('c2',g.h0.toFixed(3));p0Set('c3',Math.abs(g.h1-g.h0)<1e-6?'flat: unlinked':'not flat: linked');
+    const ctx=pl.ctx;if(!ctx)return;ctx.clearRect(0,0,pl.W,pl.H);const R=(x0,y0,x1,y1,f)=>{ctx.fillStyle=f;ctx.fillRect(pl.px(x0),pl.py(y1),pl.px(x1)-pl.px(x0),pl.py(y0)-pl.py(y1));};
+    R(0,0,1,1,'#0f1724');R(0,0,g.w,g.h1,'rgba(232,184,75,.70)');R(g.w,0,1,g.h0,'rgba(232,184,75,.38)');
+    ctx.strokeStyle='#e9eef6';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(pl.px(g.w),pl.py(0));ctx.lineTo(pl.px(g.w),pl.py(1));ctx.stroke();
+    ctx.strokeStyle='#2b3a4f';ctx.strokeRect(pl.px(0),pl.py(1),pl.px(1)-pl.px(0),pl.py(0)-pl.py(1));
+    ctx.font=p0Font(12);ctx.textAlign='center';ctx.fillStyle='#e8b84b';ctx.fillText('1st +',pl.px(g.w/2),pl.py(0)+16);ctx.fillStyle='#9fb0c4';ctx.fillText('1st −   (width '+(1-g.w).toFixed(3)+')',pl.px((1+g.w)/2),pl.py(0)+16);
+    ctx.fillStyle='#e9eef6';ctx.fillText(g.h1.toFixed(3),pl.px(g.w/2),pl.py(g.h1)-8);ctx.fillText(g.h0.toFixed(3),pl.px((1+g.w)/2),pl.py(g.h0)-8);
+    ctx.textAlign='left';ctx.fillStyle='#9fb0c4';ctx.fillText('group: '+g.lab+'   ·   shading = share with 2nd test +',pl.px(0)+4,pl.py(1)-6);}
+  p0Seg('segcg',[['sick','sick only'],['healthy','healthy only'],['all','everyone']],'sick',draw);draw('sick');
+  numChk(document.getElementById('gate'),0.073/0.17,()=>{addReveal(`<div class="rh">✓ about 0.43</div>
+    <p>$P(\\text{2nd}+\\mid\\text{1st}+)=\\frac{P(\\text{both}+)}{P(\\text{1st}+)}$. Split both by disease status (total probability), and use conditional independence inside each group to multiply the two tests:</p>
+    <div class="eqbox">$$P(\\text{1st}+)=0.1\\times0.8+0.9\\times0.1=0.17,\\qquad P(\\text{both}+)=0.1\\times0.8^2+0.9\\times0.1^2=0.064+0.009=0.073,$$
+    $$P(\\text{2nd}+\\mid\\text{1st}+)=\\frac{0.073}{0.17}\\approx0.43.$$</div>
+    <p>Without the first result, a test is positive with probability 0.17. After a positive, a second positive is 0.43 — more than twice as likely — because the first positive shifted belief toward "sick" ($P(D\\mid\\text{1st}+)=\\frac{0.08}{0.17}\\approx0.47$), and the second test depends on that. Check with Step 2's weighted average: $0.47\\times0.8+0.53\\times0.1\\approx0.376+0.053=0.43$.</p>`);},snapTo(0.073/0.17,0.0015));
+  setHints([`Write P(2nd + | 1st +) = P(both +) / P(1st +). Find each by splitting into sick and healthy; inside each group, the two tests multiply.`,`P(1st +) = 0.1·0.8 + 0.9·0.1 = 0.17 and P(both +) = 0.1·0.64 + 0.9·0.01 = 0.073, so the answer is 0.073 / 0.17 ≈ 0.43.`]);
+}
 
-    <h2 style="margin-top:22px">Simpson's paradox</h2>
-    <p>Two strategies are compared over their trading history. Each traded in calm markets and in volatile markets. Each square below is one strategy: its strips are the two kinds of market, with <b>width</b> = the share of that strategy's trades made in that market, and <b>shading height</b> = its win rate there. The dashed line is its overall win rate. Drag the borders.</p>
+/* ---------- Beat 12: explaining away (a common effect) ---------- */
+function p1_explain(){
+  stage.innerHTML=`<div class="card"><h2>Explaining away: a common effect</h2>
+    <p>Beat 11 showed two results linked overall but unlinked within each group, because both depend on a hidden <em>cause</em>. This beat shows the reverse: two things that are unlinked overall become linked once you learn about something they both <em>cause</em>.</p>
+    <p>The grass is wet if it rained, if the sprinkler ran, or both — and only then. Rain happens with probability $0.3$, the sprinkler runs with probability $0.4$, and the two are independent (the sprinkler runs on a timer).</p>
+    <p><b>Try it.</b> The square is drawn as in beat 9: rain is the left strip (width $0.3$), sprinkler the bottom band (height $0.4$). Because they are independent, they are crossed strips, and each of the four cells has area equal to its probability. Choose what you know; the cells it rules out go dark.</p>
+    <div class="seg" id="segex"></div>
+    <canvas id="cvex" width="640" height="360" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">area still possible</div><div class="v" id="x1">—</div></div><div class="rdc"><div class="k">rain part of it</div><div class="v" id="x2">—</div></div><div class="rdc"><div class="k">P(rain | what you know)</div><div class="v" id="x3">—</div></div></div>
+    <p class="small" id="x4" style="margin-top:8px;min-height:20px"></p>
+    <p style="margin-top:14px"><b>What to notice.</b> Knowing only about the sprinkler leaves rain at $0.3$ — the strips are crossed, so independent. Knowing the grass is wet raises rain to about $0.52$. Then learning the sprinkler ran drops rain back to $0.3$, and learning it did not run makes rain certain. Once the grass is known to be wet, the sprinkler tells you about rain.</p>
+    <p><b>Step 1: the grass is wet.</b> The grass is dry only when there is no rain <em>and</em> no sprinkler. Complements of independent events are independent (beat 9, Step 2), so</p>
+    <div class="eqbox">$$P(\\text{wet})=1-P(\\text{no rain})\\,P(\\text{no sprinkler})=1-0.7\\times0.6=0.58.$$</div>
+    <p>Rain always makes the grass wet, so "rain and wet" is just "rain": $P(\\text{rain}\\cap\\text{wet})=0.3$. Then $P(\\text{rain}\\mid\\text{wet})=\\frac{0.3}{0.58}\\approx0.517$. Wet grass is evidence for rain: it rules out the dry cell, which contained no rain.</p>
+    <p><b>Step 2: wet, and the sprinkler ran.</b> The sprinkler alone makes the grass wet, so "wet and sprinkler" is just "sprinkler", probability $0.4$. The rain part of it is "rain and sprinkler", probability $0.3\\times0.4=0.12$ by independence:</p>
+    <div class="eqbox">$$P(\\text{rain}\\mid\\text{wet}\\cap\\text{sprinkler})=\\frac{P(\\text{rain}\\cap\\text{sprinkler})}{P(\\text{sprinkler})}=\\frac{0.12}{0.4}=0.3.$$</div>
+    <p>Back to the prior. The sprinkler fully accounts for the wet grass, so the wet grass is no longer evidence for rain: the sprinkler has <b>explained away</b> the wet grass.</p>
+    <p><b>Step 3: wet, and the sprinkler did not run.</b> Wet grass without the sprinkler means rain: "wet and no sprinkler" is "rain and no sprinkler", probability $0.3\\times0.6=0.18$, and all of it is rain, so $P(\\text{rain}\\mid\\text{wet}\\cap\\text{no sprinkler})=\\frac{0.18}{0.18}=1$.</p>
+    <p><b>Step 4: check against the definition.</b> Without conditioning, rain and sprinkler are independent: $P(\\text{rain}\\cap\\text{sprinkler})=0.12=0.3\\times0.4$. Given wet, apply beat 11's definition, $P(A\\cap B\\mid C)=P(A\\mid C)\\,P(B\\mid C)$:</p>
+    <p>• Left side: $P(\\text{rain}\\cap\\text{sprinkler}\\mid\\text{wet})=\\frac{0.12}{0.58}\\approx0.207$ (both together always make the grass wet).<br>
+    • Right side: $P(\\text{rain}\\mid\\text{wet})=0.517$ (Step 1) and $P(\\text{sprinkler}\\mid\\text{wet})=\\frac{0.4}{0.58}\\approx0.690$, product $\\approx0.357$.</p>
+    <p>$0.207\\ne0.357$: given wet grass, rain and sprinkler are <em>dependent</em>. The overlap is smaller than the product, so learning one makes the other <em>less</em> likely (beat 9's overlap rule) — exactly what Step 2 found.</p>
+    <p><b>The two patterns side by side.</b> Beat 11: the two tests are conditionally independent given disease status, but dependent overall (a common cause). This beat: rain and sprinkler are independent overall, but dependent given wet grass (a common effect). So neither kind of independence implies the other; which one holds depends on how the events are connected. A Bayesian network (Module 11) is a diagram of these connections.</p>
+    <p><em>Where it bites.</em> Selecting data on an effect creates links between its causes. Among hospital patients — people admitted because of illness A <em>or</em> illness B — the two illnesses look negatively related even when they are independent in the population (Berkson's paradox). Among strategies kept because they performed well, the ones with a lucky period look less skilled.</p>
+    `+'<div class="conn"><span class="dt">How this connects</span><p><b>Builds on.</b> Independence and its crossed-strips picture (beat 9), the definition of conditional independence (beat 11), and conditioning as ruling out part of the space (beat 2) — the dark cells.</p><p><b>What it adds.</b> A warning that beats 9 and 11 alone do not give: selecting or conditioning on an outcome can manufacture a link between its causes — the source of Berkson’s paradox and of survivorship bias in backtests.</p></div>'+`
+    <div class="task"><b>Why did the trade lose?</b>A trade can be hit by a data error (probability $0.05$) and by a market shock (probability $0.1$), independently. The chance it loses money depends on which happened: $0.9$ if both, $0.8$ if only a data error, $0.6$ if only a shock, $0.02$ if neither. The trade lost money, and you then learn there was a market shock. What is the probability there was also a data error? Enter a decimal.</div>
+    ${gateHTML('e.g. 0.1')}</div>`;
+  const cv=document.getElementById('cvex');const pR=0.3,pS=0.4;let mode='none';
+  const cells=[{r:1,s:1,lab:'both'},{r:1,s:0,lab:'rain only'},{r:0,s:1,lab:'sprinkler only'},{r:0,s:0,lab:'neither (dry)'}];
+  const keep={none:c=>true,son:c=>c.s===1,wet:c=>c.r||c.s,wetS:c=>(c.r||c.s)&&c.s===1,wetN:c=>(c.r||c.s)&&c.s===0};
+  const area=c=>(c.r?pR:1-pR)*(c.s?pS:1-pS);
+  const notes={none:'Nothing known: P(rain) = 0.3.',son:'Only the sprinkler is known: rain is the same share (0.3) of the bottom band as of the whole square — independent.',wet:'Wet grass rules out only the dry cell, which had no rain, so rain\'s share rises.',wetS:'Wet and sprinkler on: the sprinkler band alone remains, and rain is 0.3 of it — back to the prior.',wetN:'Wet and sprinkler off: only "rain only" remains, so rain is certain.'};
+  function draw(){const k=keep[mode];let tot=0,rain=0;cells.forEach(c=>{if(k(c)){tot+=area(c);if(c.r)rain+=area(c);}});
+    p0Set('x1',tot.toFixed(3));p0Set('x2',rain.toFixed(3));p0Set('x3',(rain/tot).toFixed(3));p0Set('x4',notes[mode]);
+    const ctx=cv.getContext&&cv.getContext('2d');if(!ctx)return;const W=cv.width,H=cv.height,x0=60,y0=20,S=Math.min(W-120,H-60);ctx.clearRect(0,0,W,H);
+    const X=v=>x0+v*S,Y=v=>y0+S-v*S;
+    cells.forEach(c=>{const xa=c.r?0:pR,xb=c.r?pR:1,ya=c.s?0:pS,yb=c.s?pS:1;const on=k(c);
+      ctx.fillStyle=c.r&&c.s?'#6a8f5a':c.r?'#3f6ea5':c.s?'#b08a35':'#2a3546';if(!on)ctx.fillStyle='#0c121c';
+      ctx.fillRect(X(xa),Y(yb),X(xb)-X(xa),Y(ya)-Y(yb));ctx.strokeStyle='#5d6f85';ctx.lineWidth=1;ctx.strokeRect(X(xa),Y(yb),X(xb)-X(xa),Y(ya)-Y(yb));
+      ctx.font=p0Font(11);ctx.textAlign='center';ctx.fillStyle=on?'#e9eef6':'#4a586b';const cx=(X(xa)+X(xb))/2,cy=(Y(ya)+Y(yb))/2;
+      ctx.fillText(c.lab,cx,cy-4);ctx.fillText(area(c).toFixed(2),cx,cy+12);if(!on)ctx.fillText('ruled out',cx,cy+28);});
+    ctx.font=p0Font(12);ctx.fillStyle='#9fb0c4';ctx.textAlign='center';ctx.fillText('rain 0.3',X(pR/2),Y(0)+18);ctx.fillText('no rain 0.7',X((1+pR)/2),Y(0)+18);
+    ctx.save();ctx.translate(X(0)-14,Y(pS/2));ctx.rotate(-Math.PI/2);ctx.fillText('sprinkler 0.4',0,0);ctx.restore();
+    ctx.save();ctx.translate(X(0)-14,Y((1+pS)/2));ctx.rotate(-Math.PI/2);ctx.fillText('no sprinkler 0.6',0,0);ctx.restore();ctx.textAlign='left';}
+  p0Seg('segex',[['none','know nothing'],['son','sprinkler ran'],['wet','grass is wet'],['wetS','wet + sprinkler ran'],['wetN','wet + sprinkler didn\'t run']],'none',k=>{mode=k;draw();});
+  draw();
+  numChk(document.getElementById('gate'),0.0731707,()=>{addReveal(`<div class="rh">✓ ≈ 0.073</div>
+    <p>Condition on everything you know, "loss and shock", and split by the data error:</p>
+    <div class="eqbox">$$P(E\\mid L\\cap S)=\\frac{P(E\\cap S\\cap L)}{P(S\\cap L)}=\\frac{0.05\\times0.1\\times0.9}{0.05\\times0.1\\times0.9+0.95\\times0.1\\times0.6}=\\frac{0.0045}{0.0045+0.057}\\approx0.073.$$</div>
+    <p>Each numerator term is $P(E\\text{ or not})\\times P(S)\\times P(L\\mid\\text{that combination})$, using the independence of $E$ and $S$. The factor $P(S)=0.1$ appears in every term and cancels.</p>
+    <p>Compare: before anything, $P(E)=0.05$. After only the loss, $P(E\\mid L)=\\frac{0.05(0.1\\times0.9+0.9\\times0.8)}{0.1146}=\\frac{0.0405}{0.1146}\\approx0.35$, where $0.1146$ adds all four combinations, $0.0045+0.036+0.057+0.0171$. Learning about the shock then drops it to $0.073$: the shock explains most of the loss away.</p>`);},snapTo(0.0731707,0.0015));
+  setHints([`Condition on both facts: P(E | L ∩ S) = P(E ∩ S ∩ L) / P(S ∩ L). Split P(S ∩ L) by whether there was a data error; E and S are independent.`,`(0.05·0.1·0.9) / (0.05·0.1·0.9 + 0.95·0.1·0.6) = 0.0045 / 0.0615 ≈ 0.073.`]);
+}
+
+/* ---------- Beat 13: Simpson's paradox ---------- */
+function p1_simpson(){
+  stage.innerHTML=`<div class="card"><h2>Simpson's paradox</h2>
+    <p>An overall rate is a weighted average of the rates in each group (total probability, beat 4). Comparing two overall rates can therefore give the opposite answer to comparing group by group.</p>
+    <p><b>Try it.</b> Two strategies traded in calm and in volatile markets. Each square is one strategy. Its left strip is calm markets, its right strip volatile ones. Strip <b>width</b> = the share of that strategy's trades made in that kind of market; <b>shading height</b> = its win rate there. The dashed line is its overall win rate. Drag the white borders.</p>
     <canvas id="cvs9" width="640" height="360" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">calm: A vs B</div><div class="v" id="s1">—</div></div><div class="rdc"><div class="k">volatile: A vs B</div><div class="v" id="s2">—</div></div><div class="rdc"><div class="k">overall: A vs B</div><div class="v" id="s3">—</div></div></div>
     <p class="small" id="s4" style="margin-top:8px;min-height:20px"></p>
-    <p style="margin-top:14px"><b>What to notice.</b> With the starting numbers, A wins more often than B in calm markets (93% vs 87%) <em>and</em> in volatile markets (73% vs 69%) — yet B wins more often overall (83% vs 78%). (These are the numbers of a well-known 1986 medical study comparing two kidney-stone treatments, relabelled.) Drag both borders to the same position and the reversal disappears: with a common weight $w$ for calm markets, A's overall rate is $w\\,a_1+(1-w)\\,a_2$ and B's is $w\\,b_1+(1-w)\\,b_2$. If $a_1\\gt b_1$ and $a_2\\gt b_2$, then each term of A's sum is at least the matching term of B's (the weights are not negative), and at least one is larger, so A's average is larger.</p>
-    <p><b>Why it happens.</b> Each overall rate is a weighted average of the two strip heights (total probability, beat 4), and the two strategies use <em>different weights</em>. A made 75% of its trades in volatile markets, where everything wins less often; B made 77% of its trades in calm markets. B's overall rate is pulled toward the easy strip, A's toward the hard one:</p>
+    <p style="margin-top:14px"><b>What to notice.</b> At the start, A wins more often than B in calm markets (93% vs 87%) <em>and</em> in volatile markets (73% vs 69%) — yet B wins more often overall (83% vs 78%). Now drag both borders to the same position: the reversal disappears. (These are the numbers of a well-known 1986 medical study comparing two kidney-stone treatments, relabelled.)</p>
+    <p><b>Step 1: each overall rate is a weighted average.</b> For one strategy, "win" splits into "win in a calm market" and "win in a volatile market", so by total probability</p>
+    <div class="eqbox">$$P(\\text{win})=P(\\text{calm})\\,P(\\text{win}\\mid\\text{calm})+P(\\text{volatile})\\,P(\\text{win}\\mid\\text{volatile}).$$</div>
+    <p>The weights are that strategy's own shares of trades — the strip widths. With the starting numbers:</p>
     <div class="eqbox">$$\\text{A}: 0.25\\times0.93+0.75\\times0.73\\approx0.78,\\qquad \\text{B}: 0.77\\times0.87+0.23\\times0.69\\approx0.83.$$</div>
-    <p>The market type is a <b>confounder</b>: it affects both which strategy was used and how often trades win. Comparing overall rates mixes the strategies' skill with the markets they happened to trade in. Conditioning on the market — comparing within each strip — removes that mix, and here it is the fair comparison. Which comparison is right in general depends on what causes what, not on the numbers alone; that question returns with Bayesian networks. In backtesting, this is why a strategy's overall Sharpe ratio (its average return per unit of risk) can mislead if it traded mostly in favorable periods.</p>
-    <div class="task"><b>A second opinion</b>A disease has prevalence 10%. A test is positive for 80% of sick people and 10% of healthy people, and two tests are conditionally independent given disease status. A first test comes back positive. What is the probability that a second test is also positive? Enter a decimal.</div>
+    <p><b>Step 2: why the order flips.</b> Both strategies win less in volatile markets. A made 75% of its trades there, so its average is pulled toward its low rate, $0.73$. B made 77% of its trades in calm markets, so its average is pulled toward its high rate, $0.87$. A's lead within each group is small (6 and 4 points); the difference in weights is large, and it outweighs the lead.</p>
+    <p><b>Step 3: equal weights remove the reversal.</b> Give both strategies the same calm share $w$. Then A's overall rate is $w\\,a_1+(1-w)\\,a_2$ and B's is $w\\,b_1+(1-w)\\,b_2$, where $a_1,a_2$ and $b_1,b_2$ are the calm and volatile win rates. Subtract:</p>
+    <div class="eqbox">$$\\big(w\\,a_1+(1-w)\\,a_2\\big)-\\big(w\\,b_1+(1-w)\\,b_2\\big)=w\\,(a_1-b_1)+(1-w)(a_2-b_2).$$</div>
+    <p>If A is better in both groups, $a_1-b_1\\gt0$ and $a_2-b_2\\gt0$; the weights $w$ and $1-w$ are not negative and not both zero, so the sum is positive. With equal weights, better in every group means better overall. The paradox needs <em>different</em> weights.</p>
+    <p><b>Step 4: which comparison is fair.</b> The market type is a <b>confounder</b>: it affects both which strategy was used and how often trades win. The overall rates mix each strategy's skill with the markets it happened to trade in; comparing within each market type — conditioning on it — removes that mix, and here that is the fair comparison. In general, which comparison is right depends on what causes what, not on the numbers alone; that question returns with Bayesian networks (Module 11). In backtesting, this is why a strategy's overall Sharpe ratio (its average return per unit of risk) can mislead if it traded mostly in favourable periods.</p>
+    `+'<div class="conn"><span class="dt">How this connects</span><p><b>Builds on.</b> Total probability (beat 4): an overall rate is a weighted average of group rates. Conditioning (beat 2): comparing within a group is comparing conditional probabilities.</p><p><b>What it adds.</b> Beats 11 and 12 showed that conditioning on a third event can remove a link between two others or create one. Here it <em>reverses</em> one: two weighted averages with different weights can come out in the opposite order to every one of their parts.</p></div>'+`
+    <div class="task"><b>How much weight it takes</b>Strategy A wins 90% of its calm-market trades and 60% of its volatile-market trades, and makes 20% of its trades in calm markets. Strategy B is worse in both: 80% in calm markets, 50% in volatile ones. What share of B's trades must be in calm markets for B's overall win rate to equal A's? Enter a fraction or a decimal.</div>
     ${gateHTML('e.g. 0.5')}</div>`;
-
   const cv=document.getElementById('cvs9');
   const H={A:[0.93,0.73],B:[0.87,0.69]};let w={A:0.25,B:0.77},drag=null;
   const box=k=>{const W=cv.width,gap=24,bw=(W-gap-40)/2,x0=20+(k==='A'?0:bw+gap);return {x0,x1:x0+bw,y0:34,y1:cv.height-44};};
@@ -2442,15 +2572,15 @@ function p1_condind(){
   cv.addEventListener('pointermove',e=>{if(drag){e.preventDefault();move(e);}});
   const end=()=>drag=null;cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
   draw();
-  numChk(document.getElementById('gate'),0.073/0.17,()=>{addReveal(`<div class="rh">✓ about 0.43</div>
-    <p>$P(\\text{2nd}+\\mid\\text{1st}+)=\\frac{P(\\text{both}+)}{P(\\text{1st}+)}$. Split both by disease status (total probability), and use conditional independence inside each group to multiply the two tests:</p>
-    <div class="eqbox">$$P(\\text{1st}+)=0.1\\times0.8+0.9\\times0.1=0.17,\\qquad P(\\text{both}+)=0.1\\times0.8^2+0.9\\times0.1^2=0.064+0.009=0.073,$$
-    $$P(\\text{2nd}+\\mid\\text{1st}+)=\\frac{0.073}{0.17}\\approx0.43.$$</div>
-    <p>Without the first result, a test is positive with probability 0.17. After a positive, a second positive is 0.43 — more than twice as likely — because the first positive shifted the odds toward "sick". The tests are conditionally independent given disease status, but not independent.</p>`);},snapTo(0.073/0.17,0.0015));
-  setHints([`Write P(2nd + | 1st +) = P(both +) / P(1st +). Find each by splitting into sick and healthy; inside each group, the two tests multiply.`,`P(1st +) = 0.1·0.8 + 0.9·0.1 = 0.17 and P(both +) = 0.1·0.64 + 0.9·0.01 = 0.073, so the answer is 0.073 / 0.17 ≈ 0.43.`]);
+  numChk(document.getElementById('gate'),8/15,()=>{addReveal(`<div class="rh">✓ 8/15 ≈ 0.533</div>
+    <p>A's overall rate, with its own weights (Step 1): $0.2\\times0.9+0.8\\times0.6=0.18+0.48=0.66$.</p>
+    <p>B's overall rate with calm share $w$: $0.8\\,w+0.5\\,(1-w)=0.5+0.3\\,w$. Set it equal to A's:</p>
+    <div class="eqbox">$$0.5+0.3\\,w=0.66\\quad\\Longrightarrow\\quad w=\\frac{0.16}{0.3}=\\frac8{15}\\approx0.533.$$</div>
+    <p>If more than 53% of B's trades are in calm markets, B looks better overall than A, although it is worse in both kinds of market by 10 points.</p>`);},snapTo(8/15,0.0015));
+  setHints([`Find A's overall rate as a weighted average. Then write B's overall rate with an unknown calm share w and set the two equal.`,`A: 0.2·0.9 + 0.8·0.6 = 0.66. B: 0.8w + 0.5(1 − w) = 0.5 + 0.3w = 0.66, so w = 0.16/0.3 = 8/15 ≈ 0.533.`]);
 }
 
-/* ---------- Beat 12: puzzles where intuition fails ---------- */
+/* ---------- Beat 14: puzzles where intuition fails ---------- */
 function p1_puzzles(){
   stage.innerHTML=`<div class="card"><h2>Puzzles where intuition fails</h2>
     <p>Three famous puzzles, each settled by writing down the sample space and conditioning carefully. Each also teaches one lesson about evidence.</p>
@@ -2484,7 +2614,8 @@ function p1_puzzles(){
     <p>An urn holds 2 red and 2 blue balls. Draw two without replacement. You are told the <em>second</em> ball is red. What is the probability that the first was red? A common answer is $\\tfrac12$: "the first draw happened before the second, so the second cannot affect it". But conditioning is about information, not about time:</p>
     <div class="eqbox">$$P(R_1\\mid R_2)=\\frac{P(R_1\\cap R_2)}{P(R_2)}=\\frac{\\tfrac24\\cdot\\tfrac13}{\\tfrac12}=\\frac{1/6}{1/2}=\\tfrac13.$$</div>
     <p>Here $P(R_1\\cap R_2)=\\tfrac24\\cdot\\tfrac13$ by the multiplication rule, and $P(R_2)=\\tfrac12$ by the second-ball result of beat 4. Knowing the second ball is red means one of the two reds is accounted for, so the first draw had only one red among the other three balls: $\\tfrac13$. Later observations are evidence about earlier events — which is how a filter infers a past hidden state from later measurements (Module 10).</p>
-    <div class="task"><b>Four doors</b>Monty Hall with four doors: one car, three goats. You pick a door. The host, who knows where the car is, opens one of the other doors that has a goat. You then switch to one of the two remaining closed doors, chosen at random. What is the probability that you win the car? Enter a fraction or a decimal.</div>
+<div class="conn"><span class="dt">How this connects</span><p><b>Builds on.</b> Conditioning restricts the sample space (beat 2); Bayes' theorem and likelihoods (beat 5).</p><p><b>What it adds.</b> A likelihood $P(\\text{evidence}\\mid\\text{hypothesis})$ must describe how the evidence was produced — the host's rule, how you met the child. The same visible evidence produced by a different process has different likelihoods, and so a different posterior.</p></div>
+        <div class="task"><b>Four doors</b>Monty Hall with four doors: one car, three goats. You pick a door. The host, who knows where the car is, opens one of the other doors that has a goat. You then switch to one of the two remaining closed doors, chosen at random. What is the probability that you win the car? Enter a fraction or a decimal.</div>
     ${gateHTML('e.g. 1/2 or 0.5')}</div>`;
 
   const cv=document.getElementById('cvm10');
@@ -2525,7 +2656,7 @@ function p1_puzzles(){
   setHints([`Split into two cases: your first pick was right (1/4) or wrong (3/4). In each case, what are the two remaining closed doors hiding?`,`If you were right, switching loses; if wrong, one of the two doors has the car, so switching wins half the time: (3/4)(1/2) = 3/8.`]);
 }
 
-/* ---------- Beat 13: Module 2 problem set ---------- */
+/* ---------- Beat 15: Module 2 problem set ---------- */
 function p1_problems(){
   const P=(lvl,num,q,hint,sol)=>`<div class="prob"><span class="lvl">${lvl}</span><div class="ph">Problem ${num}</div>${q}
     <details><summary>Hint</summary><div class="sol">${hint}</div></details>
