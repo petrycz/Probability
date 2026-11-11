@@ -144,7 +144,7 @@ const MODULES=[
   beats:[p0_intro,p0_shapes,p0_recall,p0_space,p0_events,p0_sum,p0_axioms,p0_multiply,p0_combinations,p0_coins,p0_spaces,p0_birthday,p0_inclusion,p0_derangements,p0_problems]},
  {id:'p1',title:'Conditioning, Independence & Bayes',sub:'Conditional probability as a restricted world, the multiplication rule, total probability, Bayes’ theorem, and independence.',ready:true,
   outro:`Conditioning restricts the sample space to what you know: $P(A\\mid B)=P(A\\cap B)/P(B)$. The multiplication and chain rules build joint probabilities from conditional ones, total probability averages over the cases of a partition, and Bayes' rule turns $P(B\\mid A)$ into $P(A\\mid B)$ — in odds form, posterior odds = prior odds × likelihood ratio, which in log-odds makes evidence add up. Independence means a condition changes nothing; for many events it must hold for every group. Conditional independence can appear or vanish when you condition on a common cause or a common effect, which is behind Simpson's paradox, and how evidence was produced is part of the evidence, as Monty Hall shows.`,
-  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_independence,p1_mutual,p1_condind,p1_puzzles,p1_problems]},
+  beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_odds,p1_logodds,p1_independence,p1_mutual,p1_condind,p1_puzzles,p1_problems]},
  {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
@@ -1831,7 +1831,7 @@ function p1_multiply(){
     <p>The first branch to R is labeled $\\tfrac58$: 5 of the 8 balls are red. Follow it. One red ball is gone, so the urn now holds 4 red and 3 blue, and the next branch to R is labeled $\\tfrac47$ — the probability of a second red <em>given</em> the first was red. <b>Tap the leaf RR</b>: its probability is $\\tfrac58\\cdot\\tfrac47=\\tfrac{20}{56}$, the multiplication rule.</p>
     <p>The grey numbers under the nodes tell the same story as counts. There are $8\\cdot7=56$ equally likely ordered draws; 35 of them start with red, and $5\\cdot4=20$ go red then red. So $P(\\text{RR})=\\tfrac{20}{56}$ is also a Module 1 count: the probability along a path is the share of draw sequences that follow it.</p>
     <p><b>Step 3: add across paths.</b> "Exactly one red" happens along two paths, RB and BR. <b>Tap each</b>: RB is $\\tfrac58\\cdot\\tfrac37=\\tfrac{15}{56}$ and BR is $\\tfrac38\\cdot\\tfrac57=\\tfrac{15}{56}$. A draw sequence follows exactly one path, so the paths are disjoint events and their probabilities add: $P(\\text{exactly one red})=\\tfrac{30}{56}\\approx0.536$, as the readout under the tree shows. Multiply along a path, add across paths — and all the leaves together add to 1.</p>
-    <p><b>Step 4: switch to with replacement.</b> Now each ball goes back before the next draw. Look at the second-stage branches: after R they read $\\tfrac58$ and $\\tfrac38$, and after B they read $\\tfrac58$ and $\\tfrac38$ too. The urn never changes, so knowing the first draw tells you nothing about the second: $P(\\text{2nd red}\\mid\\text{1st red})=P(\\text{2nd red})=\\tfrac58$. Conditioning changes nothing, and the rule reduces to multiplying the plain probabilities. Events with this property are called <b>independent</b> (beat 7).</p>
+    <p><b>Step 4: switch to with replacement.</b> Now each ball goes back before the next draw. Look at the second-stage branches: after R they read $\\tfrac58$ and $\\tfrac38$, and after B they read $\\tfrac58$ and $\\tfrac38$ too. The urn never changes, so knowing the first draw tells you nothing about the second: $P(\\text{2nd red}\\mid\\text{1st red})=P(\\text{2nd red})=\\tfrac58$. Conditioning changes nothing, and the rule reduces to multiplying the plain probabilities. Events with this property are called <b>independent</b> (beat 9).</p>
     <p>That is also where a common error comes from. For two aces <em>without</em> replacement, $\\tfrac4{52}\\cdot\\tfrac4{52}$ uses the plain probability at the second draw, as if the first ace had been put back. The correct second factor is the conditional one, $\\tfrac3{51}$.</p>
 
     <h2 style="margin-top:22px">The chain rule</h2>
@@ -2057,101 +2057,168 @@ function p1_bayes(){
   setHints([`The prior is P(up) = 0.55. The likelihoods are P(fire | up) = 0.6 and P(fire | down) = 0.3. Numerator: P(up)·P(fire | up). Denominator: all the ways the signal fires.`,`0.55 × 0.6 = 0.330 and 0.45 × 0.3 = 0.135, so the answer is 0.330 / 0.465 ≈ 0.71.`]);
 }
 
-/* ---------- Beat 6: Bayes as updating — odds and evidence ---------- */
+/* ---------- shared: repeated-evidence chart (beats 6 and 8) ---------- */
+function p1UpdHTML(k){return `
+    <div class="ctrls"><button class="btn ghost" id="${k}plus" style="padding:10px 14px">+ positive result</button><button class="btn ghost" id="${k}minus" style="padding:10px 14px">− negative result</button><button class="btn ghost" id="${k}reset" style="padding:10px 14px">Start over</button></div>
+    <canvas id="${k}cv" width="640" height="330" style="margin-top:10px"></canvas>
+    <div class="ctrls"><span class="slabel" id="${k}pL">prior P(D) = 0.010</span><input type="range" id="${k}p" min="0.005" max="0.5" step="0.005" value="0.01"></div>
+    <div class="ctrls" style="margin-top:4px"><span class="slabel" id="${k}sL">P(+ | D) = 0.90</span><input type="range" id="${k}s" min="0.5" max="0.99" step="0.01" value="0.9"></div>
+    <div class="ctrls" style="margin-top:4px"><span class="slabel" id="${k}fL">P(+ | Dᶜ) = 0.09</span><input type="range" id="${k}f" min="0.01" max="0.3" step="0.01" value="0.09"></div>
+    <div class="readout"><div class="rdc"><div class="k">results so far</div><div class="v" id="${k}1">none</div></div><div class="rdc"><div class="k">P(D) now</div><div class="v" id="${k}2">—</div></div><div class="rdc"><div class="k">${'last move'}</div><div class="v" id="${k}3">—</div></div></div>
+    <p class="small" id="${k}5" style="margin-top:8px"></p>`;}
+function p1UpdWire(k,mode){
+  const $=id=>document.getElementById(k+id),cv=$('cv'),op=$('p'),os=$('s'),of=$('f');let seq=[];
+  const L=Math.log10,LO=-3.2,HI=3.2;
+  function stages(){const P0=+op.value,S=+os.value,F=+of.value,lrp=S/F,lrm=(1-S)/(1-F);let o=P0/(1-P0);const out=[{o,lab:'prior'}];
+    seq.forEach(r=>{o*=r==='+'?lrp:lrm;out.push({o,lab:r});});return {out,lrp,lrm};}
+  function draw(){const {out,lrp,lrm}=stages();
+    p0Set(k+'pL','prior P(D) = '+(+op.value).toFixed(3));p0Set(k+'sL','P(+ | D) = '+(+os.value).toFixed(2));p0Set(k+'fL','P(+ | Dᶜ) = '+(+of.value).toFixed(2));
+    const pos=s=>mode==='p'?s.o/(1+s.o):L(s.o);
+    const ctx=cv.getContext&&cv.getContext('2d');
+    if(ctx){const W=cv.width,H=cv.height,x0=30,x1=W-30,lo=mode==='p'?0:LO,hi=mode==='p'?1:HI,X=v=>x0+(x1-x0)*(Math.max(lo,Math.min(hi,v))-lo)/(hi-lo);ctx.clearRect(0,0,W,H);
+      const ly=50;ctx.strokeStyle='#2b3a4f';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x0,ly);ctx.lineTo(x1,ly);ctx.stroke();ctx.textAlign='center';
+      if(mode==='p'){[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1].forEach(p=>{const x=X(p);ctx.strokeStyle='#3d4f66';ctx.beginPath();ctx.moveTo(x,ly-6);ctx.lineTo(x,ly+6);ctx.stroke();ctx.font=p0Font(11);ctx.fillStyle='#9fb0c4';ctx.fillText(String(p),x,ly-12);});
+        ctx.fillStyle='#5d6f85';ctx.font=p0Font(11);ctx.fillText('probability of disease',W/2,ly+22);}
+      else [0.001,0.01,0.1,0.5,0.9,0.99,0.999].forEach(p=>{const x=X(L(p/(1-p)));ctx.strokeStyle='#3d4f66';ctx.beginPath();ctx.moveTo(x,ly-6);ctx.lineTo(x,ly+6);ctx.stroke();
+        ctx.font=p0Font(11);ctx.fillStyle='#9fb0c4';ctx.fillText('P='+p,x,ly-12);ctx.fillStyle='#5d6f85';ctx.fillText('L='+L(p/(1-p)).toFixed(1),x,ly+20);});
+      const rowH=Math.min(32,(H-90)/Math.max(1,out.length));
+      out.forEach((s,i)=>{const y=ly+44+i*rowH,x=X(pos(s));
+        if(i>0){const xp=X(pos(out[i-1])),yp=y-rowH;ctx.strokeStyle=s.lab==='+'?'#e8b84b':'#7ab8ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xp,yp);ctx.lineTo(x,y);ctx.stroke();}
+        ctx.strokeStyle='rgba(93,111,133,.35)';ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(x,ly);ctx.lineTo(x,y);ctx.stroke();ctx.setLineDash([]);
+        ctx.fillStyle=i===out.length-1?'#e9eef6':(s.lab==='+'?'#e8b84b':s.lab==='-'?'#7ab8ff':'#9fb0c4');ctx.beginPath();ctx.arc(x,y,5,0,7);ctx.fill();
+        const p=s.o/(1+s.o);ctx.font=p0Font(11);ctx.fillStyle='#d6e0ee';ctx.textAlign=x>W-170?'right':'left';
+        ctx.fillText((i?'after '+(s.lab==='-'?'−':'+')+': ':'prior: ')+(mode==='p'?'P = '+p.toFixed(3):'L = '+L(s.o).toFixed(2)+', P = '+p.toFixed(3)),x+(x>W-170?-10:10),y+4);});
+      ctx.textAlign='left';}
+    const last=out[out.length-1],p=last.o/(1+last.o);
+    p0Set(k+'1',seq.length?seq.map(r=>r==='-'?'−':'+').join(' '):'none');p0Set(k+'2',p.toFixed(4));
+    if(out.length>1){const prev=out[out.length-2];const d=mode==='p'?p-prev.o/(1+prev.o):L(last.o)-L(prev.o);p0Set(k+'3',(d>=0?'+':'−')+Math.abs(d).toFixed(mode==='p'?3:2)+(mode==='p'?' in P':' in L'));}else p0Set(k+'3','—');
+    p0Set(k+'5',mode==='p'?'Each dot is your belief after one more result. Add several positives and compare the lengths of the moves.':'Each + adds log₁₀ LR₊ = '+L(lrp).toFixed(2)+' to L; each − adds log₁₀ LR₋ = '+L(lrm).toFixed(2)+'.');}
+  $('plus').onclick=()=>{if(seq.length<8)seq.push('+');draw();};
+  $('minus').onclick=()=>{if(seq.length<8)seq.push('-');draw();};
+  $('reset').onclick=()=>{seq=[];draw();};
+  [op,os,of].forEach(el=>el.oninput=draw);
+  draw();
+}
+
+/* ---------- Beat 6: updating with repeated evidence ---------- */
 function p1_update(){
-  stage.innerHTML=`<div class="card"><h2>Bayes as updating: odds and evidence</h2>
+  stage.innerHTML=`<div class="card"><h2>Updating with repeated evidence</h2>
     <p>After one positive test the probability of disease went from $0.01$ to about $0.09$. Suppose you take a second test of the same kind, and it is also positive. Then a third. How does the probability move with each result? Use the same test as before: $P(+\\mid D)=0.9$, $P(+\\mid D^{c})=0.09$.</p>
     <p><b>Try it.</b> Add positive and negative results and watch where the probability goes. Each dot is your belief after one more result; the arrows show each move.</p>
-    <div class="ctrls"><button class="btn ghost" id="uplus" style="padding:10px 14px">+ positive result</button><button class="btn ghost" id="uminus" style="padding:10px 14px">− negative result</button><button class="btn ghost" id="ureset" style="padding:10px 14px">Start over</button></div>
-    <canvas id="cvo6" width="640" height="330" style="margin-top:10px"></canvas>
-    <div class="ctrls"><span class="slabel" id="opL">prior P(D) = 0.010</span><input type="range" id="op" min="0.005" max="0.5" step="0.005" value="0.01"></div>
-    <div class="ctrls" style="margin-top:4px"><span class="slabel" id="osL">P(+ | D) = 0.90</span><input type="range" id="os" min="0.5" max="0.99" step="0.01" value="0.9"></div>
-    <div class="ctrls" style="margin-top:4px"><span class="slabel" id="ofL">P(+ | Dᶜ) = 0.09</span><input type="range" id="of" min="0.01" max="0.3" step="0.01" value="0.09"></div>
-    <div class="readout"><div class="rdc"><div class="k">results so far</div><div class="v" id="o1">none</div></div><div class="rdc"><div class="k">P(D) now</div><div class="v" id="o2">—</div></div><div class="rdc"><div class="k">odds now</div><div class="v" id="o3">—</div></div><div class="rdc"><div class="k">step per + / per −</div><div class="v" id="o4">—</div></div></div>
-    <p class="small" id="o5" style="margin-top:8px"></p>
-    <p style="margin-top:14px">Two things to notice. In probability, the moves are uneven: the first positive takes $0.01$ to $0.09$, the second takes $0.09$ to $0.50$, the third to about $0.91$. On the line above, every positive moves the dot the <em>same distance</em> to the right, and every negative the same distance to the left. The rest of this beat explains why, and what that distance is.</p>
+    ${p1UpdHTML('u')}
+    <p style="margin-top:14px"><b>What to notice.</b> Each positive pushes the probability up, but by very different amounts: the first takes $0.01$ to $0.09$, the second $0.09$ to $0.50$, the third $0.50$ to about $0.91$. A negative pulls it back down. This beat shows how to compute each move and why "use the last answer as the new prior" is legitimate. Why the moves are so uneven is the subject of beat 8.</p>
     <p><b>Step 1: two positives, straight from the definition.</b> Write $++$ for "both tests positive". Nothing new is needed — it is the definition of conditional probability:</p>
     <div class="eqbox">$$P(D\\mid ++)=\\frac{P(D\\cap ++)}{P(++)}.$$</div>
     <p><em>The numerator.</em> The multiplication rule (beat 3) splits an intersection two ways: $P(D\\cap ++)=P(D)\\,P(++\\mid D)$, or $P(D\\cap ++)=P(++)\\,P(D\\mid ++)$. Both are correct, but the second contains the very thing we are looking for, so we use the first: it needs only $P(D)$ and the test's behaviour on sick people, which we know.</p>
-    <p><em>The assumption.</em> For $P(++\\mid D)$, assume that once disease status is fixed, the second test ignores the first: among sick people, a positive comes up with probability $0.9$ each time, whatever the other result was. On the tree, the $D$ branch splits into $+$ with $0.9$, and that $+$ splits again into $+$ with $0.9$, so $P(++\\mid D)=0.9\\times0.9=0.81$. Likewise $P(++\\mid D^{c})=0.09\\times0.09=0.0081$. (This is <em>conditional independence</em>, beat 9. It holds inside each branch only — beat 9 also shows that the two results are <em>not</em> independent overall.)</p>
+    <p><em>The assumption.</em> For $P(++\\mid D)$, assume that once disease status is fixed, the second test ignores the first: among sick people, a positive comes up with probability $0.9$ each time, whatever the other result was. On the tree, the $D$ branch splits into $+$ with $0.9$, and that $+$ splits again into $+$ with $0.9$, so $P(++\\mid D)=0.9\\times0.9=0.81$. Likewise $P(++\\mid D^{c})=0.09\\times0.09=0.0081$. (This is <em>conditional independence</em>, beat 11. It holds inside each branch only — beat 11 also shows that the two results are <em>not</em> independent overall.)</p>
     <p><em>The denominator.</em> Total probability over the two branches: $P(++)=P(D)(0.81)+P(D^{c})(0.0081)$. Putting it together:</p>
     <div class="eqbox">$$P(D\\mid ++)=\\frac{0.01\\times0.9\\times0.9}{0.01\\times0.9\\times0.9+0.99\\times0.09\\times0.09}=\\frac{0.0081}{0.0081+0.008019}\\approx0.5025.$$</div>
     <p><b>Step 2: the same answer by updating twice.</b> Look at the numerator, $0.01\\times0.9\\times0.9$. Its first two factors, $0.01\\times0.9=P(D)P(+\\mid D)$, are the numerator of the <em>first</em> update. Divide the top and bottom of Step 1's fraction by the same number, $P(+)=0.01\\times0.9+0.99\\times0.09=0.0981$ (this does not change the fraction):</p>
     <div class="eqbox">$$P(D\\mid ++)=\\frac{\\dfrac{0.01\\times0.9}{0.0981}\\times0.9}{\\dfrac{0.01\\times0.9}{0.0981}\\times0.9+\\dfrac{0.99\\times0.09}{0.0981}\\times0.09}.$$</div>
     <p>Each small fraction is a result from the first update: $\\frac{0.01\\times0.9}{0.0981}=P(D\\mid +)\\approx0.0917$ and $\\frac{0.99\\times0.09}{0.0981}=P(D^{c}\\mid +)\\approx0.9083$. Substituting:</p>
     <div class="eqbox">$$P(D\\mid ++)=\\frac{0.0917\\times0.9}{0.0917\\times0.9+0.9083\\times0.09}=\\frac{0.0826}{0.0826+0.0817}\\approx0.5025.$$</div>
-    <p>That is Bayes' theorem for one test, with $P(D\\mid +)$ in place of the prior. So "yesterday's posterior is today's prior" is not an extra rule: it is Step 1's fraction regrouped. It relies on the assumption — the second factor, $0.9$ or $0.09$, must not depend on the first result. Still, each update needs the whole formula with its total-probability sum. Odds remove that sum.</p>
-    <p><b>Step 3: odds.</b> The <b>odds</b> of an event compare its probability with the probability that it does not happen:</p>
+    <p>That is Bayes' theorem for one test, with $P(D\\mid +)$ in place of the prior. So "yesterday's posterior is today's prior" is not an extra rule: it is Step 1's fraction regrouped. It relies on the assumption — the second factor, $0.9$ or $0.09$, must not depend on the first result.</p>
+    <p><b>Step 3: a negative result.</b> A negative is evidence too, with likelihoods $P(-\\mid D)=1-0.9=0.1$ and $P(-\\mid D^{c})=1-0.09=0.91$. After the two positives, $P(D)\\approx0.5025$; a negative third result gives</p>
+    <div class="eqbox">$$P(D\\mid ++-)=\\frac{0.5025\\times0.1}{0.5025\\times0.1+0.4975\\times0.91}=\\frac{0.0503}{0.0503+0.4527}\\approx0.10.$$</div>
+    <p>Every update so far needed the whole formula, including the total-probability sum in the denominator. The next beat removes that sum.</p>
+    <div class="task"><b>A different second test</b>A patient tests positive on the screening test above ($P(D)=0.01$, $P(+\\mid D)=0.9$, $P(+\\mid D^{c})=0.09$), so $P(D\\mid +)\\approx0.0917$. A second, different test is then done: it is positive for 80% of sick people and 20% of healthy people, and its errors are unrelated to the first test's once disease status is fixed. It comes back <b>negative</b>. What is the probability of disease now? Enter a decimal.</div>
+    ${gateHTML('e.g. 0.05')}</div>`;
+  p1UpdWire('u','p');
+  numChk(document.getElementById('gate'),0.02463,()=>{addReveal(`<div class="rh">✓ ≈ 0.0246</div>
+    <p>Use the first posterior as the prior (Step 2). The second test is negative, so its likelihoods are $P(-\\mid D)=1-0.8=0.2$ and $P(-\\mid D^{c})=1-0.2=0.8$:</p>
+    <div class="eqbox">$$P(D\\mid +,-)=\\frac{0.0917\\times0.2}{0.0917\\times0.2+0.9083\\times0.8}=\\frac{0.0183}{0.0183+0.7266}\\approx0.0246.$$</div>
+    <p>The same in one step from the definition (Step 1): $\\frac{0.01\\times0.9\\times0.2}{0.01\\times0.9\\times0.2+0.99\\times0.09\\times0.8}=\\frac{0.0018}{0.0018+0.07128}\\approx0.0246$. The negative undid most of the positive: the belief is back near its starting $0.01$.</p>`);},snapTo(0.02463,0.0008));
+  setHints([`Use 0.0917 as the prior. The result is negative, so the likelihoods are P(− | D) = 1 − 0.8 = 0.2 and P(− | Dᶜ) = 1 − 0.2 = 0.8.`,`0.0917 × 0.2 / (0.0917 × 0.2 + 0.9083 × 0.8) = 0.0183 / 0.7449 ≈ 0.0246.`]);
+}
+
+/* ---------- Beat 7: odds and the likelihood ratio ---------- */
+function p1_odds(){
+  stage.innerHTML=`<div class="card"><h2>Odds and the likelihood ratio</h2>
+    <p>Every update in beat 6 needed $P(+)$, the total-probability sum in the denominator. Bayes' theorem has a second form that never computes it.</p>
+    <p><b>Try it.</b> The top bar is everyone before the test, split into sick and healthy. The middle bar keeps only the people who would test positive, drawn to the same scale: the sick part shrinks to $P(+\\mid D)$ of itself, the healthy part to $P(+\\mid D^{c})$ of itself. The bottom bar stretches the middle one back to full length — that stretching is dividing by $P(+)$. Move the sliders.</p>
+    <canvas id="cvod" width="640" height="250" style="margin-top:10px"></canvas>
+    <div class="ctrls"><span class="slabel" id="dpL">prior P(D) = 0.10</span><input type="range" id="dp" min="0.02" max="0.6" step="0.01" value="0.1"></div>
+    <div class="ctrls" style="margin-top:4px"><span class="slabel" id="dsL">P(+ | D) = 0.90</span><input type="range" id="ds" min="0.3" max="0.99" step="0.01" value="0.9"></div>
+    <div class="ctrls" style="margin-top:4px"><span class="slabel" id="dfL">P(+ | Dᶜ) = 0.09</span><input type="range" id="df" min="0.01" max="0.5" step="0.01" value="0.09"></div>
+    <div class="readout"><div class="rdc"><div class="k">sick : healthy, before</div><div class="v" id="d1">—</div></div><div class="rdc"><div class="k">sick : healthy, after +</div><div class="v" id="d2">—</div></div><div class="rdc"><div class="k">after ÷ before</div><div class="v" id="d3">—</div></div><div class="rdc"><div class="k">P(+|D) ÷ P(+|Dᶜ)</div><div class="v" id="d4">—</div></div></div>
+    <p style="margin-top:14px"><b>What to notice.</b> Look at the <em>ratio</em> of the sick part to the healthy part. Stretching the middle bar into the bottom one changes both parts by the same factor, so it does not change their ratio. And the ratio after the test is always the ratio before, times $P(+\\mid D)/P(+\\mid D^{c})$ — move the prior slider and the factor in the last two readouts stays the same; only the test's sliders change it.</p>
+    <p><b>Step 1: odds.</b> That ratio has a name. The <b>odds</b> of an event compare its probability with the probability that it does not happen:</p>
     <div class="defn"><span class="dt">Odds</span>$$O(D)=\\frac{P(D)}{P(D^{c})}=\\frac{P(D)}{1-P(D)},\\qquad\\text{and back again:}\\quad P(D)=\\frac{O(D)}{1+O(D)}.$$
       The second formula comes from solving $O=\\frac{P}{1-P}$ for $P$: $O-OP=P$, so $O=P(1+O)$. Examples: $P=0.01$ gives $O=\\frac{0.01}{0.99}=\\frac1{99}$ ("1 to 99"); $P=0.5$ gives $O=1$; $P=0.9$ gives $O=9$.</div>
-    <p><b>Step 4: the odds form of Bayes.</b> Write Bayes' theorem twice, once for $D$ and once for $D^{c}$, with the same evidence $+$:</p>
+    <p><b>Step 2: the odds form of Bayes.</b> Write Bayes' theorem twice, once for $D$ and once for $D^{c}$, with the same evidence $+$:</p>
     <div class="eqbox">$$P(D\\mid +)=\\frac{P(D)\\,P(+\\mid D)}{P(+)},\\qquad P(D^{c}\\mid +)=\\frac{P(D^{c})\\,P(+\\mid D^{c})}{P(+)}.$$</div>
-    <p>Divide the first by the second. Both have the same denominator $P(+)$, so it cancels — the total-probability sum is no longer needed:</p>
+    <p>Divide the first by the second. Both have the same denominator $P(+)$, so it cancels — that is the bottom bar's stretching dropping out of the ratio:</p>
     <div class="eqbox">$$\\underbrace{\\frac{P(D\\mid +)}{P(D^{c}\\mid +)}}_{\\text{posterior odds}}=\\underbrace{\\frac{P(D)}{P(D^{c})}}_{\\text{prior odds}}\\times\\underbrace{\\frac{P(+\\mid D)}{P(+\\mid D^{c})}}_{\\text{likelihood ratio}}.$$</div>
     <div class="defn"><span class="dt">Bayes' theorem, odds form</span>Posterior odds = prior odds × <b>likelihood ratio</b>, where the likelihood ratio $\\mathrm{LR}=\\dfrac{P(\\text{evidence}\\mid D)}{P(\\text{evidence}\\mid D^{c})}$ measures how much more probable the evidence is if $D$ is true than if it is false.</div>
-    <p><b>Why this form is useful.</b> (1) No denominator: no total-probability sum to compute. (2) It separates the two ingredients: the prior odds are about the person, the likelihood ratio is about the test alone — the same number for every patient — so a test's strength can be quoted as one number, "a positive multiplies the odds by 10". (3) Repeated evidence becomes repeated multiplication, as the next step shows. (4) Taking logs turns that multiplication into addition (Step 6).</p>
-    <p>For a positive result, $\\mathrm{LR}_+=\\frac{P(+\\mid D)}{P(+\\mid D^{c})}=\\frac{0.9}{0.09}=10$. For a negative result, $\\mathrm{LR}_-=\\frac{P(-\\mid D)}{P(-\\mid D^{c})}=\\frac{1-0.9}{1-0.09}=\\frac{0.1}{0.91}\\approx0.11$.</p>
-    <p><b>Step 5: chaining in odds, one result at a time.</b></p>
-    <p>• <em>Start.</em> $P(D)=0.01$, so the prior odds are $O_0=\\frac{0.01}{0.99}=\\frac1{99}$.<br>
+    <p><b>Why this form is useful.</b> (1) No denominator: no total-probability sum to compute. (2) It separates the two ingredients: the prior odds are about the person, the likelihood ratio is about the test alone — the same number for every patient — so a test's strength can be quoted as one number, "a positive multiplies the odds by 10". (3) Repeated evidence becomes repeated multiplication (Step 3). (4) Taking logs turns that multiplication into addition (beat 8).</p>
+    <p>For the screening test, a positive has $\\mathrm{LR}_+=\\frac{P(+\\mid D)}{P(+\\mid D^{c})}=\\frac{0.9}{0.09}=10$, and a negative has $\\mathrm{LR}_-=\\frac{P(-\\mid D)}{P(-\\mid D^{c})}=\\frac{1-0.9}{1-0.09}=\\frac{0.1}{0.91}\\approx0.11$.</p>
+    <p><b>Step 3: chaining in odds, one result at a time.</b> Redo beat 6 with $P(D)=0.01$.</p>
+    <p>• <em>Start.</em> The prior odds are $O_0=\\frac{0.01}{0.99}=\\frac1{99}$.<br>
     • <em>First positive.</em> Multiply by $\\mathrm{LR}_+=10$: $O_1=\\frac1{99}\\times10=\\frac{10}{99}$. Back to a probability: $P=\\frac{O_1}{1+O_1}=\\frac{10/99}{109/99}=\\frac{10}{109}\\approx0.0917$ — the first update's answer.<br>
-    • <em>Second positive.</em> $O_1$ is now the prior odds (Step 2). Multiply by 10 again: $O_2=\\frac{10}{99}\\times10=\\frac{100}{99}$, so $P=\\frac{100/99}{199/99}=\\frac{100}{199}\\approx0.5025$ — Step 1's answer.<br>
+    • <em>Second positive.</em> $O_1$ is now the prior odds (beat 6, Step 2). Multiply by 10 again: $O_2=\\frac{10}{99}\\times10=\\frac{100}{99}$, so $P=\\frac{100/99}{199/99}=\\frac{100}{199}\\approx0.5025$ — beat 6's answer.<br>
     • <em>Third positive.</em> $O_3=\\frac{100}{99}\\times10=\\frac{1000}{99}$, so $P=\\frac{1000}{1099}\\approx0.91$.<br>
-    • <em>Or a negative instead of the third result.</em> $O=\\frac{100}{99}\\times\\frac{0.1}{0.91}=\\frac{100}{99}\\times\\frac{10}{91}=\\frac{1000}{9009}\\approx0.111$, so $P\\approx\\frac{0.111}{1.111}\\approx0.10$.</p>
-    <p>Check against Step 1 directly. Divide $P(D\\mid ++)$ by $P(D^{c}\\mid ++)$; the shared denominator $P(++)$ cancels just as in Step 4:</p>
+    • <em>Or a negative instead of the third result.</em> $O=\\frac{100}{99}\\times\\frac{0.1}{0.91}=\\frac{100}{99}\\times\\frac{10}{91}=\\frac{1000}{9009}\\approx0.111$, so $P\\approx\\frac{0.111}{1.111}\\approx0.10$ — beat 6, Step 3.</p>
+    <p>Check against beat 6's Step 1 directly. Divide $P(D\\mid ++)$ by $P(D^{c}\\mid ++)$; the shared denominator $P(++)$ cancels just as in Step 2:</p>
     <div class="eqbox">$$\\frac{P(D\\mid ++)}{P(D^{c}\\mid ++)}=\\frac{0.01\\times0.9\\times0.9}{0.99\\times0.09\\times0.09}=\\frac{0.01}{0.99}\\times\\frac{0.9}{0.09}\\times\\frac{0.9}{0.09}=\\frac1{99}\\times10\\times10=\\frac{100}{99}.$$</div>
     <p>Two conditionally independent results multiply the odds by their two likelihood ratios.</p>
-    <p><b>Step 6: from multiplying to adding — log-odds.</b> Step 5 multiplied the odds by 10 for every positive. The log of a product is the sum of the logs (Calculus, Module 1), so take the log of both sides of posterior odds = prior odds × LR. The right side is a product, so its log splits into a sum:</p>
-    <div class="eqbox">$$\\log_{10}O(\\text{posterior})=\\log_{10}O(\\text{prior})+\\log_{10}\\mathrm{LR}.$$</div>
-    <p>Call $L=\\log_{10}O$ the <b>log-odds</b>. Now redo Step 5 in log-odds, one result at a time:</p>
-    <p>• <em>Start.</em> $L_0=\\log_{10}\\frac1{99}=-\\log_{10}99\\approx-2.00$.<br>
-    • <em>Each positive</em> adds $\\log_{10}\\mathrm{LR}_+=\\log_{10}10=1$: $L_1\\approx-1.00$, $L_2\\approx0.00$, $L_3\\approx1.00$.<br>
-    • <em>A negative</em> adds $\\log_{10}\\mathrm{LR}_-=\\log_{10}\\frac{0.1}{0.91}=\\log_{10}0.1-\\log_{10}0.91\\approx-1+0.04=-0.96$.</p>
-    <p><em>Back to a probability.</em> Undo the log, $O=10^{L}$, then use $P=\\frac{O}{1+O}$:</p>
-    <div class="eqbox">$$\\begin{aligned}L=-2&:\\quad O=0.01,\\quad P=\\tfrac{0.01}{1.01}\\approx0.0099\\\\ L=-1&:\\quad O=0.1,\\quad P=\\tfrac{0.1}{1.1}\\approx0.091\\\\ L=0&:\\quad O=1,\\quad P=\\tfrac12=0.5\\\\ L=1&:\\quad O=10,\\quad P=\\tfrac{10}{11}\\approx0.909\\\\ L=2&:\\quad O=100,\\quad P=\\tfrac{100}{101}\\approx0.990\\end{aligned}$$</div>
-    <p>These match Step 5: $0.01$, $0.0917$, $0.5025$, $0.91$ (up to the rounding of $-1.996$ to $-2$). $L=0$ means even odds, $P=\\frac12$; positive $L$ means more likely than not; negative $L$ means less likely.</p>
-    <p><em>Why the dots on the line move equal distances.</em> The line is drawn in $L$. Every positive adds exactly 1 to $L$, wherever the dot is, so every arrow has the same length. In probability the same evidence moves $0.01\\to0.09$ (by $0.08$) but $0.09\\to0.50$ (by $0.41$), because the conversion $P=\\frac{10^{L}}{1+10^{L}}$ is an S-shaped curve: flat near 0 and 1, steep near $\\frac12$. Look at the list above: equal steps in $L$ give tiny steps in $P$ at the ends and big ones in the middle.</p>
-    <p><em>Evidence adds up.</em> After $k$ positives and $m$ negatives, in any order,</p>
-    <div class="eqbox">$$L=L_0+k\\cdot1+m\\cdot(-0.96).$$</div>
-    <p>Each result contributes its own fixed amount, so the order does not matter, and one positive and one negative nearly cancel ($1-0.96=0.04$).</p>
-    <p><em>Where you will see this again.</em> Machine learning uses natural logs, $\\ln O$, called the <b>logit</b>. Converting back: $P=\\frac{O}{1+O}$; divide top and bottom by $O$ to get $P=\\frac1{1+1/O}=\\frac1{1+e^{-\\ln O}}$ — the <b>sigmoid</b> function. A logistic-regression classifier computes a logit as a weighted sum of features and passes it through the sigmoid: each feature adds its evidence to the log-odds, just as each test result does here. A naive-Bayes spam filter adds up the log-likelihood-ratios of the words in an email.</p>
-
     <h2 style="margin-top:22px">The prosecutor's fallacy</h2>
     <p>A DNA trace matches a suspect. The chance that a random innocent person matches is 1 in a million. "So the chance he is innocent is 1 in a million" — that is the confusion of the inverse again: $P(\\text{match}\\mid\\text{innocent})$ is not $P(\\text{innocent}\\mid\\text{match})$. Suppose the suspect was found by searching a database of a city of 10 million, with nothing else pointing to him. Then:</p>
     <p>• <b>Prior odds</b> that he is the source: 1 to 9,999,999, about $10^{-7}$ — he is one of 10 million people.<br>
     • <b>Likelihood ratio</b> of a match: $\\frac{P(\\text{match}\\mid\\text{source})}{P(\\text{match}\\mid\\text{not source})}=\\frac{1}{10^{-6}}=10^{6}$.<br>
     • <b>Posterior odds</b>: $10^{-7}\\times10^{6}=0.1$, so $P=\\frac{0.1}{1.1}\\approx0.09$.</p>
     <p>In counts: among 10 million people, about 10 innocent people match by chance, plus the true source, so a match alone leaves roughly a 1-in-11 chance. Strong evidence multiplies the odds by a million, but a tiny prior can absorb it. The same mistake reads a small p-value as the probability that a result is a fluke (Module 14).</p>
+    <div class="task"><b>Only the ratio is known</b>A diagnostic report says only that a positive result has a likelihood ratio of 8. Before the test, a doctor puts the patient's chance of disease at 20%. The test is positive. What is the probability of disease now? Enter a fraction or a decimal.</div>
+    ${gateHTML('e.g. 0.5')}</div>`;
+  const cv=document.getElementById('cvod'),dp=document.getElementById('dp'),ds=document.getElementById('ds'),df=document.getElementById('df');
+  const rat=x=>x>=1?x.toFixed(2)+' : 1':'1 : '+(1/x).toFixed(2);
+  function draw(){const P=+dp.value,S=+ds.value,F=+df.value,a=P*S,b=(1-P)*F,t=a+b;
+    p0Set('dpL','prior P(D) = '+P.toFixed(2));p0Set('dsL','P(+ | D) = '+S.toFixed(2));p0Set('dfL','P(+ | Dᶜ) = '+F.toFixed(2));
+    p0Set('d1',rat(P/(1-P)));p0Set('d2',rat(a/b));p0Set('d3','×'+((a/b)/(P/(1-P))).toFixed(2));p0Set('d4','×'+(S/F).toFixed(2));
+    const ctx=cv.getContext&&cv.getContext('2d');if(!ctx)return;const W=cv.width,x0=20,w=W-40;ctx.clearRect(0,0,W,cv.height);
+    const bar=(y,s,h,lab,sub)=>{ctx.fillStyle='#e8b84b';ctx.fillRect(x0,y,w*s,30);ctx.fillStyle='#4a6fa5';ctx.fillRect(x0+w*s,y,w*h,30);ctx.strokeStyle='#5d6f85';ctx.lineWidth=1;ctx.strokeRect(x0,y,w*(s+h),30);
+      ctx.font=p0Font(12);ctx.fillStyle='#9fb0c4';ctx.textAlign='left';ctx.fillText(lab,x0,y-7);ctx.textAlign='right';ctx.fillText(sub,x0+w,y-7);};
+    bar(26,P,1-P,'everyone: sick | healthy','sick '+P.toFixed(3)+'  ·  healthy '+(1-P).toFixed(3));
+    bar(106,a,b,'only those who test + (same scale)','sick '+a.toFixed(3)+'  ·  healthy '+b.toFixed(3)+'  ·  total P(+) = '+t.toFixed(3));
+    bar(186,a/t,b/t,'stretched to full length (÷ P(+))','sick '+(a/t).toFixed(3)+'  ·  healthy '+(b/t).toFixed(3));
+    ctx.textAlign='left';}
+  [dp,ds,df].forEach(el=>el.oninput=draw);draw();
+  numChk(document.getElementById('gate'),2/3,()=>{addReveal(`<div class="rh">✓ 2/3 ≈ 0.667</div>
+    <p>Without $P(+\\mid D)$ and $P(+\\mid D^{c})$ separately you cannot compute $P(+)$, so the probability form of Bayes is stuck. The odds form needs only their ratio:</p>
+    <div class="eqbox">$$O_{\\text{prior}}=\\frac{0.2}{0.8}=\\frac14,\\qquad O_{\\text{post}}=\\frac14\\times8=2,\\qquad P=\\frac{2}{1+2}=\\frac23.$$</div>
+    <p>Many tests, and many classifiers, are reported this way: one likelihood ratio that each user combines with their own prior.</p>`);},snapTo(2/3,0.0015));
+  setHints([`You can't compute P(+) without the two likelihoods, so use odds: prior odds = 0.2/0.8, then multiply by the likelihood ratio.`,`Odds = (0.2/0.8) × 8 = 2, so P = 2/(1 + 2) = 2/3.`]);
+}
+
+/* ---------- Beat 8: log-odds ---------- */
+function p1_logodds(){
+  stage.innerHTML=`<div class="card"><h2>Log-odds: evidence adds up</h2>
+    <p>In beat 6 the same positive result moved the probability by $0.08$, then $0.41$, then $0.41$ again. In beat 7 each positive simply multiplied the odds by 10. Is there a scale on which each piece of evidence is one fixed step?</p>
+    <p><b>Try it.</b> This is the chart from beat 6, but the line now measures $L=\\log_{10}(\\text{odds})$; the matching probabilities are marked above it. Add results and compare the moves.</p>
+    ${p1UpdHTML('g')}
+    <p style="margin-top:14px"><b>What to notice.</b> Every positive moves the dot the <em>same distance</em> to the right, and every negative the same distance to the left, wherever the dot starts. Change the test sliders and the step sizes change; change the prior and only the starting point moves.</p>
+    <p><b>Step 1: the log of the odds form.</b> The log of a product is the sum of the logs (Calculus, Module 1), so take the log of both sides of posterior odds = prior odds × LR (beat 7). The right side is a product, so its log splits into a sum:</p>
+    <div class="eqbox">$$\\log_{10}O(\\text{posterior})=\\log_{10}O(\\text{prior})+\\log_{10}\\mathrm{LR}.$$</div>
+    <p>Call $L=\\log_{10}O$ the <b>log-odds</b>. Each piece of evidence adds its own fixed amount, $\\log_{10}\\mathrm{LR}$, to $L$ — the fixed step you saw.</p>
+    <p><b>Step 2: the chain in log-odds.</b> Redo beat 7's chain one result at a time:</p>
+    <p>• <em>Start.</em> $L_0=\\log_{10}\\frac1{99}=-\\log_{10}99\\approx-2.00$.<br>
+    • <em>Each positive</em> adds $\\log_{10}\\mathrm{LR}_+=\\log_{10}10=1$: $L_1\\approx-1.00$, $L_2\\approx0.00$, $L_3\\approx1.00$.<br>
+    • <em>A negative</em> adds $\\log_{10}\\mathrm{LR}_-=\\log_{10}\\frac{0.1}{0.91}=\\log_{10}0.1-\\log_{10}0.91\\approx-1+0.04=-0.96$.</p>
+    <p><em>Back to a probability.</em> Undo the log, $O=10^{L}$, then use $P=\\frac{O}{1+O}$ (beat 7, Step 1):</p>
+    <div class="eqbox">$$\\begin{aligned}L=-2&:\\quad O=0.01,\\quad P=\\tfrac{0.01}{1.01}\\approx0.0099\\\\ L=-1&:\\quad O=0.1,\\quad P=\\tfrac{0.1}{1.1}\\approx0.091\\\\ L=0&:\\quad O=1,\\quad P=\\tfrac12=0.5\\\\ L=1&:\\quad O=10,\\quad P=\\tfrac{10}{11}\\approx0.909\\\\ L=2&:\\quad O=100,\\quad P=\\tfrac{100}{101}\\approx0.990\\end{aligned}$$</div>
+    <p>These match beat 7: $0.01$, $0.0917$, $0.5025$, $0.91$ (up to the rounding of $-1.996$ to $-2$). $L=0$ means even odds, $P=\\frac12$; positive $L$ means more likely than not; negative $L$ means less likely.</p>
+    <p><b>Step 3: why equal steps in $L$ are unequal steps in $P$.</b> Putting the two conversions together, $P=\\frac{10^{L}}{1+10^{L}}$. Plotted, it is an S-shaped curve:</p>
+    <canvas id="cvsg" width="640" height="260" style="margin-top:6px"></canvas>
+    <p>Each positive moves one unit to the right along the curve. Near $L=0$ the curve is steep, so one unit lifts $P$ a lot ($0.09\\to0.50\\to0.91$). Far out on either side it is flat, so one unit barely moves $P$ ($0.0099\\to0.091$ at the bottom, $0.909\\to0.990$ at the top). The evidence is the same each time; only the probability scale squeezes it.</p>
+    <p><b>Step 4: evidence adds up.</b> After $k$ positives and $m$ negatives, in any order,</p>
+    <div class="eqbox">$$L=L_0+k\\cdot1+m\\cdot(-0.96).$$</div>
+    <p>Each result contributes its own fixed amount, so the order does not matter, and one positive and one negative nearly cancel ($1-0.96=0.04$).</p>
+    <p><em>Where you will see this again.</em> Machine learning uses natural logs, $\\ln O$, called the <b>logit</b>. Converting back: $P=\\frac{O}{1+O}$; divide top and bottom by $O$ to get $P=\\frac1{1+1/O}=\\frac1{1+e^{-\\ln O}}$ — the <b>sigmoid</b> function, the S-curve above with $e$ in place of 10. A logistic-regression classifier computes a logit as a weighted sum of features and passes it through the sigmoid: each feature adds its evidence to the log-odds, just as each test result does here. A naive-Bayes spam filter adds up the log-likelihood-ratios of the words in an email.</p>
     <div class="task"><b>A day of checks</b>A machine is faulty with prior probability $0.01$. An automatic check raises an alarm with probability $\\tfrac{10}{11}$ if the machine is faulty and $\\tfrac1{11}$ if it is fine, and the checks are conditionally independent given the machine's state. Over one day, 42 checks give 23 alarms and 19 all-clears, in some order. What is the probability the machine is faulty? Enter a decimal.</div>
     ${gateHTML('e.g. 0.5')}</div>`;
-
-  const cv=document.getElementById('cvo6'),op=document.getElementById('op'),os=document.getElementById('os'),of=document.getElementById('of');
-  let seq=[];
-  const L=Math.log10,LO=-3.2,HI=3.2;
-  function stages(){const P0=+op.value,S=+os.value,F=+of.value,lrp=S/F,lrm=(1-S)/(1-F);let o=P0/(1-P0);const out=[{o,lab:'prior'}];
-    seq.forEach(r=>{o*=r==='+'?lrp:lrm;out.push({o,lab:r});});return {out,lrp,lrm};}
-  function draw(){const {out,lrp,lrm}=stages();
-    p0Set('opL','prior P(D) = '+(+op.value).toFixed(3));p0Set('osL','P(+ | D) = '+(+os.value).toFixed(2));p0Set('ofL','P(+ | Dᶜ) = '+(+of.value).toFixed(2));
-    const ctx=cv.getContext&&cv.getContext('2d');
-    if(ctx){const W=cv.width,H=cv.height,x0=30,x1=W-30,X=v=>x0+(x1-x0)*(Math.max(LO,Math.min(HI,v))-LO)/(HI-LO);ctx.clearRect(0,0,W,H);
-      const ly=50;ctx.strokeStyle='#2b3a4f';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x0,ly);ctx.lineTo(x1,ly);ctx.stroke();
-      ctx.textAlign='center';[0.001,0.01,0.1,0.5,0.9,0.99,0.999].forEach(p=>{const x=X(L(p/(1-p)));ctx.strokeStyle='#3d4f66';ctx.beginPath();ctx.moveTo(x,ly-6);ctx.lineTo(x,ly+6);ctx.stroke();
-        ctx.font=p0Font(11);ctx.fillStyle='#9fb0c4';ctx.fillText('P='+p,x,ly-12);ctx.fillStyle='#5d6f85';ctx.fillText('log O='+L(p/(1-p)).toFixed(1),x,ly+20);});
-      const rowH=Math.min(32,(H-90)/Math.max(1,out.length));
-      out.forEach((s,i)=>{const y=ly+44+i*rowH,x=X(L(s.o));
-        if(i>0){const xp=X(L(out[i-1].o)),yp=y-rowH;ctx.strokeStyle=s.lab==='+'?'#e8b84b':'#7ab8ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xp,yp);ctx.lineTo(x,y);ctx.stroke();}
-        ctx.strokeStyle='rgba(93,111,133,.35)';ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(x,ly);ctx.lineTo(x,y);ctx.stroke();ctx.setLineDash([]);
-        ctx.fillStyle=i===out.length-1?'#e9eef6':(s.lab==='+'?'#e8b84b':s.lab==='-'?'#7ab8ff':'#9fb0c4');ctx.beginPath();ctx.arc(x,y,5,0,7);ctx.fill();
-        const p=s.o/(1+s.o);ctx.font=p0Font(11);ctx.fillStyle='#d6e0ee';ctx.textAlign=x>W-170?'right':'left';ctx.fillText((i?'after '+(s.lab==='-'?'−':'+')+': ':'prior: ')+'P = '+p.toFixed(3),x+(x>W-170?-10:10),y+4);});
-      ctx.textAlign='left';}
-    const last=out[out.length-1],p=last.o/(1+last.o);
-    p0Set('o1',seq.length?seq.map(r=>r==='-'?'−':'+').join(' '):'none');p0Set('o2',p.toFixed(4));p0Set('o3',last.o<1?'1 to '+(1/last.o).toFixed(2):last.o.toFixed(2)+' to 1');
-    p0Set('o4','×'+lrp.toFixed(2)+' / ×'+lrm.toFixed(3));
-    p0Set('o5','Each + multiplies the odds by LR₊ = '+lrp.toFixed(2)+' (adds '+L(lrp).toFixed(2)+' in log-odds); each − multiplies by LR₋ = '+lrm.toFixed(3)+' (adds '+L(lrm).toFixed(2)+').');}
-  document.getElementById('uplus').onclick=()=>{if(seq.length<8)seq.push('+');draw();};
-  document.getElementById('uminus').onclick=()=>{if(seq.length<8)seq.push('-');draw();};
-  document.getElementById('ureset').onclick=()=>{seq=[];draw();};
-  [op,os,of].forEach(el=>el.oninput=draw);
-  draw();
+  p1UpdWire('g','L');
+  const pl=plot(document.getElementById('cvsg'),{xmin:-3.5,xmax:3.5,ymin:-0.08,ymax:1.08});
+  pl.grid();pl.hline(0,'#2b3a4f');pl.hline(1,'#2b3a4f',true);pl.curve(x=>Math.pow(10,x)/(1+Math.pow(10,x)),'#e8b84b');
+  [-2,-1,0,1,2].forEach(l=>{const p=Math.pow(10,l)/(1+Math.pow(10,l));pl.point(l,p,'#e9eef6',4);pl.label(l+0.08,p-0.06,'L='+l+', P='+(p<0.1?p.toFixed(3):p.toFixed(2)),'#9fb0c4');});
   numChk(document.getElementById('gate'),0.99020,()=>{addReveal(`<div class="rh">✓ ≈ 0.990</div>
     <p><b>Likelihood ratios.</b> An alarm: $\\mathrm{LR}_{a}=\\frac{10/11}{1/11}=10$. An all-clear: $\\mathrm{LR}_{c}=\\frac{1/11}{10/11}=\\frac1{10}$.</p>
     <p><b>Log-odds.</b> Prior: $\\log_{10}\\frac1{99}\\approx-1.996$. Each alarm adds $\\log_{10}10=1$; each all-clear adds $\\log_{10}\\frac1{10}=-1$. The order does not matter, only the counts:</p>
@@ -2160,7 +2227,7 @@ function p1_update(){
   setHints([`Each alarm multiplies the odds by (10/11)/(1/11) = 10 and each all-clear by 1/10. In base-10 log-odds that is +1 and −1, starting from log₁₀(1/99) ≈ −2.`,`Log-odds ≈ −1.996 + 23 − 19 = 2.004, so odds = 10⁴/99 ≈ 101 and P = 101/102 ≈ 0.990.`]);
 }
 
-/* ---------- Beat 7: independence ---------- */
+/* ---------- Beat 9: independence ---------- */
 function p1_independence(){
   stage.innerHTML=`<div class="card"><h2>Independence: when knowing one tells you nothing</h2>
     <p>Sometimes learning that $B$ happened changes the probability of $A$ — a positive test raised the chance of disease. Sometimes it changes nothing — a coin does not remember the last toss. Events of the second kind are <b>independent</b>.</p>
@@ -2239,7 +2306,7 @@ function p1_independence(){
   setHints([`A warning is "A fails or B fails". Use the union rule, and get P(both fail) from independence.`,`0.02 + 0.05 − 0.02 × 0.05 = 0.069.`]);
 }
 
-/* ---------- Beat 8: independence of many events ---------- */
+/* ---------- Beat 10: independence of many events ---------- */
 function p1_mutual(){
   stage.innerHTML=`<div class="card"><h2>Independence of many events</h2>
     <p>With two events, independence is one equation. With three or more, is it enough to check them two at a time? Toss two fair coins. The four outcomes HH, HT, TH, TT are equally likely, each $\\tfrac14$. Define</p>
@@ -2314,7 +2381,7 @@ function p1_mutual(){
   setHints([`The system works only if every component works. Each works with probability 1 − (its failure probability). Mutual independence lets you multiply.`,`0.9 × 0.8 × 0.95 = 0.684.`]);
 }
 
-/* ---------- Beat 9: conditional independence and Simpson's paradox ---------- */
+/* ---------- Beat 11: conditional independence and Simpson's paradox ---------- */
 function p1_condind(){
   stage.innerHTML=`<div class="card"><h2>Conditional independence and Simpson's paradox</h2>
     <p>Beat 6 assumed two test results were unrelated "once disease status is fixed". That is a different statement from independence, and the difference matters: knowing one thing can create or destroy a link between two others.</p>
@@ -2383,7 +2450,7 @@ function p1_condind(){
   setHints([`Write P(2nd + | 1st +) = P(both +) / P(1st +). Find each by splitting into sick and healthy; inside each group, the two tests multiply.`,`P(1st +) = 0.1·0.8 + 0.9·0.1 = 0.17 and P(both +) = 0.1·0.64 + 0.9·0.01 = 0.073, so the answer is 0.073 / 0.17 ≈ 0.43.`]);
 }
 
-/* ---------- Beat 10: puzzles where intuition fails ---------- */
+/* ---------- Beat 12: puzzles where intuition fails ---------- */
 function p1_puzzles(){
   stage.innerHTML=`<div class="card"><h2>Puzzles where intuition fails</h2>
     <p>Three famous puzzles, each settled by writing down the sample space and conditioning carefully. Each also teaches one lesson about evidence.</p>
@@ -2458,7 +2525,7 @@ function p1_puzzles(){
   setHints([`Split into two cases: your first pick was right (1/4) or wrong (3/4). In each case, what are the two remaining closed doors hiding?`,`If you were right, switching loses; if wrong, one of the two doors has the car, so switching wins half the time: (3/4)(1/2) = 3/8.`]);
 }
 
-/* ---------- Beat 11: Module 2 problem set ---------- */
+/* ---------- Beat 13: Module 2 problem set ---------- */
 function p1_problems(){
   const P=(lvl,num,q,hint,sol)=>`<div class="prob"><span class="lvl">${lvl}</span><div class="ph">Problem ${num}</div>${q}
     <details><summary>Hint</summary><div class="sol">${hint}</div></details>
@@ -2491,7 +2558,7 @@ function p1_problems(){
     `<p>(a) Of 100,000 transactions, 500 are fraud and 99,500 legitimate. Flagged: $500\\times0.98=490$ fraud and $99{,}500\\times0.02=1{,}990$ legitimate. So</p>
     <div class="eqbox">$$P(\\text{fraud}\\mid\\text{flag})=\\frac{490}{490+1990}=\\frac{490}{2480}\\approx0.198.$$</div>
     <p>Four out of five flags are false alarms: the 2% error rate applies to a group 199 times larger.</p>
-    <p>(b) After the first flag the odds are $\\frac{490}{1990}\\approx0.246$. Because the detectors are conditionally independent, the second flag multiplies the odds by its own likelihood ratio (beat 6, Step 5), $\\frac{P(\\text{flag}\\mid\\text{fraud})}{P(\\text{flag}\\mid\\text{legit})}=\\frac{0.98}{0.02}=49$: odds $0.246\\times49\\approx12.1$, so $P=\\frac{12.1}{13.1}\\approx0.92$. Check with counts: $490\\times0.98\\approx480$ fraud and $1990\\times0.02\\approx40$ legitimate transactions are flagged twice, and $\\frac{480}{520}\\approx0.92$.</p>`)
+    <p>(b) After the first flag the odds are $\\frac{490}{1990}\\approx0.246$. Because the detectors are conditionally independent, the second flag multiplies the odds by its own likelihood ratio (beat 7, Step 3), $\\frac{P(\\text{flag}\\mid\\text{fraud})}{P(\\text{flag}\\mid\\text{legit})}=\\frac{0.98}{0.02}=49$: odds $0.246\\times49\\approx12.1$, so $P=\\frac{12.1}{13.1}\\approx0.92$. Check with counts: $490\\times0.98\\approx480$ fraud and $1990\\times0.02\\approx40$ legitimate transactions are flagged twice, and $\\frac{480}{520}\\approx0.92$.</p>`)
   +P('prosecutor’s fallacy',5,
     `<p>A DNA trace matches a suspect. The chance that a random innocent person matches is 1 in 1,000, and the true source always matches. The prosecutor says: "The chance he is innocent is 1 in 1,000." Find the probability he is the source if (a) other evidence shows the source was one of the 50 people in a building, he among them, and nothing else singles him out; (b) the only evidence is the match, and he was found by searching a city of 1,000,000.</p>`,
     `<p>Posterior odds = prior odds × likelihood ratio. The likelihood ratio is $\\frac{1}{1/1000}=1000$ in both cases; only the prior changes.</p>`,
