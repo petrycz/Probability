@@ -2060,7 +2060,7 @@ function p1_bayes(){
 /* ---------- Beat 6: Bayes as updating — odds and evidence ---------- */
 function p1_update(){
   stage.innerHTML=`<div class="card"><h2>Bayes as updating: odds and evidence</h2>
-    <p>After one positive test the probability of disease went from $0.01$ to about $0.09$. Suppose you take a second, independent test, and it is also positive. Then a third. How does the probability move with each result? Use the same test as before: $P(+\\mid D)=0.9$, $P(+\\mid D^{c})=0.09$.</p>
+    <p>After one positive test the probability of disease went from $0.01$ to about $0.09$. Suppose you take a second test of the same kind, and it is also positive. Then a third. How does the probability move with each result? Use the same test as before: $P(+\\mid D)=0.9$, $P(+\\mid D^{c})=0.09$.</p>
     <p><b>Try it.</b> Add positive and negative results and watch where the probability goes. Each dot is your belief after one more result; the arrows show each move.</p>
     <div class="ctrls"><button class="btn ghost" id="uplus" style="padding:10px 14px">+ positive result</button><button class="btn ghost" id="uminus" style="padding:10px 14px">− negative result</button><button class="btn ghost" id="ureset" style="padding:10px 14px">Start over</button></div>
     <canvas id="cvo6" width="640" height="330" style="margin-top:10px"></canvas>
@@ -2070,22 +2070,50 @@ function p1_update(){
     <div class="readout"><div class="rdc"><div class="k">results so far</div><div class="v" id="o1">none</div></div><div class="rdc"><div class="k">P(D) now</div><div class="v" id="o2">—</div></div><div class="rdc"><div class="k">odds now</div><div class="v" id="o3">—</div></div><div class="rdc"><div class="k">step per + / per −</div><div class="v" id="o4">—</div></div></div>
     <p class="small" id="o5" style="margin-top:8px"></p>
     <p style="margin-top:14px">Two things to notice. In probability, the moves are uneven: the first positive takes $0.01$ to $0.09$, the second takes $0.09$ to $0.50$, the third to about $0.91$. On the line above, every positive moves the dot the <em>same distance</em> to the right, and every negative the same distance to the left. The rest of this beat explains why, and what that distance is.</p>
-    <p><b>Step 1: update twice with Bayes.</b> After the first positive, $P(D\\mid +)\\approx0.0917$. That is now what you believe before the second test, so use it as the prior in Bayes' theorem. Assuming the two tests' errors are unrelated once disease status is fixed (the precise condition, <em>conditional independence</em>, comes in beat 9):</p>
-    <div class="eqbox">$$P(D\\mid ++)=\\frac{0.0917\\times0.9}{0.0917\\times0.9+0.9083\\times0.09}=\\frac{0.0825}{0.0825+0.0817}\\approx0.50.$$</div>
-    <p>Yesterday's posterior is today's prior. This works, but each step needs the whole formula again. Odds make it a single multiplication.</p>
-    <p><b>Step 2: odds.</b> The <b>odds</b> of an event compare its probability with the probability that it does not happen:</p>
+    <p><b>Step 1: two positives, straight from the definition.</b> Write $++$ for "both tests positive". Nothing new is needed — it is the definition of conditional probability:</p>
+    <div class="eqbox">$$P(D\\mid ++)=\\frac{P(D\\cap ++)}{P(++)}.$$</div>
+    <p><em>The numerator.</em> The multiplication rule (beat 2) splits an intersection two ways: $P(D\\cap ++)=P(D)\\,P(++\\mid D)$, or $P(D\\cap ++)=P(++)\\,P(D\\mid ++)$. Both are correct, but the second contains the very thing we are looking for, so we use the first: it needs only $P(D)$ and the test's behaviour on sick people, which we know.</p>
+    <p><em>The assumption.</em> For $P(++\\mid D)$, assume that once disease status is fixed, the second test ignores the first: among sick people, a positive comes up with probability $0.9$ each time, whatever the other result was. On the tree, the $D$ branch splits into $+$ with $0.9$, and that $+$ splits again into $+$ with $0.9$, so $P(++\\mid D)=0.9\\times0.9=0.81$. Likewise $P(++\\mid D^{c})=0.09\\times0.09=0.0081$. (This is <em>conditional independence</em>, beat 9. It holds inside each branch only — beat 9 also shows that the two results are <em>not</em> independent overall.)</p>
+    <p><em>The denominator.</em> Total probability over the two branches: $P(++)=P(D)(0.81)+P(D^{c})(0.0081)$. Putting it together:</p>
+    <div class="eqbox">$$P(D\\mid ++)=\\frac{0.01\\times0.9\\times0.9}{0.01\\times0.9\\times0.9+0.99\\times0.09\\times0.09}=\\frac{0.0081}{0.0081+0.008019}\\approx0.5025.$$</div>
+    <p><b>Step 2: the same answer by updating twice.</b> Look at the numerator, $0.01\\times0.9\\times0.9$. Its first two factors, $0.01\\times0.9=P(D)P(+\\mid D)$, are the numerator of the <em>first</em> update. Divide the top and bottom of Step 1's fraction by the same number, $P(+)=0.01\\times0.9+0.99\\times0.09=0.0981$ (this does not change the fraction):</p>
+    <div class="eqbox">$$P(D\\mid ++)=\\frac{\\dfrac{0.01\\times0.9}{0.0981}\\times0.9}{\\dfrac{0.01\\times0.9}{0.0981}\\times0.9+\\dfrac{0.99\\times0.09}{0.0981}\\times0.09}.$$</div>
+    <p>Each small fraction is a result from the first update: $\\frac{0.01\\times0.9}{0.0981}=P(D\\mid +)\\approx0.0917$ and $\\frac{0.99\\times0.09}{0.0981}=P(D^{c}\\mid +)\\approx0.9083$. Substituting:</p>
+    <div class="eqbox">$$P(D\\mid ++)=\\frac{0.0917\\times0.9}{0.0917\\times0.9+0.9083\\times0.09}=\\frac{0.0826}{0.0826+0.0817}\\approx0.5025.$$</div>
+    <p>That is Bayes' theorem for one test, with $P(D\\mid +)$ in place of the prior. So "yesterday's posterior is today's prior" is not an extra rule: it is Step 1's fraction regrouped. It relies on the assumption — the second factor, $0.9$ or $0.09$, must not depend on the first result. Still, each update needs the whole formula with its total-probability sum. Odds remove that sum.</p>
+    <p><b>Step 3: odds.</b> The <b>odds</b> of an event compare its probability with the probability that it does not happen:</p>
     <div class="defn"><span class="dt">Odds</span>$$O(D)=\\frac{P(D)}{P(D^{c})}=\\frac{P(D)}{1-P(D)},\\qquad\\text{and back again:}\\quad P(D)=\\frac{O(D)}{1+O(D)}.$$
       The second formula comes from solving $O=\\frac{P}{1-P}$ for $P$: $O-OP=P$, so $O=P(1+O)$. Examples: $P=0.01$ gives $O=\\frac{0.01}{0.99}=\\frac1{99}$ ("1 to 99"); $P=0.5$ gives $O=1$; $P=0.9$ gives $O=9$.</div>
-    <p><b>Step 3: the odds form of Bayes.</b> Write Bayes' theorem twice, once for $D$ and once for $D^{c}$, with the same evidence $+$:</p>
+    <p><b>Step 4: the odds form of Bayes.</b> Write Bayes' theorem twice, once for $D$ and once for $D^{c}$, with the same evidence $+$:</p>
     <div class="eqbox">$$P(D\\mid +)=\\frac{P(D)\\,P(+\\mid D)}{P(+)},\\qquad P(D^{c}\\mid +)=\\frac{P(D^{c})\\,P(+\\mid D^{c})}{P(+)}.$$</div>
     <p>Divide the first by the second. Both have the same denominator $P(+)$, so it cancels — the total-probability sum is no longer needed:</p>
     <div class="eqbox">$$\\underbrace{\\frac{P(D\\mid +)}{P(D^{c}\\mid +)}}_{\\text{posterior odds}}=\\underbrace{\\frac{P(D)}{P(D^{c})}}_{\\text{prior odds}}\\times\\underbrace{\\frac{P(+\\mid D)}{P(+\\mid D^{c})}}_{\\text{likelihood ratio}}.$$</div>
     <div class="defn"><span class="dt">Bayes' theorem, odds form</span>Posterior odds = prior odds × <b>likelihood ratio</b>, where the likelihood ratio $\\mathrm{LR}=\\dfrac{P(\\text{evidence}\\mid D)}{P(\\text{evidence}\\mid D^{c})}$ measures how much more probable the evidence is if $D$ is true than if it is false.</div>
-    <p>For a positive result, $\\mathrm{LR}_+=\\frac{0.9}{0.09}=10$. For a negative result, $\\mathrm{LR}_-=\\frac{P(-\\mid D)}{P(-\\mid D^{c})}=\\frac{0.1}{0.91}\\approx0.11$. Now the chain is just multiplication:</p>
-    <div class="eqbox">$$\\tfrac1{99}\\xrightarrow{\\times10}\\tfrac{10}{99}\;(P=\\tfrac{10}{109}\\approx0.09)\\xrightarrow{\\times10}\\tfrac{100}{99}\;(P=\\tfrac{100}{199}\\approx0.50)\\xrightarrow{\\times10}\\tfrac{1000}{99}\;(P\\approx0.91).$$</div>
-    <p><b>Step 4: why the steps on the line are equal.</b> The line is drawn in <b>log-odds</b>, $\\log_{10}O$. Taking logarithms turns the multiplication into addition:</p>
-    <div class="eqbox">$$\\log O(\\text{posterior})=\\log O(\\text{prior})+\\log\\mathrm{LR}.$$</div>
-    <p>Every positive adds $\\log_{10}10=1$ and every negative adds $\\log_{10}0.11\\approx-0.96$, wherever the dot happens to be. Evidence is additive in log-odds. This is the scale machine learning uses: a logistic-regression or neural-network classifier outputs a <b>logit</b>, which is a log-odds, and a naive-Bayes spam filter scores an email by adding up the log-likelihood-ratios of its words.</p>
+    <p><b>Why this form is useful.</b> (1) No denominator: no total-probability sum to compute. (2) It separates the two ingredients: the prior odds are about the person, the likelihood ratio is about the test alone — the same number for every patient — so a test's strength can be quoted as one number, "a positive multiplies the odds by 10". (3) Repeated evidence becomes repeated multiplication, as the next step shows. (4) Taking logs turns that multiplication into addition (Step 6).</p>
+    <p>For a positive result, $\\mathrm{LR}_+=\\frac{P(+\\mid D)}{P(+\\mid D^{c})}=\\frac{0.9}{0.09}=10$. For a negative result, $\\mathrm{LR}_-=\\frac{P(-\\mid D)}{P(-\\mid D^{c})}=\\frac{1-0.9}{1-0.09}=\\frac{0.1}{0.91}\\approx0.11$.</p>
+    <p><b>Step 5: chaining in odds, one result at a time.</b></p>
+    <p>• <em>Start.</em> $P(D)=0.01$, so the prior odds are $O_0=\\frac{0.01}{0.99}=\\frac1{99}$.<br>
+    • <em>First positive.</em> Multiply by $\\mathrm{LR}_+=10$: $O_1=\\frac1{99}\\times10=\\frac{10}{99}$. Back to a probability: $P=\\frac{O_1}{1+O_1}=\\frac{10/99}{109/99}=\\frac{10}{109}\\approx0.0917$ — the first update's answer.<br>
+    • <em>Second positive.</em> $O_1$ is now the prior odds (Step 2). Multiply by 10 again: $O_2=\\frac{10}{99}\\times10=\\frac{100}{99}$, so $P=\\frac{100/99}{199/99}=\\frac{100}{199}\\approx0.5025$ — Step 1's answer.<br>
+    • <em>Third positive.</em> $O_3=\\frac{100}{99}\\times10=\\frac{1000}{99}$, so $P=\\frac{1000}{1099}\\approx0.91$.<br>
+    • <em>Or a negative instead of the third result.</em> $O=\\frac{100}{99}\\times\\frac{0.1}{0.91}=\\frac{100}{99}\\times\\frac{10}{91}=\\frac{1000}{9009}\\approx0.111$, so $P\\approx\\frac{0.111}{1.111}\\approx0.10$.</p>
+    <p>Check against Step 1 directly. Divide $P(D\\mid ++)$ by $P(D^{c}\\mid ++)$; the shared denominator $P(++)$ cancels just as in Step 4:</p>
+    <div class="eqbox">$$\\frac{P(D\\mid ++)}{P(D^{c}\\mid ++)}=\\frac{0.01\\times0.9\\times0.9}{0.99\\times0.09\\times0.09}=\\frac{0.01}{0.99}\\times\\frac{0.9}{0.09}\\times\\frac{0.9}{0.09}=\\frac1{99}\\times10\\times10=\\frac{100}{99}.$$</div>
+    <p>Two conditionally independent results multiply the odds by their two likelihood ratios.</p>
+    <p><b>Step 6: from multiplying to adding — log-odds.</b> Step 5 multiplied the odds by 10 for every positive. The log of a product is the sum of the logs (Calculus, Module 1), so take the log of both sides of posterior odds = prior odds × LR. The right side is a product, so its log splits into a sum:</p>
+    <div class="eqbox">$$\\log_{10}O(\\text{posterior})=\\log_{10}O(\\text{prior})+\\log_{10}\\mathrm{LR}.$$</div>
+    <p>Call $L=\\log_{10}O$ the <b>log-odds</b>. Now redo Step 5 in log-odds, one result at a time:</p>
+    <p>• <em>Start.</em> $L_0=\\log_{10}\\frac1{99}=-\\log_{10}99\\approx-2.00$.<br>
+    • <em>Each positive</em> adds $\\log_{10}\\mathrm{LR}_+=\\log_{10}10=1$: $L_1\\approx-1.00$, $L_2\\approx0.00$, $L_3\\approx1.00$.<br>
+    • <em>A negative</em> adds $\\log_{10}\\mathrm{LR}_-=\\log_{10}\\frac{0.1}{0.91}=\\log_{10}0.1-\\log_{10}0.91\\approx-1+0.04=-0.96$.</p>
+    <p><em>Back to a probability.</em> Undo the log, $O=10^{L}$, then use $P=\\frac{O}{1+O}$:</p>
+    <div class="eqbox">$$\\begin{aligned}L=-2&:\\quad O=0.01,\\quad P=\\tfrac{0.01}{1.01}\\approx0.0099\\\\ L=-1&:\\quad O=0.1,\\quad P=\\tfrac{0.1}{1.1}\\approx0.091\\\\ L=0&:\\quad O=1,\\quad P=\\tfrac12=0.5\\\\ L=1&:\\quad O=10,\\quad P=\\tfrac{10}{11}\\approx0.909\\\\ L=2&:\\quad O=100,\\quad P=\\tfrac{100}{101}\\approx0.990\\end{aligned}$$</div>
+    <p>These match Step 5: $0.01$, $0.0917$, $0.5025$, $0.91$ (up to the rounding of $-1.996$ to $-2$). $L=0$ means even odds, $P=\\frac12$; positive $L$ means more likely than not; negative $L$ means less likely.</p>
+    <p><em>Why the dots on the line move equal distances.</em> The line is drawn in $L$. Every positive adds exactly 1 to $L$, wherever the dot is, so every arrow has the same length. In probability the same evidence moves $0.01\\to0.09$ (by $0.08$) but $0.09\\to0.50$ (by $0.41$), because the conversion $P=\\frac{10^{L}}{1+10^{L}}$ is an S-shaped curve: flat near 0 and 1, steep near $\\frac12$. Look at the list above: equal steps in $L$ give tiny steps in $P$ at the ends and big ones in the middle.</p>
+    <p><em>Evidence adds up.</em> After $k$ positives and $m$ negatives, in any order,</p>
+    <div class="eqbox">$$L=L_0+k\\cdot1+m\\cdot(-0.96).$$</div>
+    <p>Each result contributes its own fixed amount, so the order does not matter, and one positive and one negative nearly cancel ($1-0.96=0.04$).</p>
+    <p><em>Where you will see this again.</em> Machine learning uses natural logs, $\\ln O$, called the <b>logit</b>. Converting back: $P=\\frac{O}{1+O}$; divide top and bottom by $O$ to get $P=\\frac1{1+1/O}=\\frac1{1+e^{-\\ln O}}$ — the <b>sigmoid</b> function. A logistic-regression classifier computes a logit as a weighted sum of features and passes it through the sigmoid: each feature adds its evidence to the log-odds, just as each test result does here. A naive-Bayes spam filter adds up the log-likelihood-ratios of the words in an email.</p>
 
     <h2 style="margin-top:22px">The prosecutor's fallacy</h2>
     <p>A DNA trace matches a suspect. The chance that a random innocent person matches is 1 in a million. "So the chance he is innocent is 1 in a million" — that is the confusion of the inverse again: $P(\\text{match}\\mid\\text{innocent})$ is not $P(\\text{innocent}\\mid\\text{match})$. Suppose the suspect was found by searching a database of a city of 10 million, with nothing else pointing to him. Then:</p>
@@ -2093,7 +2121,7 @@ function p1_update(){
     • <b>Likelihood ratio</b> of a match: $\\frac{P(\\text{match}\\mid\\text{source})}{P(\\text{match}\\mid\\text{not source})}=\\frac{1}{10^{-6}}=10^{6}$.<br>
     • <b>Posterior odds</b>: $10^{-7}\\times10^{6}=0.1$, so $P=\\frac{0.1}{1.1}\\approx0.09$.</p>
     <p>In counts: among 10 million people, about 10 innocent people match by chance, plus the true source, so a match alone leaves roughly a 1-in-11 chance. Strong evidence multiplies the odds by a million, but a tiny prior can absorb it. The same mistake reads a small p-value as the probability that a result is a fluke (Module 14).</p>
-    <div class="task"><b>Two words</b>40% of email is spam. The word "free" appears in 25% of spam and 2% of legitimate email; the word "meeting" appears in 1% of spam and 5% of legitimate email. Assume the two words occur independently once you know whether an email is spam. An email contains both words. What is the probability it is spam? Enter a decimal.</div>
+    <div class="task"><b>A day of checks</b>A machine is faulty with prior probability $0.01$. An automatic check raises an alarm with probability $\\tfrac{10}{11}$ if the machine is faulty and $\\tfrac1{11}$ if it is fine, and the checks are conditionally independent given the machine's state. Over one day, 42 checks give 23 alarms and 19 all-clears, in some order. What is the probability the machine is faulty? Enter a decimal.</div>
     ${gateHTML('e.g. 0.5')}</div>`;
 
   const cv=document.getElementById('cvo6'),op=document.getElementById('op'),os=document.getElementById('os'),of=document.getElementById('of');
@@ -2124,12 +2152,12 @@ function p1_update(){
   document.getElementById('ureset').onclick=()=>{seq=[];draw();};
   [op,os,of].forEach(el=>el.oninput=draw);
   draw();
-  numChk(document.getElementById('gate'),0.625,()=>{addReveal(`<div class="rh">✓ 0.625</div>
-    <p>Work in odds. Prior odds of spam: $\\frac{0.4}{0.6}=\\frac23$. Each word contributes its likelihood ratio, and because the words are independent given the class, the ratios multiply:</p>
-    <div class="eqbox">$$\\mathrm{LR}_{\\text{free}}=\\frac{0.25}{0.02}=12.5,\\qquad\\mathrm{LR}_{\\text{meeting}}=\\frac{0.01}{0.05}=0.2,$$
-    $$\\text{posterior odds}=\\tfrac23\\times12.5\\times0.2=\\tfrac53,\\qquad P(\\text{spam}\\mid\\text{both})=\\frac{5/3}{1+5/3}=\\frac58=0.625.$$</div>
-    <p>"Free" pushes toward spam by a factor of 12.5; "meeting" pulls back by a factor of 5. In log-odds the two simply add: $\\log_{10}12.5+\\log_{10}0.2\\approx1.10-0.70=0.40$. This is exactly how the naive-Bayes spam filter in the capstone scores an email, one word at a time.</p>`);},snapTo(0.625,0.0015));
-  setHints([`Convert the prior to odds (0.4/0.6), then multiply by each word's likelihood ratio: P(word | spam) / P(word | legit). Convert back with P = O/(1+O).`,`Odds = (2/3) × 12.5 × 0.2 = 5/3, so P = (5/3)/(1 + 5/3) = 5/8 = 0.625.`]);
+  numChk(document.getElementById('gate'),0.99020,()=>{addReveal(`<div class="rh">✓ ≈ 0.990</div>
+    <p><b>Likelihood ratios.</b> An alarm: $\\mathrm{LR}_{a}=\\frac{10/11}{1/11}=10$. An all-clear: $\\mathrm{LR}_{c}=\\frac{1/11}{10/11}=\\frac1{10}$.</p>
+    <p><b>Log-odds.</b> Prior: $\\log_{10}\\frac1{99}\\approx-1.996$. Each alarm adds $\\log_{10}10=1$; each all-clear adds $\\log_{10}\\frac1{10}=-1$. The order does not matter, only the counts:</p>
+    <div class="eqbox">$$L\\approx-1.996+23(1)+19(-1)=2.004,\\qquad O=\\frac1{99}\\cdot10^{23}\\cdot10^{-19}=\\frac{10^4}{99}\\approx101,\\qquad P=\\frac{101}{102}\\approx0.990.$$</div>
+    <p><b>Why not directly?</b> Directly, $P(\\text{data}\\mid\\text{faulty})=\\big(\\tfrac{10}{11}\\big)^{23}\\big(\\tfrac1{11}\\big)^{19}\\approx1.8\\times10^{-21}$, an unwieldy number, and the same kind of number appears for "fine". The odds form divides one by the other, so the $11$s cancel and only the net count of alarms over all-clears, $23-19=4$, is left. The 42 checks amount to 4 net alarms, each worth one step of 1 in log-odds.</p>`);},snapTo(0.99020,0.0015));
+  setHints([`Each alarm multiplies the odds by (10/11)/(1/11) = 10 and each all-clear by 1/10. In base-10 log-odds that is +1 and −1, starting from log₁₀(1/99) ≈ −2.`,`Log-odds ≈ −1.996 + 23 − 19 = 2.004, so odds = 10⁴/99 ≈ 101 and P = 101/102 ≈ 0.990.`]);
 }
 
 /* ---------- Beat 7: independence ---------- */
@@ -2437,7 +2465,7 @@ function p1_problems(){
     <p>(d) No: $0.75+0.417\\ne1$. They are shares of two <em>different</em> restricted worlds. What adds to 1 is two outcomes inside the same world: $P(\\text{up}\\mid\\text{high})+P(\\text{not up}\\mid\\text{high})=1$.</p>`)
   +P('chain rule',2,
     `<p>A language model gives $P(\\text{The})=0.05$, $P(\\text{cat}\\mid\\text{The})=0.01$, $P(\\text{sat}\\mid\\text{The cat})=0.2$ and $P(\\text{on}\\mid\\text{The cat sat})=0.6$. (a) What probability does it give the sequence "The cat sat on"? (b) Find its log-probability (natural log). (c) Why do models add log-probabilities instead of multiplying probabilities?</p>`,
-    `<p>(a) The chain rule multiplies each token's probability given everything before it. (b) $\\ln(xy)=\\ln x+\\ln y$.</p>`,
+    `<p>(a) The chain rule multiplies each token's probability given everything before it. (b) The log of a product is the sum of the logs (Calculus, Module 1).</p>`,
     `<p>(a) By the chain rule, $P(w_1w_2w_3w_4)=P(w_1)P(w_2\\mid w_1)P(w_3\\mid w_1w_2)P(w_4\\mid w_1w_2w_3)$, so $0.05\\cdot0.01\\cdot0.2\\cdot0.6=6\\times10^{-5}$. The rule needs no assumption: it is the definition of conditional probability applied three times.</p>
     <p>(b) $\\ln0.05+\\ln0.01+\\ln0.2+\\ln0.6\\approx-3.00-4.61-1.61-0.51=-9.72$, and $e^{-9.72}\\approx6\\times10^{-5}$.</p>
     <p>(c) A long text is a product of thousands of factors below 1. A thousand tokens at about $0.1$ each give about $10^{-1000}$, far below the smallest number a 64-bit float can hold (about $10^{-308}$), so the product would round to 0. The sum of logs, about $-2303$, is an ordinary number. Training a model maximizes this sum, which is why its loss is the average negative log-probability per token.</p>`)
