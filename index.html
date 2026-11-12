@@ -2399,7 +2399,7 @@ function p1_condind(){
       $A$ — the first test is positive. &nbsp; $B$ — the second test is positive. &nbsp; $C$ — the person is sick (beat 6's $D$).</div>
     <p>Here are 100,000 people as counts. Along each row the test's rate is applied twice ($0.9$ for the sick, $0.09$ for the healthy); the bottom row adds the two above it.</p>
     <div style="overflow-x:auto;margin:10px 0"><table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.6;text-align:center">
-      <tr style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.3px"><td style="padding:5px;border-bottom:1px solid var(--line)"></td><td style="padding:5px;border-bottom:1px solid var(--line)">people</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A$: 1st +</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A$ and $B$</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A^{c}$: 1st −</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A^{c}$ and $B$</td></tr>
+      <tr style="color:var(--muted);font-size:11px;letter-spacing:.2px"><td style="padding:5px;border-bottom:1px solid var(--line)"></td><td style="padding:5px;border-bottom:1px solid var(--line)">people</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A$: 1st +</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A$ and $B$</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A^{c}$: 1st −</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A^{c}$ and $B$</td></tr>
       <tr><td style="padding:5px;text-align:left">$C$: sick</td><td>1,000</td><td>900</td><td>810</td><td>100</td><td>90</td></tr>
       <tr><td style="padding:5px;text-align:left">$C^{c}$: healthy</td><td>99,000</td><td>8,910</td><td>802</td><td>90,090</td><td>8,108</td></tr>
       <tr><td style="padding:5px;text-align:left;border-top:1px solid var(--line)">everyone</td><td style="border-top:1px solid var(--line)">100,000</td><td style="border-top:1px solid var(--line)">9,810</td><td style="border-top:1px solid var(--line)">1,612</td><td style="border-top:1px solid var(--line)">90,190</td><td style="border-top:1px solid var(--line)">8,198</td></tr></table></div>
@@ -2454,31 +2454,46 @@ function p1_condind(){
 
 /* ---------- Beat 12: explaining away (a common effect) ---------- */
 function p1_explain(){
-  stage.innerHTML=`<div class="card"><h2>Explaining away: a common effect</h2>
-    <p>Beat 11 showed two results linked overall but unlinked within each group, because both depend on a hidden <em>cause</em>. This beat shows the reverse: two things that are unlinked overall become linked once you learn about something they both <em>cause</em>.</p>
-    <p>The grass is wet if it rained, if the sprinkler ran, or both — and only then. Rain happens with probability $0.3$, the sprinkler runs with probability $0.4$, and the two are independent (the sprinkler runs on a timer).</p>
-    <p><b>Try it.</b> The square is drawn as in beat 9: rain is the left strip (width $0.3$), sprinkler the bottom band (height $0.4$). Because they are independent, they are crossed strips, and each of the four cells has area equal to its probability. Choose what you know; the cells it rules out go dark.</p>
+  const Q=(n,q,after)=>`<div class="task" id="eq${n}" style="margin-top:12px"><b>Problem ${n}</b>${q}
+      <div class="entry" style="margin-top:8px"><input type="text" inputmode="text" autocomplete="off" autocapitalize="off" placeholder="fraction or decimal"><button class="btn primary" style="flex:0 0 auto;padding:12px 18px">Check</button></div>
+      <div class="miniout"></div><span class="small showme" style="cursor:pointer;text-decoration:underline;color:var(--muted)">Show me</span>
+      <div class="sol" style="display:none;margin-top:8px">${after}</div></div>`;
+  stage.innerHTML=`<div class="card"><h2>Explaining away</h2>
+    <p>Beat 11 started with two <em>dependent</em> events and made them independent by zooming into one part of the population. This beat asks the reverse: can zooming in make two <em>independent</em> events dependent? As before, independence is a fact about the numbers — is $A$ just as likely with $B$ as without it? — so work it out by calculating.</p>
+    <div class="defn"><span class="dt">The setup</span>On any day it rains with probability $0.3$, and the sprinkler runs with probability $0.4$. The sprinkler is on a timer, so the two are independent. The grass is wet if it rained, the sprinkler ran, or both — and only then.<br>
+      $R$ — it rained. &nbsp; $S$ — the sprinkler ran. &nbsp; $W$ — the grass is wet.</div>
+    <p>In the language of beats 5–8: rain and the sprinkler are two possible <em>hypotheses</em>, and wet grass is the <em>evidence</em> both can explain. Here are 1,000 days as counts. Each cell is $1000\\times P(\\text{rain or not})\\times P(\\text{sprinkler or not})$, by independence.</p>
+    <div style="overflow-x:auto;margin:10px 0"><table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.6;text-align:center">
+      <tr style="color:var(--muted);font-size:11px;letter-spacing:.2px"><td style="TD"></td><td style="TD">$S$: sprinkler ran</td><td style="TD">$S^{c}$: sprinkler off</td><td style="TD">total</td></tr>
+      <tr><td style="padding:6px;text-align:left">$R$: rain</td><td>120 <span class="small" style="color:var(--muted)">wet</span></td><td>180 <span class="small" style="color:var(--muted)">wet</span></td><td>300</td></tr>
+      <tr><td style="padding:6px;text-align:left">$R^{c}$: no rain</td><td>280 <span class="small" style="color:var(--muted)">wet</span></td><td>420 <span class="small" style="color:var(--muted)">dry</span></td><td>700</td></tr>
+      <tr><td style="padding:6px;text-align:left;BT">total</td><td style="BT">400</td><td style="BT">600</td><td style="BT">1,000</td></tr></table></div>
+    <p>The grass is wet on every day except the 420 with no rain and no sprinkler: $1000-420=580$ wet days.</p>
+    ${Q(1,`<em>All days.</em> Among the days the sprinkler ran, what share had rain? That is $P(R\\mid S)$.`,
+      `$\\frac{120}{400}=0.3$. Without the sprinkler: $\\frac{180}{600}=0.3$. Equal, so $R$ and $S$ are <span style="font-weight:700">independent</span> — as built in.`)}
+    ${Q(2,`<em>Zoom into wet days.</em> Use only the three wet cells (580 days). What share of wet days had rain? That is $P(R\\mid W)$.`,
+      `$\\frac{120+180}{580}=\\frac{300}{580}\\approx0.517$, up from $0.3$. Wet grass is evidence for rain: zooming in threw out the 420 dry days, none of which had rain.`)}
+    ${Q(3,`<em>Wet days when the sprinkler ran.</em> Among wet days with the sprinkler on, what share had rain? That is $P(R\\mid W\\cap S)$.`,
+      `Every sprinkler day is wet, so these are all 400 sprinkler days: $\\frac{120}{400}=0.3$. Back to the prior. Learning the sprinkler ran made rain <em>less</em> likely than the $0.517$ of Problem 2: the sprinkler already accounts for the wet grass.`)}
+    ${Q(4,`<em>Wet days when the sprinkler was off.</em> Among wet days with the sprinkler off, what share had rain? That is $P(R\\mid W\\cap S^{c})$.`,
+      `Only one wet cell has the sprinkler off — rain, sprinkler off, 180 days — so $\\frac{180}{180}=1$. On a wet day without the sprinkler, it must have rained.`)}
+    <p id="exprog" class="small" style="margin-top:14px;padding:10px 12px;border:1px dashed var(--line);border-radius:8px;color:var(--muted)">Solve or open all four problems to continue the beat — 0 of 4 done.</p>
+    <div id="exdone" style="display:none">
+    <p style="margin-top:16px"><b>What you found.</b> Over all days, the sprinkler tells you nothing about rain: $0.3$ either way (Problem 1). Among wet days, it tells you a lot: $0.3$ if it ran, $1$ if it did not (Problems 3 and 4). Zooming into wet days made two independent events dependent.</p>
+    <p><em>Why.</em> On all days the four cells form beat 9's crossed strips: rain takes up the same share of the sprinkler column as of the no-sprinkler column. Zooming into wet days deletes one cell — the 420 dry days, which are exactly the days with neither cause. In the no-sprinkler column only the rain cell is left, so the shares no longer match. Wet grass needs <em>some</em> cause; once one cause is known to be present, the other is no longer needed, and once it is known to be absent, the other must be there. The sprinkler <b>explains away</b> the wet grass. Here is the same thing as areas:</p>
     <div class="seg" id="segex"></div>
     <canvas id="cvex" width="640" height="360" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">area still possible</div><div class="v" id="x1">—</div></div><div class="rdc"><div class="k">rain part of it</div><div class="v" id="x2">—</div></div><div class="rdc"><div class="k">P(rain | what you know)</div><div class="v" id="x3">—</div></div></div>
     <p class="small" id="x4" style="margin-top:8px;min-height:20px"></p>
-    <p style="margin-top:14px"><b>What to notice.</b> Knowing only about the sprinkler leaves rain at $0.3$ — the strips are crossed, so independent. Knowing the grass is wet raises rain to about $0.52$. Then learning the sprinkler ran drops rain back to $0.3$, and learning it did not run makes rain certain. Once the grass is known to be wet, the sprinkler tells you about rain.</p>
-    <p><b>Step 1: the grass is wet.</b> The grass is dry only when there is no rain <em>and</em> no sprinkler. Complements of independent events are independent (beat 9, Step 2), so</p>
-    <div class="eqbox">$$P(\\text{wet})=1-P(\\text{no rain})\\,P(\\text{no sprinkler})=1-0.7\\times0.6=0.58.$$</div>
-    <p>Rain always makes the grass wet, so "rain and wet" is just "rain": $P(\\text{rain}\\cap\\text{wet})=0.3$. Then $P(\\text{rain}\\mid\\text{wet})=\\frac{0.3}{0.58}\\approx0.517$. Wet grass is evidence for rain: it rules out the dry cell, which contained no rain.</p>
-    <p><b>Step 2: wet, and the sprinkler ran.</b> The sprinkler alone makes the grass wet, so "wet and sprinkler" is just "sprinkler", probability $0.4$. The rain part of it is "rain and sprinkler", probability $0.3\\times0.4=0.12$ by independence:</p>
-    <div class="eqbox">$$P(\\text{rain}\\mid\\text{wet}\\cap\\text{sprinkler})=\\frac{P(\\text{rain}\\cap\\text{sprinkler})}{P(\\text{sprinkler})}=\\frac{0.12}{0.4}=0.3.$$</div>
-    <p>Back to the prior. The sprinkler fully accounts for the wet grass, so the wet grass is no longer evidence for rain: the sprinkler has <b>explained away</b> the wet grass.</p>
-    <p><b>Step 3: wet, and the sprinkler did not run.</b> Wet grass without the sprinkler means rain: "wet and no sprinkler" is "rain and no sprinkler", probability $0.3\\times0.6=0.18$, and all of it is rain, so $P(\\text{rain}\\mid\\text{wet}\\cap\\text{no sprinkler})=\\frac{0.18}{0.18}=1$.</p>
-    <p><b>Step 4: check against the definition.</b> Without conditioning, rain and sprinkler are independent: $P(\\text{rain}\\cap\\text{sprinkler})=0.12=0.3\\times0.4$. Given wet, apply beat 11's definition, $P(A\\cap B\\mid C)=P(A\\mid C)\\,P(B\\mid C)$:</p>
-    <p>• Left side: $P(\\text{rain}\\cap\\text{sprinkler}\\mid\\text{wet})=\\frac{0.12}{0.58}\\approx0.207$ (both together always make the grass wet).<br>
-    • Right side: $P(\\text{rain}\\mid\\text{wet})=0.517$ (Step 1) and $P(\\text{sprinkler}\\mid\\text{wet})=\\frac{0.4}{0.58}\\approx0.690$, product $\\approx0.357$.</p>
-    <p>$0.207\\ne0.357$: given wet grass, rain and sprinkler are <em>dependent</em>. The overlap is smaller than the product, so learning one makes the other <em>less</em> likely (beat 9's overlap rule) — exactly what Step 2 found.</p>
-    <p><b>The two patterns side by side.</b> Beat 11: the two tests are conditionally independent given disease status, but dependent overall (a common cause). This beat: rain and sprinkler are independent overall, but dependent given wet grass (a common effect). So neither kind of independence implies the other; which one holds depends on how the events are connected. A Bayesian network (Module 11) is a diagram of these connections.</p>
-    <p><em>Where it bites.</em> Selecting data on an effect creates links between its causes. Among hospital patients — people admitted because of illness A <em>or</em> illness B — the two illnesses look negatively related even when they are independent in the population (Berkson's paradox). Among strategies kept because they performed well, the ones with a lucky period look less skilled.</p>
-    <p>So conditioning on a third event can remove a link (beat 11) or create one (this beat). The next beat shows it can do something more surprising still: reverse which of two options looks better.</p>
+    <p style="margin-top:14px"><b>The definition, checked.</b> Beat 11's definition says $R$ and $S$ are conditionally independent given $W$ when $P(R\\cap S\\mid W)=P(R\\mid W)\\,P(S\\mid W)$. From the counts:</p>
+    <p>• Left side: $P(R\\cap S\\mid W)=\\frac{120}{580}\\approx0.207$.<br>
+    • Right side: $P(R\\mid W)=\\frac{300}{580}\\approx0.517$ (Problem 2) and $P(S\\mid W)=\\frac{400}{580}\\approx0.690$, product $\\approx0.357$.</p>
+    <p>$0.207\\ne0.357$: given wet grass, $R$ and $S$ are <em>not</em> conditionally independent, although they are independent. The overlap is smaller than the product, which (beat 9, Step 3) means learning one makes the other less likely — Problem 3.</p>
+    <p><b>Beat 11 and this beat side by side.</b> There, two pieces of <em>evidence</em> (two test results) shared one hypothesis as their common cause: dependent overall, independent once you zoom into the hypothesis. Here, two <em>hypotheses</em> (rain, sprinkler) share one piece of evidence as their common effect: independent overall, dependent once you zoom into the evidence. So neither kind of independence implies the other; you have to calculate each.</p>
+    <p><em>Where it bites.</em> Zooming in on an effect creates links between its causes. Among hospital patients — admitted because of illness A <em>or</em> illness B — the two illnesses look negatively related even when they are independent in the population (Berkson's paradox). Among trading strategies kept because they performed well, the ones that had a lucky period look less skilled. So zooming in can remove a link (beat 11) or create one (this beat). The next beat shows it can even reverse which of two options looks better.</p>
     <div class="task"><b>Why did the trade lose?</b>A trade can be hit by a data error (probability $0.05$) and by a market shock (probability $0.1$), independently. The chance it loses money depends on which happened: $0.9$ if both, $0.8$ if only a data error, $0.6$ if only a shock, $0.02$ if neither. The trade lost money, and you then learn there was a market shock. What is the probability there was also a data error? Enter a decimal.</div>
-    ${gateHTML('e.g. 0.1')}</div>`;
+    ${gateHTML('e.g. 0.1')}</div>
+    </div></div>`;
   const cv=document.getElementById('cvex');const pR=0.3,pS=0.4;let mode='none';
   const cells=[{r:1,s:1,lab:'both'},{r:1,s:0,lab:'rain only'},{r:0,s:1,lab:'sprinkler only'},{r:0,s:0,lab:'neither (dry)'}];
   const keep={none:c=>true,son:c=>c.s===1,wet:c=>c.r||c.s,wetS:c=>(c.r||c.s)&&c.s===1,wetN:c=>(c.r||c.s)&&c.s===0};
@@ -2498,6 +2513,12 @@ function p1_explain(){
     ctx.save();ctx.translate(X(0)-14,Y((1+pS)/2));ctx.rotate(-Math.PI/2);ctx.fillText('no sprinkler 0.6',0,0);ctx.restore();ctx.textAlign='left';}
   p0Seg('segex',[['none','know nothing'],['son','sprinkler ran'],['wet','grass is wet'],['wetS','wet + sprinkler ran'],['wetN','wet + sprinkler didn\'t run']],'none',k=>{mode=k;draw();});
   draw();
+  let solved=0;
+  [[1,0.3,0.001],[2,300/580,0.002],[3,0.3,0.001],[4,1,0.001]].forEach(([n,ans,tol])=>{const h=document.getElementById('eq'+n);let done=false;
+    const fin=()=>{if(done)return;done=true;h.querySelector('.sol').style.display='block';h.querySelector('.showme').style.display='none';++solved;
+      p0Set('exprog','Solve or open all four problems to continue the beat — '+solved+' of 4 done.');
+      if(solved===4){document.getElementById('exprog').style.display='none';document.getElementById('exdone').style.display='block';renderMath(document.getElementById('exdone'));}};
+    numChk(h,ans,fin,snapTo(ans,tol));h.querySelector('.showme').onclick=()=>{h.querySelector('input').disabled=true;h.querySelector('button').style.display='none';h.querySelector('.miniout').textContent='';fin();};});
   numChk(document.getElementById('gate'),0.0731707,()=>{addReveal(`<div class="rh">✓ ≈ 0.073</div>
     <p>Condition on everything you know, "loss and shock", and split by the data error:</p>
     <div class="eqbox">$$P(E\\mid L\\cap S)=\\frac{P(E\\cap S\\cap L)}{P(S\\cap L)}=\\frac{0.05\\times0.1\\times0.9}{0.05\\times0.1\\times0.9+0.95\\times0.1\\times0.6}=\\frac{0.0045}{0.0045+0.057}\\approx0.073.$$</div>
