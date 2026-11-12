@@ -2386,61 +2386,58 @@ function p1_mutual(){
 
 /* ---------- Beat 11: conditional independence ---------- */
 function p1_condind(){
-  const Q=(n,q,a)=>`<div class="task" style="margin-top:12px"><b>Question ${n}</b>${q}<details><summary>Check</summary><div class="sol">${a}</div></details></div>`;
   stage.innerHTML=`<div class="card"><h2>Conditional independence</h2>
-    <p>Beat 6 multiplied two test results, $P(++\\mid D)=0.9\\times0.9$, assuming that once you know whether someone is sick, the second test ignores the first. Beat 10's products needed independence. So are the two tests independent? Find out by counting.</p>
-    <div class="defn"><span class="dt">The setup</span>64 people, 32 sick and 32 healthy. Each person takes the test twice. The test is positive for $\\tfrac34$ of sick people and $\\tfrac14$ of healthy people, and one person's two results do not influence each other.<br>
-      $A$ — first test positive. $\;B$ — second test positive. $\;C$ — sick.</div>
-    <p>Each dot is a person. In each half, the rows above the line had a positive <b>first</b> test ($A$); the columns left of the line had a positive <b>second</b> test ($B$), drawn filled. Choose a group and a first result to highlight those people.</p>
-    <div class="ctrls"><span class="slabel" style="min-width:70px">group</span><div class="seg" id="segcg"></div></div>
-    <div class="ctrls" style="margin-top:6px"><span class="slabel" style="min-width:70px">first test</span><div class="seg" id="segcf"></div></div>
-    <canvas id="cvci" width="640" height="200" style="margin-top:10px"></canvas>
-    <div class="readout"><div class="rdc"><div class="k">highlighted people</div><div class="v" id="c1">—</div></div><div class="rdc"><div class="k">of them, 2nd test +</div><div class="v" id="c2">—</div></div><div class="rdc"><div class="k">share with 2nd test +</div><div class="v" id="c3">—</div></div></div>
-    `+Q(1,`Group: sick. What share of them have a positive second test after a <em>positive</em> first test? After a <em>negative</em> one?`,
-      `<p>$\\frac{18}{24}=\\frac34$ and $\\frac{6}{8}=\\frac34$ — the same. Among the sick, the first result tells you nothing about the second: $P(B\\mid A\\cap C)=P(B\\mid A^{c}\\cap C)=\\frac34$.</p>`)
-    +Q(2,`Group: healthy. The same two shares?`,
-      `<p>$\\frac{2}{8}=\\frac14$ and $\\frac{6}{24}=\\frac14$ — again the same. Among the healthy, the first result tells you nothing either.</p>`)
-    +Q(3,`Group: everyone. The same two shares?`,
-      `<p>After a positive first test: $\\frac{18+2}{24+8}=\\frac{20}{32}=\\frac58$. After a negative one: $\\frac{6+6}{8+24}=\\frac{12}{32}=\\frac38$. Now they differ: for everyone together, a first positive makes a second positive more likely. Without looking at the first result, the share is $\\frac{32}{64}=\\frac12$.</p>`)
-    +Q(4,`Within each group nothing links the tests, yet together they are linked. Why? With "everyone" and a positive first test highlighted, how many of the 32 are sick?`,
-      `<p>24 of the 32 are sick: the first positive mostly picked out sick people. The second test is positive for $\\frac34$ of those and $\\frac14$ of the other 8, so the share is a weighted average (total probability, beat 4):</p>
-      <p>$$\\tfrac{24}{32}\\cdot\\tfrac34+\\tfrac{8}{32}\\cdot\\tfrac14=\\tfrac{18}{32}+\\tfrac{2}{32}=\\tfrac{20}{32}=\\tfrac58.$$</p>
-      <p>After a negative first test only 8 of the 32 are sick, so the average leans the other way: $\\frac{8}{32}\\cdot\\frac34+\\frac{24}{32}\\cdot\\frac14=\\frac{12}{32}=\\frac38$.</p>`)
-    +`<p style="margin-top:16px"><b>What happened.</b> The first result does not act on the second test. It changes <em>who is in the group</em> — mostly sick people after a positive, mostly healthy after a negative — and the second test depends on that. Disease status is a <b>common cause</b> of both results: it links them overall, while within the sick or within the healthy they are unlinked.</p>
-    <p>The picture shows the same thing. Within each half, $A$ is a band of rows and $B$ a band of columns — beat 9's crossed strips, the picture of independence. Put the halves together and the $B$ columns no longer line up (6 of 8 on the left, 2 of 8 on the right), so there is no single band: not independent.</p>
-    <p><b>The definition.</b> "Independent within the sick group" is beat 9's definition with every probability computed inside that group, that is, conditioned on $C$:</p>
-    <div class="defn"><span class="dt">Conditional independence</span>$A$ and $B$ are <b>conditionally independent given $C$</b> when $$P(A\\cap B\\mid C)=P(A\\mid C)\\,P(B\\mid C).$$</div>
-    <p>Check it on the dots. Given sick: $P(A\\cap B\\mid C)=\\frac{18}{32}=\\frac9{16}=\\frac34\\cdot\\frac34$. Holds. Given healthy: $\\frac{2}{32}=\\frac1{16}=\\frac14\\cdot\\frac14$. Holds. For everyone: $P(A\\cap B)=\\frac{20}{64}=\\frac5{16}$, but $P(A)P(B)=\\frac12\\cdot\\frac12=\\frac14$. Fails.</p>
-    <p>Question 1 found it in the form "$P(B\\mid A\\cap C)=P(B\\mid C)$". The two forms say the same thing: divide the definition by $P(A\\mid C)$, and write each conditional with its definition, so the $P(C)$s cancel:</p>
-    <div class="eqbox">$$\\frac{P(A\\cap B\\mid C)}{P(A\\mid C)}=\\frac{P(A\\cap B\\cap C)/P(C)}{P(A\\cap C)/P(C)}=\\frac{P(A\\cap B\\cap C)}{P(A\\cap C)}=P(B\\mid A\\cap C),$$</div>
-    <p>while the right side becomes $P(B\\mid C)$.</p>
-    <p>That is what beat 6's product $0.9\\times0.9$ used: independence inside each disease group, not overall. A naive-Bayes spam filter assumes the same about words — linked overall, independent once you know whether the email is spam. Here conditioning on $C$ <em>removed</em> a link. Can conditioning also <em>create</em> one between two events that have none? The next beat.</p>
+    <p>Beat 10's products needed independence. Beat 6 multiplied too: for two positive tests on a sick person it used $0.9\\times0.9$. Are the two test results independent, then? Take beat 6's test and look.</p>
+    <div class="defn"><span class="dt">The setup</span>1% of people are sick. Each test is positive for $0.9$ of sick people and $0.09$ of healthy people. Everyone is tested twice.<br>
+      $A$ — the first test is positive. &nbsp; $B$ — the second test is positive. &nbsp; $C$ — the person is sick (beat 6's $D$).</div>
+
+    <p><b>Step 1: look at everyone.</b> Beat 9's test for independence: does learning $A$ change the chance of $B$? Among 100,000 people, the bars show how often the second test is positive — for the whole group, for those whose first test was positive, and for those whose first test was negative.</p>
+    <div class="seg" id="segcg"></div>
+    <canvas id="cvci" width="640" height="230" style="margin-top:10px"></canvas>
+    <div class="readout"><div class="rdc"><div class="k">P(B) in this group</div><div class="v" id="c0">—</div></div><div class="rdc"><div class="k">P(B | A)</div><div class="v" id="c1">—</div></div><div class="rdc"><div class="k">P(B | Aᶜ)</div><div class="v" id="c2">—</div></div><div class="rdc"><div class="k">does A change B?</div><div class="v" id="c3">—</div></div></div>
+    <p style="margin-top:14px">The bars differ: a first positive raises the chance of a second from $0.098$ to $0.164$, and a first negative lowers it to $0.091$. So $A$ and $B$ are <em>not</em> independent. That is odd: the second test never sees the first result. How can the first result matter?</p>
+
+    <p><b>Step 2: split by disease.</b> Switch the picture to <b>sick only</b>, then to <b>healthy only</b>. Among the sick, all three bars read $0.9$. Among the healthy, all three read $0.09$. Inside each group the first result changes nothing. The link exists in the whole population and in neither of its two parts.</p>
+    <p>The counts behind the bars: of 100,000 people, 1,000 are sick. Apply the test's rate twice along each row ($0.9$ for the sick, $0.09$ for the healthy), then add the two rows.</p>
+    <div style="overflow-x:auto;margin:10px 0"><table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.6;text-align:center">
+      <tr style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.3px"><td style="padding:5px;border-bottom:1px solid var(--line)"></td><td style="padding:5px;border-bottom:1px solid var(--line)">people</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A$: 1st +</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A$ and $B$</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A^{c}$: 1st −</td><td style="padding:5px;border-bottom:1px solid var(--line)">$A^{c}$ and $B$</td></tr>
+      <tr><td style="padding:5px;text-align:left">$C$: sick</td><td>1,000</td><td>900</td><td>810</td><td>100</td><td>90</td></tr>
+      <tr><td style="padding:5px;text-align:left">$C^{c}$: healthy</td><td>99,000</td><td>8,910</td><td>802</td><td>90,090</td><td>8,108</td></tr>
+      <tr><td style="padding:5px;text-align:left;border-top:1px solid var(--line)">everyone</td><td style="border-top:1px solid var(--line)">100,000</td><td style="border-top:1px solid var(--line)">9,810</td><td style="border-top:1px solid var(--line)">1,612</td><td style="border-top:1px solid var(--line)">90,190</td><td style="border-top:1px solid var(--line)">8,198</td></tr></table></div>
+
+    <p><b>Step 3: where the link comes from.</b> The first test does not act on the second. It <em>sorts</em> people into two piles, and the piles hold very different shares of sick people (read them off the table):</p>
+    <p>• Everyone: $\\frac{1000}{100000}=1\\%$ sick.<br>
+    • First-positive pile: $\\frac{900}{9810}\\approx9.2\\%$ sick. This is $P(C\\mid A)$, beat 5's Bayes update.<br>
+    • First-negative pile: $\\frac{100}{90190}\\approx0.11\\%$ sick — the 100 sick people the first test missed.</p>
+    <p>In any pile, the second test is positive for $0.9$ of the sick and $0.09$ of the healthy, so its rate there is a weighted average of those two numbers (total probability, beat 4). More sick people in the pile means more second positives:</p>
+    <div class="eqbox">$$\\begin{aligned}\\text{everyone:}&\\quad 0.01\\times0.9+0.99\\times0.09\\approx0.098\\\\ \\text{first-positive pile:}&\\quad 0.092\\times0.9+0.908\\times0.09\\approx0.164\\\\ \\text{first-negative pile:}&\\quad 0.0011\\times0.9+0.9989\\times0.09\\approx0.091\\end{aligned}$$</div>
+    <p>So the whole link runs through $C$: the first result tells you about disease, and disease drives the second result. Being sick is a <b>common cause</b> of both:</p>
+    <div class="eqbox">$$A\;\\longleftarrow\;C\;\\longrightarrow\;B$$</div>
+    <p>Once you already know $C$ — you are looking at the sick only, or the healthy only — the first result has nothing left to tell you, and the link is gone. That was Step 2.</p>
+
+    <p><b>Step 4: the definition.</b> "Looking at the sick only" is conditioning on $C$ (beat 2). What Step 2 showed is that $A$ and $B$ pass beat 9's independence test inside that group. That has a name:</p>
+    <div class="defn"><span class="dt">Conditional independence</span>$A$ and $B$ are <b>conditionally independent given $C$</b> when they are independent among the cases where $C$ happened: $$P(A\\cap B\\mid C)=P(A\\mid C)\\,P(B\\mid C).$$</div>
+    <p>Check each row of the table.</p>
+    <p>• Sick: $P(A\\cap B\\mid C)=\\frac{810}{1000}=0.81$, and $P(A\\mid C)\\,P(B\\mid C)=0.9\\times0.9=0.81$. Holds.<br>
+    • Healthy: $\\frac{802}{99000}\\approx0.0081$, and $0.09\\times0.09=0.0081$. Holds.<br>
+    • Everyone: $P(A\\cap B)=\\frac{1612}{100000}\\approx0.016$, but $P(A)\\,P(B)\\approx0.098\\times0.098\\approx0.0096$. Fails.</p>
+    <p>The two results are conditionally independent given disease status, and not independent. This answers the opening question: beat 6's $0.9\\times0.9$ is the first line of this check — independence among the sick, which is all it needed.</p>
+
+    <p><b>Step 5: the same thing as "adds nothing".</b> Beat 9 rewrote $P(A\\cap B)=P(A)P(B)$ as $P(B\\mid A)=P(B)$. Do the same inside $C$: divide both sides of the definition by $P(A\\mid C)$. The right side becomes $P(B\\mid C)$. On the left, write each conditional by its definition; the $P(C)$s cancel:</p>
+    <div class="eqbox">$$\\frac{P(A\\cap B\\mid C)}{P(A\\mid C)}=\\frac{P(A\\cap B\\cap C)\\,/\\,P(C)}{P(A\\cap C)\\,/\\,P(C)}=\\frac{P(A\\cap B\\cap C)}{P(A\\cap C)}=P(B\\mid A\\cap C).$$</div>
+    <p>So conditional independence says $P(B\\mid A\\cap C)=P(B\\mid C)$: once you know $C$, learning $A$ adds nothing about $B$. In the table's sick row, $\\frac{810}{900}=0.9=\\frac{900}{1000}$ — the equal bars of Step 2.</p>
+    <p>A naive-Bayes spam filter assumes the same about words: linked overall, independent once you know whether the email is spam. Here, conditioning on a third event <em>removed</em> a link. Can conditioning also <em>create</em> a link between two events that have none? The next beat.</p>
     <div class="task"><b>A second opinion</b>A disease has prevalence 10%. A test is positive for 80% of sick people and 10% of healthy people, and two tests are conditionally independent given disease status. A first test comes back positive. What is the probability that a second test is also positive? Enter a decimal.</div>
     ${gateHTML('e.g. 0.5')}</div>`;
-  /* people: block 0 = sick, 1 = healthy; 4 rows x 8 cols each */
-  const P=[];
-  [[3,6],[1,2]].forEach(([aRows,bCols],blk)=>{for(let r=0;r<4;r++)for(let c=0;c<8;c++)P.push({blk,r,c,A:r<aRows,B:c<bCols});});
-  let grp='sick',first='+';
-  const cv=document.getElementById('cvci');
-  function draw(){const sel=q=>(grp==='all'||(grp==='sick')===(q.blk===0))&&(first==='+')===q.A;
-    const H=P.filter(sel),nb=H.filter(q=>q.B).length;
-    p0Set('c1',String(H.length));p0Set('c2',String(nb));p0Set('c3',nb+'/'+H.length+' = '+(nb/H.length).toFixed(3));
+  const G={all:{n:100000,a:9810,ab:1612,na:90190,nab:8198,b:9810,lab:'everyone'},sick:{n:1000,a:900,ab:810,na:100,nab:90,b:900,lab:'sick only'},healthy:{n:99000,a:8910,ab:802,na:90090,nab:8108,b:8910,lab:'healthy only'}};
+  const cv=document.getElementById('cvci'),fmt=x=>x.toLocaleString('en-US');
+  function draw(k){const g=G[k],r=[g.b/g.n,g.ab/g.a,g.nab/g.na],same=Math.abs(r[1]-r[2])<0.002;
+    p0Set('c0',r[0].toFixed(3));p0Set('c1',r[1].toFixed(3));p0Set('c2',r[2].toFixed(3));p0Set('c3',same?'no: unlinked':'yes: linked');
     const ctx=cv.getContext&&cv.getContext('2d');if(!ctx)return;const W=cv.width;ctx.clearRect(0,0,W,cv.height);
-    const sp=28,bw=8*sp,ox=[62,W-bw-12],oy=44;
-    [0,1].forEach(blk=>{const x0=ox[blk],aRows=blk?1:3,bCols=blk?2:6;
-      ctx.font=p0Font(13);ctx.fillStyle=blk?'#9fb0c4':'#e8b84b';ctx.textAlign='left';ctx.fillText(blk?'healthy (Cᶜ): 32':'sick (C): 32',x0,18);
-      ctx.strokeStyle='#5d6f85';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
-      ctx.beginPath();ctx.moveTo(x0-4,oy+aRows*sp);ctx.lineTo(x0+bw+4,oy+aRows*sp);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x0+bCols*sp,oy-10);ctx.lineTo(x0+bCols*sp,oy+4*sp+4);ctx.stroke();ctx.setLineDash([]);
-      ctx.font=p0Font(10);ctx.fillStyle='#9fb0c4';ctx.textAlign='center';
-      ctx.fillText('B: 2nd +',x0+bCols*sp/2,oy-14+0);ctx.fillText('2nd −',x0+bCols*sp+(8-bCols)*sp/2,oy-14);
-      ctx.textAlign='right';ctx.fillText('A: 1st +',x0-8,oy+aRows*sp/2+4);ctx.fillText('Aᶜ: 1st −',x0-8,oy+aRows*sp+(4-aRows)*sp/2+4);});
-    P.forEach(q=>{const x=ox[q.blk]+q.c*sp+sp/2,y=oy+q.r*sp+sp/2,on=sel(q);ctx.globalAlpha=on?1:0.18;
-      ctx.beginPath();ctx.arc(x,y,8,0,7);if(q.B){ctx.fillStyle=q.blk?'#9fb0c4':'#e8b84b';ctx.fill();}else{ctx.strokeStyle=q.blk?'#9fb0c4':'#e8b84b';ctx.lineWidth=2;ctx.stroke();}});
-    ctx.globalAlpha=1;ctx.textAlign='left';}
-  p0Seg('segcg',[['sick','sick'],['healthy','healthy'],['all','everyone']],'sick',k=>{grp=k;draw();});
-  p0Seg('segcf',[['+','positive'],['-','negative']],'+',k=>{first=k;draw();});
-  draw();
+    const rows=[['whole group ('+g.lab+')',g.b,g.n,'#9fb0c4'],['first test + (A)',g.ab,g.a,'#e8b84b'],['first test − (Aᶜ)',g.nab,g.na,'#7ab8ff']],x0=20,bw=W-40;
+    rows.forEach((q,i)=>{const y=22+i*70,v=q[1]/q[2];ctx.font=p0Font(12);ctx.textAlign='left';ctx.fillStyle='#d6e0ee';ctx.fillText(q[0]+':  second test + for '+fmt(q[1])+' of '+fmt(q[2])+' = '+v.toFixed(3),x0,y);
+      ctx.fillStyle='#111a28';ctx.fillRect(x0,y+8,bw,26);ctx.fillStyle=q[3];ctx.fillRect(x0,y+8,bw*v,26);ctx.strokeStyle='#2b3a4f';ctx.lineWidth=1;ctx.strokeRect(x0,y+8,bw,26);});}
+  p0Seg('segcg',[['all','everyone'],['sick','sick only'],['healthy','healthy only']],'all',draw);draw('all');
   numChk(document.getElementById('gate'),0.073/0.17,()=>{addReveal(`<div class="rh">✓ about 0.43</div>
     <p>$P(\\text{2nd}+\\mid\\text{1st}+)=\\frac{P(\\text{both}+)}{P(\\text{1st}+)}$. Split both by disease status (total probability), and use conditional independence inside each group to multiply the two tests:</p>
     <div class="eqbox">$$P(\\text{1st}+)=0.1\\times0.8+0.9\\times0.1=0.17,\\qquad P(\\text{both}+)=0.1\\times0.8^2+0.9\\times0.1^2=0.064+0.009=0.073,$$
