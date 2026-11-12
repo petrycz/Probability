@@ -2529,27 +2529,47 @@ function p1_explain(){
 
 /* ---------- Beat 13: Simpson's paradox ---------- */
 function p1_simpson(){
+  const Q=(n,q,after)=>`<div class="task" id="sq${n}" style="margin-top:12px"><b>Problem ${n}</b>${q}
+      <div class="entry" style="margin-top:8px"><input type="text" inputmode="text" autocomplete="off" autocapitalize="off" placeholder="fraction or decimal"><button class="btn primary" style="flex:0 0 auto;padding:12px 18px">Check</button></div>
+      <div class="miniout"></div><span class="small showme" style="cursor:pointer;text-decoration:underline;color:var(--muted)">Show me</span>
+      <div class="sol" style="display:none;margin-top:8px">${after}</div></div>`;
   stage.innerHTML=`<div class="card"><h2>Simpson's paradox</h2>
-    <p>Beats 11 and 12 showed that conditioning on a third event can remove a link between two others or create one. It can also <em>reverse</em> a comparison: an option that is better within every group can be worse overall. The reason is total probability (beat 4): an overall rate is a weighted average of the rates in each group, and two options can be averaged with different weights.</p>
-    <p><b>Try it.</b> Two strategies traded in calm and in volatile markets. Each square is one strategy. Its left strip is calm markets, its right strip volatile ones. Strip <b>width</b> = the share of that strategy's trades made in that kind of market; <b>shading height</b> = its win rate there. The dashed line is its overall win rate. Drag the white borders.</p>
+    <p>Zooming into one part of the data removed a link in beat 11 and created one in beat 12. This beat shows it can do something stranger: <em>reverse</em> a comparison. One option can be better inside every part of the data and still look worse overall. Work out how by calculating.</p>
+    <div class="defn"><span class="dt">The setup</span>Two strategies, A and B, each made 350 trades. Some trades were made in calm markets, some in volatile ones, and trades win less often in volatile markets. Which strategy wins more often?<br>
+      (The counts are from a well-known 1986 medical study comparing two kidney-stone treatments, relabelled.)</div>
+    <div style="overflow-x:auto;margin:10px 0"><table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.6;text-align:center">
+      <tr style="color:var(--muted);font-size:11px;letter-spacing:.2px"><td style="TD"></td><td style="TD">calm markets<br>wins / trades</td><td style="TD">volatile markets<br>wins / trades</td><td style="TD">all trades<br>wins / trades</td></tr>
+      <tr><td style="padding:6px;text-align:left">Strategy A</td><td>81 / 87</td><td>192 / 263</td><td>273 / 350</td></tr>
+      <tr><td style="padding:6px;text-align:left">Strategy B</td><td>234 / 270</td><td>55 / 80</td><td>289 / 350</td></tr></table></div>
+    ${Q(1,`<em>All trades.</em> What is A's overall win rate?`,
+      `A: $\\frac{273}{350}=0.78$. B: $\\frac{289}{350}\\approx0.826$. Overall, <span style="font-weight:700">B looks better</span>.`)}
+    ${Q(2,`<em>Zoom into calm markets.</em> What is A's win rate in calm markets?`,
+      `A: $\\frac{81}{87}\\approx0.931$. B: $\\frac{234}{270}\\approx0.867$. In calm markets <span style="font-weight:700">A is better</span>.`)}
+    ${Q(3,`<em>Zoom into volatile markets.</em> What is A's win rate in volatile markets?`,
+      `A: $\\frac{192}{263}\\approx0.730$. B: $\\frac{55}{80}\\approx0.688$. In volatile markets <span style="font-weight:700">A is better</span> too. A wins more often in each kind of market, yet less often overall.`)}
+    ${Q(4,`<em>So how can B be better overall?</em> What share of A's trades were made in volatile markets?`,
+      `A: $\\frac{263}{350}\\approx0.75$. B: only $\\frac{80}{350}\\approx0.23$. A did most of its trading where winning is hard; B did most of its trading where winning is easy.`)}
+    <p id="smprog" class="small" style="margin-top:14px;padding:10px 12px;border:1px dashed var(--line);border-radius:8px;color:var(--muted)">Solve or open all four problems to continue the beat — 0 of 4 done.</p>
+    <div id="smdone" style="display:none">
+    <p style="margin-top:16px"><b>What you found.</b> A is better in calm markets (Problem 2) and in volatile markets (Problem 3), but B is better overall (Problem 1), because the two strategies traded in very different mixes of markets (Problem 4).</p>
+    <p><em>Why.</em> Each overall rate is a weighted average of the two group rates (total probability, beat 4), with the strategy's own share of trades in each market as the weights:</p>
+    <div class="eqbox">$$P(\\text{win})=P(\\text{calm})\\,P(\\text{win}\\mid\\text{calm})+P(\\text{volatile})\\,P(\\text{win}\\mid\\text{volatile}).$$</div>
+    <div class="eqbox">$$\\begin{aligned}\\text{A:}&\\quad 0.25\\times0.931+0.75\\times0.730\\approx0.78\\\\ \\text{B:}&\\quad 0.77\\times0.867+0.23\\times0.688\\approx0.83\\end{aligned}$$</div>
+    <p>A's average is pulled toward its volatile rate, $0.73$, because 75% of its weight sits there. B's is pulled toward its calm rate, $0.87$. A's lead inside each group is small (6 and 4 points); the difference in weights is large, and it wins. The picture shows the same thing: each square is one strategy, strip <b>width</b> = its share of trades in that market, shading <b>height</b> = its win rate there, and the dashed line is its overall rate. Drag the white borders.</p>
     <canvas id="cvs9" width="640" height="360" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">calm: A vs B</div><div class="v" id="s1">—</div></div><div class="rdc"><div class="k">volatile: A vs B</div><div class="v" id="s2">—</div></div><div class="rdc"><div class="k">overall: A vs B</div><div class="v" id="s3">—</div></div></div>
     <p class="small" id="s4" style="margin-top:8px;min-height:20px"></p>
-    <p style="margin-top:14px"><b>What to notice.</b> At the start, A wins more often than B in calm markets (93% vs 87%) <em>and</em> in volatile markets (73% vs 69%) — yet B wins more often overall (83% vs 78%). Now drag both borders to the same position: the reversal disappears. (These are the numbers of a well-known 1986 medical study comparing two kidney-stone treatments, relabelled.)</p>
-    <p><b>Step 1: each overall rate is a weighted average.</b> For one strategy, "win" splits into "win in a calm market" and "win in a volatile market", so by total probability</p>
-    <div class="eqbox">$$P(\\text{win})=P(\\text{calm})\\,P(\\text{win}\\mid\\text{calm})+P(\\text{volatile})\\,P(\\text{win}\\mid\\text{volatile}).$$</div>
-    <p>The weights are that strategy's own shares of trades — the strip widths. With the starting numbers:</p>
-    <div class="eqbox">$$\\text{A}: 0.25\\times0.93+0.75\\times0.73\\approx0.78,\\qquad \\text{B}: 0.77\\times0.87+0.23\\times0.69\\approx0.83.$$</div>
-    <p><b>Step 2: why the order flips.</b> Both strategies win less in volatile markets. A made 75% of its trades there, so its average is pulled toward its low rate, $0.73$. B made 77% of its trades in calm markets, so its average is pulled toward its high rate, $0.87$. A's lead within each group is small (6 and 4 points); the difference in weights is large, and it outweighs the lead.</p>
-    <p><b>Step 3: equal weights remove the reversal.</b> Give both strategies the same calm share $w$. Then A's overall rate is $w\\,a_1+(1-w)\\,a_2$ and B's is $w\\,b_1+(1-w)\\,b_2$, where $a_1,a_2$ and $b_1,b_2$ are the calm and volatile win rates. Subtract:</p>
-    <div class="eqbox">$$\\big(w\\,a_1+(1-w)\\,a_2\\big)-\\big(w\\,b_1+(1-w)\\,b_2\\big)=w\\,(a_1-b_1)+(1-w)(a_2-b_2).$$</div>
+    <p><b>Equal weights remove the reversal.</b> Drag both borders in the picture to the same position and the reversal disappears. Here is why it always does. Give both strategies the same calm share $w$. Then A's overall rate is $w\\,a_1+(1-w)\\,a_2$ and B's is $w\\,b_1+(1-w)\\,b_2$, where $a_1,a_2$ and $b_1,b_2$ are the calm and volatile win rates. Subtract:</p>
+    <div class="eqbox">$$\\begin{aligned}&\\big(w\\,a_1+(1-w)\\,a_2\\big)-\\big(w\\,b_1+(1-w)\\,b_2\\big)\\\\ &\\quad=w\\,(a_1-b_1)+(1-w)(a_2-b_2).\\end{aligned}$$</div>
     <p>If A is better in both groups, $a_1-b_1\\gt0$ and $a_2-b_2\\gt0$; the weights $w$ and $1-w$ are not negative and not both zero, so the sum is positive. With equal weights, better in every group means better overall. The paradox needs <em>different</em> weights.</p>
-    <p><b>Step 4: which comparison is fair.</b> The market type is a <b>confounder</b>: it affects both which strategy was used and how often trades win. The overall rates mix each strategy's skill with the markets it happened to trade in; comparing within each market type — conditioning on it — removes that mix, and here that is the fair comparison. In general, which comparison is right depends on what causes what, not on the numbers alone; that question returns with Bayesian networks (Module 11). In backtesting, this is why a strategy's overall Sharpe ratio (its average return per unit of risk) can mislead if it traded mostly in favourable periods.</p>
+    <p><b>Which comparison is fair.</b> The market type is a <b>confounder</b>: it affects both which strategy was used and how often trades win. The overall rates mix each strategy's skill with the markets it happened to trade in; comparing within each market type — conditioning on it — removes that mix, and here that is the fair comparison. In general, which comparison is right depends on what causes what, not on the numbers alone; that question returns with Bayesian networks (Module 11). In backtesting, this is why a strategy's overall Sharpe ratio (its average return per unit of risk) can mislead if it traded mostly in favourable periods.</p>
+    <p><b>Back to the thread.</b> Beats 11–13 all zoomed into part of the data — conditioning on a third event. It removed a link (beat 11), created one (beat 12), and here reversed a comparison. In each case the overall numbers and the zoomed-in numbers told different stories, and only calculating both showed which.</p>
     <p>In every beat so far, the event we conditioned on was handed to us. The last beat of the module looks at the step before that — writing down exactly what was observed — where intuition fails most often.</p>
     <div class="task"><b>How much weight it takes</b>Strategy A wins 90% of its calm-market trades and 60% of its volatile-market trades, and makes 20% of its trades in calm markets. Strategy B is worse in both: 80% in calm markets, 50% in volatile ones. What share of B's trades must be in calm markets for B's overall win rate to equal A's? Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 0.5')}</div>`;
+    ${gateHTML('e.g. 0.5')}</div>
+    </div></div>`;
   const cv=document.getElementById('cvs9');
-  const H={A:[0.93,0.73],B:[0.87,0.69]};let w={A:0.25,B:0.77},drag=null;
+  const H={A:[81/87,192/263],B:[234/270,55/80]};let w={A:87/350,B:270/350},drag=null;
   const box=k=>{const W=cv.width,gap=24,bw=(W-gap-40)/2,x0=20+(k==='A'?0:bw+gap);return {x0,x1:x0+bw,y0:34,y1:cv.height-44};};
   function draw(){const ctx=cv.getContext&&cv.getContext('2d');const ov={};
     ['A','B'].forEach(k=>ov[k]=w[k]*H[k][0]+(1-w[k])*H[k][1]);
@@ -2566,7 +2586,7 @@ function p1_simpson(){
         ctx.fillStyle='#e9eef6';ctx.fillText(Math.round(H[k][0]*100)+'%',(b.x0+xm)/2,yy(H[k][0])-6);ctx.fillText(Math.round(H[k][1]*100)+'%',(xm+b.x1)/2,yy(H[k][1])-6);
         ctx.fillStyle='#e8b84b';ctx.textAlign='left';ctx.fillText('overall '+(ov[k]*100).toFixed(1)+'%',b.x0+4,b.y1+34);});
       ctx.textAlign='left';}
-    p0Set('s1','93% vs 87%');p0Set('s2','73% vs 69%');p0Set('s3',(ov.A*100).toFixed(1)+'% vs '+(ov.B*100).toFixed(1)+'%');
+    p0Set('s1','93.1% vs 86.7%');p0Set('s2','73.0% vs 68.8%');p0Set('s3',(ov.A*100).toFixed(1)+'% vs '+(ov.B*100).toFixed(1)+'%');
     p0Set('s4',ov.B>ov.A?'Reversal: A is better in each kind of market, but B is better overall, because B traded mostly in calm markets.':'No reversal: A is better in each kind of market and overall.');}
   cv.style.touchAction='none';
   const which=X=>{for(const k of ['A','B']){const b=box(k);if(X>=b.x0-10&&X<=b.x1+10)return k;}return null;};
@@ -2575,6 +2595,12 @@ function p1_simpson(){
   cv.addEventListener('pointermove',e=>{if(drag){e.preventDefault();move(e);}});
   const end=()=>drag=null;cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
   draw();
+  let solved=0;
+  [[1,273/350,0.002],[2,81/87,0.002],[3,192/263,0.002],[4,263/350,0.003]].forEach(([n,ans,tol])=>{const h=document.getElementById('sq'+n);let done=false;
+    const fin=()=>{if(done)return;done=true;h.querySelector('.sol').style.display='block';h.querySelector('.showme').style.display='none';++solved;
+      p0Set('smprog','Solve or open all four problems to continue the beat — '+solved+' of 4 done.');
+      if(solved===4){document.getElementById('smprog').style.display='none';document.getElementById('smdone').style.display='block';renderMath(document.getElementById('smdone'));draw();}};
+    numChk(h,ans,fin,snapTo(ans,tol));h.querySelector('.showme').onclick=()=>{h.querySelector('input').disabled=true;h.querySelector('button').style.display='none';h.querySelector('.miniout').textContent='';fin();};});
   numChk(document.getElementById('gate'),8/15,()=>{addReveal(`<div class="rh">✓ 8/15 ≈ 0.533</div>
     <p>A's overall rate, with its own weights (Step 1): $0.2\\times0.9+0.8\\times0.6=0.18+0.48=0.66$.</p>
     <p>B's overall rate with calm share $w$: $0.8\\,w+0.5\\,(1-w)=0.5+0.3\\,w$. Set it equal to A's:</p>
