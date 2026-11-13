@@ -150,7 +150,7 @@ const MODULES=[
   outro:`Every beat in this module is about one pair: a hypothesis and the evidence for it. Conditioning restricts the sample space to what you know, and everything else follows from that.`,
   outroHTML:`<div style="text-align:left;margin-top:14px"><p style="margin-bottom:6px"><b>The module in one frame.</b> $H$ is a hypothesis, with prior probability $P(H)$; $E$ is evidence.</p><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px;line-height:1.5"><tr style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.3px"><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">beat</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">concept</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">in symbols</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">what it says about $H$ and $E$</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">2</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Conditional probability</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(E\\mid H)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">How likely the evidence is in the world where the hypothesis holds. Conditioning means restricting to what is known.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">3</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Multiplication and chain rule</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H\\cap E)=P(H)\\,P(E\\mid H)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">The chance of hypothesis and evidence together, built one step at a time.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">4</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Total probability</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(E)=P(H)P(E\\mid H)+P(H^{c})P(E\\mid H^{c})$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">The overall chance of the evidence: an average over the hypotheses, weighted by their priors.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">5</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Bayes' theorem</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H\\mid E)=\\dfrac{P(H)\\,P(E\\mid H)}{P(E)}$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Flips the question: from evidence given hypothesis to hypothesis given evidence. Prior becomes posterior.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">6</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Repeated evidence</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H\\mid E_1\\cap E_2)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">The posterior after $E_1$ is the prior for $E_2$.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">7</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Odds and likelihood ratio</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$\\dfrac{P(H\\mid E)}{P(H^{c}\\mid E)}=\\dfrac{P(H)}{P(H^{c})}\\cdot\\dfrac{P(E\\mid H)}{P(E\\mid H^{c})}$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">The strength of the evidence as one number, separate from the prior. No $P(E)$ needed.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">8</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Log-odds</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$\\log O_{\\text{post}}=\\log O_{\\text{prior}}+\\log\\mathrm{LR}$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Each piece of evidence adds a fixed amount; order does not matter.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">9</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Independence</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H\\mid E)=P(H)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Evidence that says nothing about the hypothesis.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">10</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Many events</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H\\mid E_1\\cap E_2)=P(H)$, products for trials</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">No combination of the others moves any one event; repeated trials multiply.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">11</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Conditional independence</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(E_1\\cap E_2\\mid H)=P(E_1\\mid H)\\,P(E_2\\mid H)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">How pieces of evidence relate to each other: unrelated once the hypothesis is known. Lets every update reuse the same likelihoods.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">12</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Explaining away</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H_1\\mid E\\cap H_2)\\ne P(H_1\\mid E)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Two independent hypotheses for the same evidence become dependent once the evidence is seen.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">13</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Simpson's paradox</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(E\\mid H)$ within groups vs overall</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">The same comparison can reverse depending on which grouping you condition on, because the group weights differ.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">14</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Puzzles</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">what exactly is $E$?</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">State exactly what was observed and how it was produced; that fixes $P(E\mid H)$.</td></tr></table></div></div>`,
   beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_odds,p1_logodds,p1_independence,p1_mutual,p1_condind,p1_explain,p1_simpson,p1_puzzles,p1_problems]},
- {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:true,outro:`A random variable is a function from outcomes to numbers; its pmf lists the probability of each value.`,beats:[p2_recall,p2_rv,p2_cdf]},
+ {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:true,outro:`A random variable is a function from outcomes to numbers; its pmf lists the probability of each value.`,beats:[p2_recall,p2_rv,p2_cdf,p2_expect]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
  {id:'p5',title:'Limit Theorems & Monte Carlo',sub:'Markov, Chebyshev, and Hoeffding; the law of large numbers; the central limit theorem; Monte Carlo and importance sampling; fat tails.',ready:false,outro:'',beats:[]},
@@ -531,7 +531,7 @@ function p0_recall(){
 }
 
 /* shared fraction-or-decimal parser for numeric gates */
-function parseFrac(s){const t=(s||'').replace(/\s/g,'');const m=t.split('/');
+function parseFrac(s){const t=(s||'').replace(/\s/g,'').replace(/−/g,'-');const m=t.split('/');
   const v=m.length===2?parseFloat(m[0])/parseFloat(m[1]):parseFloat(t);return v;}
 function snapTo(target,tol){return s=>{const v=parseFrac(s);return Math.abs(v-target)<tol?target:v;};}
 function gateHTML(ph){return `<div id="gate"><div class="entry"><input id="ni" type="text" inputmode="text" autocomplete="off" autocapitalize="off" placeholder="${ph}"><button class="btn primary" style="flex:0 0 auto;padding:12px 18px">Check</button></div><div class="miniout"></div></div>`;}
@@ -553,6 +553,15 @@ function p0_intro(){
     <canvas id="cvb" width="640" height="220"></canvas>
     <p class="small" style="margin-top:6px">Each bar is one face's share of all the rolls so far. Faces in the chosen event are gold.</p>
     <div class="readout"><div class="rdc"><div class="k">rolls n</div><div class="v" id="rn">0</div></div><div class="rdc"><div class="k">event happened n_A</div><div class="v" id="ra">0</div></div><div class="rdc"><div class="k">share n_A / n</div><div class="v" id="rs">—</div></div><div class="rdc"><div class="k">six bars added</div><div class="v" id="rt">—</div></div></div>
+    
+    ${gQ('wpq',1,`Choose the event &ldquo;even&rdquo; and roll a few thousand times. Where does its share settle? Then pin down the exact value from the faces.`,
+      `Three of the six faces are even, and the share settles at $\\frac36=\\frac12$.`)}
+    ${gQ('wpq',2,`After 1,000 rolls, by at most how much can one more roll move the share? (A decimal is fine.)`,
+      `The new roll is one of 1,001, so the share moves by at most $\\frac1{1001}\\approx0.001$. The more rolls so far, the less one more can move it — that is why the path flattens.`)}
+    ${gQ('wpq',3,`After any number of rolls, what do the six faces' shares add up to?`,
+      `Exactly 1: every roll lands on exactly one face, so the six counts add to $n$ and the shares to $\\frac nn=1$.`)}
+    ${gProg('wpqprog')}
+    <div id="wpqdone" style="display:none">
     <p style="margin-top:14px">After one roll the share can only be 0 or 1. Each new roll changes it by at most $1/n$, so as $n$ grows the swings shrink and the path flattens toward a fixed level. That level is the probability of the event:</p>
     <div class="eqbox">$$P(A)\;=\;\\text{the value the share }\\frac{n_A}{n}\\text{ settles at as }n\\text{ grows}.$$</div>
     <p>Now watch the last readout while rolling: the six bars add to exactly $1$, every time. Each roll lands on exactly one face, so the six counts add to $n$ and the six shares add to $n/n=1$ — at every $n$, not only in the limit. Probabilities are the values these shares settle at, so they keep the same two properties:</p>
@@ -561,7 +570,8 @@ function p0_intro(){
       <b>The outcomes' probabilities add to $1$.</b> Each trial has exactly one outcome, so the outcomes split the trials between them with nothing left over and nothing counted twice. The $1$ stands for "all of the trials" — a whole split into shares. Writing $100\\%$ says the same thing.</div>
     <p>Long-run share is one reading of a probability. The other is a <b>degree of belief</b>, a number attached to something that happens only once: whether an attacker overtakes the honest chain, whether a trading strategy's edge is real. Both readings obey the same rules; Module 2 (Bayes' theorem) and Module 12 (estimation) work mostly in the second.</p>
     <div class="task"><b>Find where the share settles</b>For a fair die, what value does the share of rolls with "roll ≥ 5" settle at? Roll a few thousand times to see it, then pin down the exact value. Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 1/4 or 0.25')}</div>`;
+    ${gateHTML('e.g. 1/4 or 0.25')}</div></div>`;
+  gWire('wpq',[[1,1/2,0.002],[2,1/1001,0.0003],[3,1,0.001]],'wpqprog','wpqdone');
 
   const EV=[['six','roll = 6',[6]],['ge5','roll ≥ 5',[5,6]],['even','even',[2,4,6]],['any','any face',[1,2,3,4,5,6]]];
   let ev=EV[1],rolls=[];const MAXN=20000;
@@ -800,11 +810,23 @@ function p0_space(){
     <div class="seg" id="segview" style="margin-top:7px"></div>
     <canvas id="cvs" width="640" height="600" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">rolls n</div><div class="v" id="rn">0</div></div><div class="rdc"><div class="k">a 5 and a 6, either order</div><div class="v" id="r56">—</div></div><div class="rdc"><div class="k">two 6s</div><div class="v" id="r66">—</div></div><div class="rdc"><div class="k">ratio</div><div class="v" id="rr">—</div></div></div>
+    
+    ${gQ('sdq',1,`How many outcomes does the grid have — how many (red, blue) pairs?`,
+      `$6\\times6=36$: one cell per pair.`)}
+    ${gQ('sdq',2,`What is the probability of the single outcome (red 5, blue 6)?`,
+      `$\\frac1{36}$ — each cell gets the same share of the dots.`)}
+    ${gQ('sdq',3,`With two identical white dice, a roll is recorded without order (&ldquo;one 3 and one 4&rdquo;). How many different such results are there?`,
+      `6 doubles plus $\\frac{36-6}{2}=15$ mixed pairs: 21. If these 21 results were equally likely, each would have $\\frac1{21}$ — Problem 4 shows why they are not.`)}
+    ${gQ('sdq',4,`How many of the 36 ordered outcomes give the white-dice result &ldquo;two 3s&rdquo;?`,
+      `Only (3, 3). A mixed result like &ldquo;one 3 and one 4&rdquo; comes from two ordered outcomes, (3, 4) and (4, 3), so the 21 results are not equally likely.`)}
+    ${gProg('sdqprog')}
+    <div id="sdqdone" style="display:none">
     <p style="margin-top:14px">Nothing favors one ordered pair over another: each red face is equally likely, each blue face is equally likely, and the dice are rolled separately (Module 2 makes "separately" precise as <em>independence</em>). So the 36 cells take equal shares of the total, and each outcome has probability $\\tfrac1{36}$. Think of each cell as a pebble of mass $\\tfrac1{36}$: the probability of any collection of outcomes is the mass of its pebbles.</p>
     <p>Now switch the view to <b>both white</b>. With two identical dice, a roll can only be recorded as an unordered result, such as one 5 and one 6. Such a result is a <b>multiset</b> — an unordered collection in which a value may repeat — written with double braces: $\\{\\{5,6\\}\\}$, or $\\{\\{6,6\\}\\}$ for a double. There are 21 such results: 6 doubles and 15 mixed pairs, each labelled on the grid. They are <em>not</em> equally likely. The result $\\{\\{5,6\\}\\}$ is the roll $(5,6)$ or the roll $(6,5)$ — two cells, joined by the gold arc — while $\\{\\{6,6\\}\\}$ is the single cell $(6,6)$. Painting the dice white changes what gets written down, not how the dice fall. Roll a few thousand times and compare the two shares in the readouts.</p>
     <p>That gives the rule for choosing a sample space: describe each outcome in enough detail that symmetry makes the outcomes equally likely. Recording less detail is allowed, but each recorded result is then a <em>collection</em> of equally likely outcomes, weighed by how many it contains.</p>
     <div class="task"><b>Weigh an unordered result</b>Two white dice are rolled. What is the probability that the result is $\\{\\{5,6\\}\\}$ — one 5 and one 6, in either order? Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 1/36 or 0.028')}</div>`;
+    ${gateHTML('e.g. 1/36 or 0.028')}</div></div>`;
+  gWire('sdq',[[1,36,0.1],[2,1/36,0.001],[3,21,0.1],[4,1,0.1]],'sdqprog','sdqdone');
   let view='color';const cvs=document.getElementById('cvs'),pl=plot(cvs,P0G);
   function draw(){const ctx=pl.ctx;
     if(ctx){ctx.clearRect(0,0,pl.W,pl.H);
@@ -849,6 +871,17 @@ function p0_events(){
     <div class="readout"><div class="rdc"><div class="k">cells in event</div><div class="v" id="ek">—</div></div><div class="rdc"><div class="k">P = cells / 36</div><div class="v" id="ep">—</div></div><div class="rdc"><div class="k">share of rolls</div><div class="v" id="es">—</div></div></div>
     <div class="seg" id="segroll" style="margin-top:10px"></div>
     <p class="small" style="margin-top:6px">Rolls carry over from the previous beat; roll more to compare an event's share of the rolls with its count over 36.</p>
+    
+    ${gQ('evq',1,`Set $A$ = doubles and $B$ = sum $\\ge10$, and show $A\\cup B$. How many cells does it have?`,
+      `6 doubles plus 6 cells with sum at least 10, but (5,5) and (6,6) are in both: $6+6-2=10$.`)}
+    ${gQ('evq',2,`How many cells are in $A\\cap B$?`,
+      `(5, 5) and (6, 6) — the doubles with sum at least 10.`)}
+    ${gQ('evq',3,`Now $B$ = sum is 7. How many cells are in &ldquo;doubles and sum 7&rdquo;?`,
+      `None: a double has an even sum. Doubles and sum 7 are disjoint.`)}
+    ${gQ('evq',4,`How many cells are in &ldquo;not doubles&rdquo;?`,
+      `$36-6=30$: the complement is everything outside $A$.`)}
+    ${gProg('evqprog')}
+    <div id="evqdone" style="display:none">
     <p style="margin-top:14px">Everyday phrasing translates into these operations, and the translation is most of the work in a word problem:</p>
     <div style="overflow-x:auto;margin:10px 0"><table style="width:100%;border-collapse:collapse;font-size:14px;line-height:1.5">
       <tr style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px"><td style="padding:6px 8px;border-bottom:1px solid var(--line)">in words</td><td style="padding:6px 8px;border-bottom:1px solid var(--line)">as sets</td></tr>
@@ -864,7 +897,8 @@ function p0_events(){
     <p>Two of these deserve a check on the grid. Set $A$ = doubles, $B$ = sum = 7 and show $A\\cap B$: it is empty, because a double has an even sum, so those two events are disjoint. Then, for any choice of $A$ and $B$, show $(A\\cup B)^{c}$ and $A^{c}\\cap B^{c}$ in turn: the same cells fill both times. "Not ($A$ or $B$)" and "not $A$ and not $B$" ask the same question, and swapping "or" for "and" under a complement holds in general — <b>De Morgan's laws</b>:</p>
     <div class="eqbox">$$(A\\cup B)^{c}=A^{c}\\cap B^{c},\\qquad (A\\cap B)^{c}=A^{c}\\cup B^{c}.$$</div>
     <div class="task"><b>At least one six</b>Roll two dice. What is the probability that at least one of them shows a 6? Translate the question into sets, build it on the grid, and enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 5/36 or 0.139')}</div>`;
+    ${gateHTML('e.g. 5/36 or 0.139')}</div></div>`;
+  gWire('evq',[[1,10,0.1],[2,2,0.1],[3,0,0.1],[4,30,0.1]],'evqprog','evqdone');
   const PRE=[['r6','red = 6',(r,b)=>r===6],['b6','blue = 6',(r,b)=>b===6],['dbl','doubles',(r,b)=>r===b],['s7','sum = 7',(r,b)=>r+b===7],
     ['s10','sum ≥ 10',(r,b)=>r+b>=10],['rgt','red > blue',(r,b)=>r>b],['rev','red even',(r,b)=>r%2===0],['tap','tap cells',null]];
   const OPS=[['A','A'],['B','B'],['Ac','Aᶜ'],['AuB','A ∪ B'],['AnB','A ∩ B'],['AmB','A ∖ B'],['xor','exactly one'],['nAuB','(A ∪ B)ᶜ'],['AcnBc','Aᶜ ∩ Bᶜ']];
@@ -912,6 +946,17 @@ function p0_sum(){
     <canvas id="cvg" width="640" height="600" style="margin-top:8px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">chosen sum s</div><div class="v" id="hs">—</div></div><div class="rdc"><div class="k">cells with r + b = s</div><div class="v" id="hk">—</div></div><div class="rdc"><div class="k">share of rolls</div><div class="v" id="hr">—</div></div><div class="rdc"><div class="k">all 11 sums added</div><div class="v" id="ht">—</div></div></div>
     <div class="seg" id="segroll" style="margin-top:10px"></div>
+    
+    ${gQ('smq',1,`How many of the 36 cells have sum 7?`,
+      `(1,6), (2,5), (3,4), (4,3), (5,2), (6,1): six cells.`)}
+    ${gQ('smq',2,`How many have sum 2?`,
+      `Only (1, 1). So the 11 sums are not equally likely: 7 is six times as likely as 2.`)}
+    ${gQ('smq',3,`Add up the number of cells for all eleven sums. What is the total?`,
+      `$1+2+3+4+5+6+5+4+3+2+1=36$: every cell has exactly one sum.`)}
+    ${gQ('smq',4,`What is the probability that the sum is 7 or 11?`,
+      `$\\frac{6+2}{36}=\\frac8{36}$: the two sums never happen together, so their cells simply add.`)}
+    ${gProg('smqprog')}
+    <div id="smqdone" style="display:none">
     <p style="margin-top:14px">Count along the anti-diagonals: the sum $s$ has $6-|s-7|$ cells, rising from 1 cell at $s=2$ to 6 cells at $s=7$ and falling back to 1 at $s=12$. Combining two uniform quantities produced one that is far from uniform: a 7 is six times as likely as a 2. Sums of many random quantities pile up in the middle even more sharply, and that pile-up, followed to its limit, is the central limit theorem (Module 6).</p>
     <p>The 11 sum events have two properties. They are pairwise <b>disjoint</b> — no roll has two different sums — and together they <b>cover</b> $\\Omega$ — every roll has some sum. A family of events with both properties is a <b>partition</b> of $\\Omega$. It splits the 36 pebbles with no overlap and nothing left over, so its probabilities add to exactly 1:</p>
     <div class="eqbox">$$\\sum_{s=2}^{12}P(r+b=s)=\\frac{1+2+3+4+5+6+5+4+3+2+1}{36}=\\frac{36}{36}=1.$$</div>
@@ -924,7 +969,8 @@ function p0_sum(){
       Disjoint events therefore have <b>orthogonal</b> indicators. Each outcome lies in exactly one cell of a partition, so the cells' indicators add to the all-ones vector: $\sum_s\mathbf 1_{\{r+b=s\}}=\mathbf 1$. The 11 sum indicators are an orthogonal basis — orthogonal, not orthonormal, since $\|\mathbf 1_{\{r+b=s\}}\|^2=P(r+b=s)$ differs from cell to cell — for an 11-dimensional subspace of $\mathbb R^{36}$: the vectors that take one value on each anti-diagonal, which are exactly the quantities that depend only on the sum. The 36 single outcomes are the finest partition, and their indicators are an orthogonal basis for all of $\mathbb R^{36}$.<br><br>
       This picture returns in Module 5, where the <b>conditional expectation</b> of a quantity given a partition is its orthogonal projection onto that subspace (projection as in Linear Algebra Module 3). The same projection is why a model trained to minimize squared error learns a conditional mean, and it underlies least-squares regression and the Kalman filter.</div>
     <div class="task"><b>A sum of 8 or more</b>Two dice are rolled. What is the probability that the sum is at least 8? Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 7/36 or 0.194')}</div>`;
+    ${gateHTML('e.g. 7/36 or 0.194')}</div></div>`;
+  gWire('smq',[[1,6,0.1],[2,1,0.1],[3,36,0.1],[4,8/36,0.002]],'smqprog','smqdone');
   let sSel=7;const cvh=document.getElementById('cvh'),cvg=document.getElementById('cvg');
   const ph=plot(cvh,{xmin:1.2,xmax:12.8,ymin:-0.03,ymax:0.2}),pg=plot(cvg,P0G);
   function draw(){const n=P0R.rolls.length,sc=new Array(13).fill(0);
@@ -969,6 +1015,17 @@ function p0_axioms(){
     <div class="ctrls"><button class="btn ghost" id="rescale" style="padding:10px 14px">Rescale so the total is 1</button><button class="btn ghost" id="fair" style="padding:10px 14px">Fair die</button></div>
     <div class="readout"><div class="rdc"><div class="k">total of all p_f</div><div class="v" id="dt">—</div></div><div class="rdc"><div class="k">P(A) = sum over faces in A</div><div class="v" id="da">—</div></div><div class="rdc"><div class="k">P(not A)</div><div class="v" id="dc">—</div></div></div>
     <p class="small" id="dv" style="margin-top:8px;min-height:20px"></p>
+    
+    ${gQ('axq',1,`Load the die so that 6 comes up with probability $0.5$ and the other five faces share the rest equally. What is the probability of each other face?`,
+      `The other five share $1-0.5=0.5$: $0.1$ each.`)}
+    ${gQ('axq',2,`With that die, what is $P(\\{4,5,6\\})$?`,
+      `$0.1+0.1+0.5=0.7$: the event's faces are disjoint single outcomes, so their probabilities add.`)}
+    ${gQ('axq',3,`And the probability of &ldquo;not $\\{4,5,6\\}$&rdquo;?`,
+      `$0.1\\times3=0.3$, which is $1-0.7$: an event and its complement always add to 1.`)}
+    ${gQ('axq',4,`On a square board of area 1, region $A$ has area $0.3$, region $B$ has area $0.25$, and they overlap in an area of $0.08$. What is the area of $A\\cup B$?`,
+      `$0.3+0.25=0.55$ counts the overlap twice; remove one copy: $0.55-0.08=0.47$.`)}
+    ${gProg('axqprog')}
+    <div id="axqdone" style="display:none">
     <p style="margin-top:12px">Any heights work, as long as none is negative and they total exactly 1. Those requirements are not arbitrary: they are the properties of the long-run shares from the first beat. A share is never negative; the shares of all the outcomes make up all of the trials, so they total 1; and the share of trials landing in one of two separate groups is the sum of the two groups' shares. In 1933 Andrey Kolmogorov took exactly these three properties as the definition of probability.</p>
     <div class="defn"><span class="dt">The axioms of probability</span>
       A <b>probability</b> $P$ is a rule that takes an event $A\\subseteq\\Omega$ as input and returns a real number $P(A)$, such that:<br><br>
@@ -1000,7 +1057,8 @@ function p0_axioms(){
     <div class="defn"><span class="dt">The union bound</span>Since $P(A\\cap B)\\ge0$, the union rule gives $P(A\\cup B)\\le P(A)+P(B)$, and by repeating it, $P(A_1\\cup\\cdots\\cup A_n)\\le P(A_1)+\\cdots+P(A_n)$. It needs no information about overlaps, which is why it is everywhere: the chance that <em>any</em> of $n$ hashed items collides, that <em>any</em> of $n$ estimates is far off (the core step of PAC learning bounds in machine-learning theory), or that <em>any</em> of $n$ backtested strategies looks good by luck, is at most $n$ times the chance for one.</div>
     <p>Drag $B$ completely inside $A$ to see monotonicity: $P(A\\cup B)=P(A)$ and $P(A\\cap B)=P(B)$. Pull them apart to see rule 3: the overlap vanishes and $P(A)+P(B)=P(A\\cup B)$.</p>
     <div class="task"><b>Neither stock rises</b>Over many trading days, stock A closes up on 55% of days, stock B on 60% of days, and both close up on 40% of days. On what fraction of days does neither close up? To check it on the dartboard, stretch both rectangles to the full width and set A to heights 0 to 0.55 and B to heights 0.15 to 0.75. Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 1/5 or 0.2')}</div>`;
+    ${gateHTML('e.g. 1/5 or 0.2')}</div></div>`;
+  gWire('axq',[[1,0.1,0.002],[2,0.7,0.002],[3,0.3,0.002],[4,0.47,0.002]],'axqprog','axqdone');
 
   function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
   function canvasXY(cv,e){const rc=cv.getBoundingClientRect();const w=Math.max(1,rc.width),h=rc.height||w*cv.height/cv.width;
@@ -1127,6 +1185,17 @@ function p0_multiply(){
     <canvas id="cvt" width="640" height="380" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">leaves (outcomes)</div><div class="v" id="tl">—</div></div><div class="rdc"><div class="k">count by stages</div><div class="v" id="tp">—</div></div><div class="rdc"><div class="k">tapped outcome</div><div class="v" id="to">—</div></div></div>
     <p class="small" id="tn" style="margin-top:8px;min-height:20px"></p>
+    
+    ${gQ('mpq',1,`Use the tree: with 4 letters, 3 stages and repeats allowed, how many codes are there?`,
+      `Each of the 3 stages has 4 options whatever came before: $4\\cdot4\\cdot4=64$.`)}
+    ${gQ('mpq',2,`Switch to no repeats. How many codes now?`,
+      `$4\\cdot3\\cdot2=24$: one letter fewer at each stage, whichever letters were used.`)}
+    ${gQ('mpq',3,`A PIN is 4 digits from 0–9, repeats allowed. How many PINs are there?`,
+      `$10^4=10{,}000$.`)}
+    ${gQ('mpq',4,`How many 4-digit PINs have all four digits different?`,
+      `$10\\cdot9\\cdot8\\cdot7=5{,}040$ — about half of all PINs.`)}
+    ${gProg('mpqprog')}
+    <div id="mpqdone" style="display:none">
     <p style="margin-top:14px">With repeats allowed, every node at a given depth has the same number of children, so the leaves multiply out level by level: depth 1 has $n_1$ nodes, depth 2 has $n_1n_2$, and depth $k$ has $n_1n_2\\cdots n_k$.</p>
     <p>Now switch to <b>no repeats</b>. Different nodes now offer <em>different</em> letters — after A the next stage offers B, C, D; after B it offers A, C, D — but every node at a given depth still offers the <em>same number</em> of letters. The count only needs the number, so the product still holds.</p>
     <div class="defn"><span class="dt">The multiplication principle</span>
@@ -1152,7 +1221,8 @@ function p0_multiply(){
       <b>Language models.</b> With a vocabulary of $V=50{,}000$ tokens, a sequence of $L=10$ tokens has $V^{L}\\approx10^{47}$ possibilities, so no model can store a probability for each one. Instead a model generates one token per stage, walking down a tree like the one above, and the probability of a whole sequence is the product of the next-token probabilities along its path (the multiplication rule of Module 2).<br>
       <b>Orderings.</b> Self-attention in a Transformer treats its inputs as a set: all $L!$ orderings of the same tokens look identical to it, which is why Transformers add positional encodings to mark the order. A shuffled 52-card deck has $52!\\approx8.1\\times10^{67}$ orderings, so a well-shuffled deck is almost surely in an order no deck has ever been in.</div>
     <div class="task"><b>No repeated letter</b>A password is 3 lowercase letters, each chosen uniformly from the 26 letters, with repeats allowed. What is the probability that a random password has no repeated letter? Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 3/4 or 0.75')}</div>`;
+    ${gateHTML('e.g. 3/4 or 0.75')}</div></div>`;
+  gWire('mpq',[[1,64,0.1],[2,24,0.1],[3,10000,0.1],[4,5040,0.1]],'mpqprog','mpqdone');
 
   function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
   function canvasXY(cv,e){const rc=cv.getBoundingClientRect();const w=Math.max(1,rc.width),h=rc.height||w*cv.height/cv.width;
@@ -1251,6 +1321,17 @@ function p0_combinations(){
     <div class="seg" id="segcv" style="margin-top:10px"></div>
     <canvas id="cvc" width="640" height="360" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">ordered selections</div><div class="v" id="co">—</div></div><div class="rdc"><div class="k">chips per set</div><div class="v" id="cp">—</div></div><div class="rdc"><div class="k">sets (rows)</div><div class="v" id="cs">—</div></div><div class="rdc"><div class="k">tapped set</div><div class="v" id="ct">—</div></div></div>
+    
+    ${gQ('cbq',1,`How many ordered selections of 2 different letters can be made from A, B, C, D?`,
+      `$4\\cdot3=12$: AB, AC, AD, BA, BC, …`)}
+    ${gQ('cbq',2,`How many different <em>sets</em> of 2 letters are there, ignoring order?`,
+      `AB, AC, AD, BC, BD, CD: 6.`)}
+    ${gQ('cbq',3,`How many ordered selections does each set appear as?`,
+      `Two: AB and BA. And $12=6\\times2$.`)}
+    ${gQ('cbq',4,`From 5 letters there are $5\\cdot4\\cdot3=60$ ordered selections of 3. How many sets of 3 letters are there?`,
+      `Each set of 3 appears as $3\\cdot2\\cdot1=6$ orderings, so $\\frac{60}{6}=10$.`)}
+    ${gProg('cbqprog')}
+    <div id="cbqdone" style="display:none">
     <p style="margin-top:14px">Every group has the same size. A set of $k$ letters can be put in order in $k\\cdot(k-1)\\cdots1=k!$ ways — the multiplication principle again, with one fewer letter left at each stage — and each ordered selection belongs to exactly one set. So the ordered selections split into $\\binom nk$ groups of exactly $k!$ each:</p>
     <div class="eqbox">$$\\binom{n}{k}\\cdot k!=\\frac{n!}{(n-k)!}\\quad\\Longrightarrow\\quad\\binom{n}{k}=\\frac{n!}{k!\\,(n-k)!}.$$</div>
     <p>Counting one representative per group, by dividing by the group size, is the general way to remove an overcount: it works whenever every group has the same size. Two facts follow at once. Choosing which $k$ items are <em>in</em> is the same as choosing which $n-k$ are <em>out</em>, so $\\binom nk=\\binom n{n-k}$; the formula agrees, since it treats $k$ and $n-k$ alike. And $\\binom n0=\\binom nn=1$: one way to take nothing, one way to take everything.</p>
@@ -1259,7 +1340,8 @@ function p0_combinations(){
       <b>Poker hands.</b> A hand is 5 cards from 52, order ignored. Ordered selections: $52\\cdot51\\cdot50\\cdot49\\cdot48=311{,}875{,}200$. Each hand appears $5!=120$ times among them, so there are $311{,}875{,}200/120=2{,}598{,}960$ hands. A royal flush is one specific hand in each of 4 suits, so $P(\\text{royal flush})=4/2{,}598{,}960\\approx1.5\\times10^{-6}$.<br><br>
       <b>Searching for a trading model.</b> Picking 5 predictors out of 100 candidate signals gives $\\binom{100}{5}=\\frac{100\\cdot99\\cdot98\\cdot97\\cdot96}{120}=75{,}287{,}520$ possible models. Test that many against the same price history and some will fit it well by luck alone — the data-snooping problem of Module 14.</div>
     <div class="task"><b>Committees</b>How many different 3-person committees can be formed from 7 people? Enter a whole number.</div>
-    ${gateHTML('e.g. 12')}</div>`;
+    ${gateHTML('e.g. 12')}</div></div>`;
+  gWire('cbq',[[1,12,0.1],[2,6,0.1],[3,2,0.1],[4,10,0.1]],'cbqprog','cbqdone');
   function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
   function canvasXY(cv,e){const rc=cv.getBoundingClientRect();const w=Math.max(1,rc.width),h=rc.height||w*cv.height/cv.width;
     return [(e.clientX-rc.left)*(cv.width/w),(e.clientY-rc.top)*(cv.height/h)];}
@@ -1413,10 +1495,22 @@ function p0_spaces(){
     <div id="spgrid" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:12px;font-family:var(--mono);font-size:12.5px"></div>
     <div class="readout"><div class="rdc"><div class="k">unordered results</div><div class="v" id="sp1">—</div></div><div class="rdc"><div class="k">sequences in all</div><div class="v" id="sp2">—</div></div><div class="rdc"><div class="k">sequences per result</div><div class="v" id="sp3">—</div></div></div>
     <p class="small" id="sp4" style="margin-top:8px;min-height:20px"></p>
+    
+    ${gQ('spq',1,`Roll three dice. How many ordered outcomes are there?`,
+      `$6^3=216$.`)}
+    ${gQ('spq',2,`How many ordered outcomes give the unordered result &ldquo;one 1, one 2, one 3&rdquo;?`,
+      `$3!=6$: all orders of three different faces.`)}
+    ${gQ('spq',3,`How many give &ldquo;two 1s and one 2&rdquo;?`,
+      `Three: the 2 can be first, second or third.`)}
+    ${gQ('spq',4,`And &ldquo;three 1s&rdquo;?`,
+      `Only (1,1,1). So unordered results with repeats are not equally likely: 6, 3 and 1 ordered outcomes each.`)}
+    ${gProg('spqprog')}
+    <div id="spqdone" style="display:none">
     <p style="margin-top:12px">Without repeats, every set stands for exactly $k!$ sequences, so the factor cancels and $\\frac{\\text{sets in }A}{\\binom nk}$ is a valid probability. With repeats, a multiset whose values appear $m_1,m_2,\\dots$ times stands for $\\frac{k!}{m_1!\\,m_2!\\cdots}$ sequences — 6, 3, or 1 for three dice — so multisets are not equally likely.</p>
     <div class="defn"><span class="dt">The rule</span>Count in the ordered space; it is always equally likely when each draw is uniform. Unordered without repeats is a valid shortcut. Unordered with repeats is not — weight each multiset by its sequences, or count ordered.</div>
     <div class="task"><b>Three dice, all different</b>Roll three fair dice. What is the probability that all three show different faces? Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 1/2 or 0.5')}</div>`;
+    ${gateHTML('e.g. 1/2 or 0.5')}</div></div>`;
+  gWire('spq',[[1,216,0.1],[2,6,0.1],[3,3,0.1],[4,1,0.1]],'spqprog','spqdone');
   function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
   const fact=m=>{let r=1;for(let i=2;i<=m;i++)r*=i;return r;};
   let mode='dice',sel=null;
@@ -1456,6 +1550,15 @@ function p0_birthday(){
     <div class="readout"><div class="rdc"><div class="k">people in room</div><div class="v" id="b1">0</div></div><div class="rdc"><div class="k">P(next person is new)</div><div class="v" id="b2">—</div></div><div class="rdc"><div class="k">P(all different so far)</div><div class="v" id="b3">—</div></div><div class="rdc"><div class="k">shared birthday yet?</div><div class="v" id="b4">—</div></div></div>
     <p style="margin-top:14px">Each new person almost certainly avoids everyone already in the room — the second readout stays close to 1 for a long time. But the room survives only if <em>every</em> person avoids <em>all</em> earlier ones, and those near-1 factors multiply. That product, the third readout, falls faster than intuition expects.</p>
 
+    
+    ${gQ('bdq',1,`With 3 people, what is the probability that all three birthdays are different? (365 equally likely days.)`,
+      `The second person avoids one day, the third avoids two: $\\frac{364}{365}\\cdot\\frac{363}{365}\\approx0.992$.`)}
+    ${gQ('bdq',2,`How many different pairs of people are there among 23 people?`,
+      `$\\frac{23\\cdot22}{2}=253$. Each pair is a separate chance of a match.`)}
+    ${gQ('bdq',3,`For 23 people, what is the probability that at least two share a birthday? Use the complement.`,
+      `$1-\\frac{365\\cdot364\\cdots343}{365^{23}}\\approx0.507$: just over one half, with 253 pairs to match.`)}
+    ${gProg('bdqprog')}
+    <div id="bdqdone" style="display:none">
     <h2 style="margin-top:22px">The exact answer</h2>
     <p>Let $k$ be the number of people. <b>Step 1: the sample space.</b> Record the room as the sequence of birthdays, person 1 to person $k$. Each person has $n$ options and repeats are allowed, so there are $n^k$ sequences, all equally likely — the "order recorded, repeats allowed" cell.</p>
     <p><b>Step 2: count the complement.</b> "At least two share" is messy to count directly: it could be one pair, two pairs, a triple, and so on. Its complement, "all birthdays different", is one clean case. Count it in the same ordered model as the sample space, one person at a time:</p>
@@ -1495,7 +1598,8 @@ function p0_birthday(){
     <div class="defn"><span class="dt">The birthday bound for hashes</span>
       A hash function maps each input to one of $n=2^b$ values ($b$ bits), roughly uniformly. Two different inputs with the same hash are a <b>collision</b>. By the formula above, collisions become likely after about $\\sqrt n=2^{b/2}$ inputs — not $2^b$. A 64-bit hash collides after a few billion items, which is why systems that must never collide use far longer hashes. Bitcoin's SHA-256 has $n=2^{256}$, so finding any collision takes on the order of $2^{128}$ hash evaluations, which is out of reach. The same square-root effect sets the false-positive rates of the Bloom filters in the probabilistic-data-structures capstone.</div>
     <div class="task"><b>Code collisions</b>Each of 10 items is tagged with a random two-digit code from 00 to 99, chosen uniformly and separately for each item. What is the probability that at least two items get the same code? Enter a decimal.</div>
-    ${gateHTML('e.g. 0.5')}</div>`;
+    ${gateHTML('e.g. 0.5')}</div></div>`;
+  gWire('bdq',[[1,365*364*363/365**3,0.0005],[2,253,0.1],[3,1-Array.from({length:23},(_,j)=>(365-j)/365).reduce((a,b)=>a*b,1),0.002]],'bdqprog','bdqdone');
 
   function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
   const ff=getComputedStyle(document.body).fontFamily;
@@ -1567,6 +1671,17 @@ function p0_inclusion(){
     <canvas id="cvv" width="640" height="440" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">running total</div><div class="v" id="v1">—</div></div><div class="rdc"><div class="k">true size of A ∪ B ∪ C</div><div class="v" id="v2">74</div></div><div class="rdc"><div class="k">this step</div><div class="v" id="v3" style="font-size:14px">—</div></div></div>
     <p class="small" id="v4" style="margin-top:8px;min-height:20px"></p>
+    
+    ${gQ('ieq',1,`What is $|A|+|B|+|C|$?`,
+      `$50+33+20=103$ — more than 100, so some numbers have been counted more than once.`)}
+    ${gQ('ieq',2,`How many numbers from 1 to 100 are divisible by both 2 and 3?`,
+      `Divisible by both means divisible by 6: $6,12,\\dots,96$, so 16.`)}
+    ${gQ('ieq',3,`How many are divisible by all three of 2, 3, 5?`,
+      `Divisible by 30: 30, 60, 90.`)}
+    ${gQ('ieq',4,`In $|A|+|B|+|C|$, how many times is the number 30 counted?`,
+      `Once in each of $A$, $B$ and $C$. Correcting for numbers counted more than once is the subject of this beat.`)}
+    ${gProg('ieqprog')}
+    <div id="ieqdone" style="display:none">
     <p style="margin-top:14px">After the three single terms, the centre region — multiples of 30 — has been counted 3 times and each two-circle region twice. Subtracting the three pairwise overlaps removes the extra copies from the two-circle regions, but takes the centre down from 3 to 0, because the centre lies inside all three overlaps. Adding the triple overlap back once fixes it. Now every region inside the union has been counted exactly once:</p>
     <div class="eqbox">$$|A\\cup B\\cup C|=|A|+|B|+|C|-|A\\cap B|-|A\\cap C|-|B\\cap C|+|A\\cap B\\cap C|$$
     $$=50+33+20-16-10-6+3=74.$$</div>
@@ -1586,7 +1701,8 @@ function p0_inclusion(){
     <p>So the alternating formula counts every outcome in the union exactly once, for any number of events.</p>
     
 <div class="task"><b>Divisible by 2, 3, or 5</b>A whole number is picked uniformly at random from 1 to 100. What is the probability that it is divisible by at least one of 2, 3, 5? Enter a decimal.</div>
-    ${gateHTML('e.g. 0.5')}</div>`;
+    ${gateHTML('e.g. 0.5')}</div></div>`;
+  gWire('ieq',[[1,103,0.1],[2,16,0.1],[3,3,0.1],[4,3,0.1]],'ieqprog','ieqdone');
 
   function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
   const ff=getComputedStyle(document.body).fontFamily;
@@ -1630,6 +1746,17 @@ function p0_derangements(){
     <div class="ctrls" style="margin-top:6px"><button class="btn ghost" id="dsh" style="padding:10px 14px">Shuffle once</button><button class="btn ghost" id="dsim" style="padding:10px 14px">+1000 shuffles</button></div>
     <div id="denv" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px"></div>
     <div class="readout"><div class="rdc"><div class="k">letters in own envelope</div><div class="v" id="d1">—</div></div><div class="rdc"><div class="k">P(none), exact</div><div class="v" id="d2">—</div></div><div class="rdc"><div class="k">share of shuffles with none</div><div class="v" id="d3">—</div></div><div class="rdc"><div class="k">1/e</div><div class="v" id="d4">0.3679</div></div></div>
+    
+    ${gQ('drq',1,`Three letters: list all $3!=6$ orderings. In how many is no letter in its own envelope?`,
+      `Reading the letters in envelopes 1, 2, 3: 231 and 312. So the probability is $\\frac26=\\frac13$.`)}
+    ${gQ('drq',2,`With 5 letters, what is the probability that letter 1 is in its own envelope?`,
+      `Letter 1 is equally likely to be in any of the 5 envelopes: $\\frac15$.`)}
+    ${gQ('drq',3,`With 5 letters, what is the probability that letters 1 and 2 are both home?`,
+      `$\\frac15\\cdot\\frac14=\\frac1{20}$: letter 1 home, then letter 2 lands in envelope 2 among the 4 left.`)}
+    ${gQ('drq',4,`Set $n$ to 12 above and shuffle many times. What does the share of &ldquo;nobody home&rdquo; settle near? (Three decimals.)`,
+      `About $0.368$ — and it barely changes with $n$. The steps below explain both facts.`)}
+    ${gProg('drqprog')}
+    <div id="drqdone" style="display:none">
     <h2 style="margin-top:22px">Deriving the probability, step by step</h2>
     <p><b>Step 1: the outcomes.</b> Number the letters and the envelopes $1,\\dots,n$; letter $i$ belongs in envelope $i$. An outcome records which letter went into each envelope, so it is an ordering of the $n$ letters. Write it as the letters found in envelopes $1,2,\\dots,n$: for $n=3$, the outcome $231$ means envelope 1 holds letter 2, envelope 2 holds letter 3, envelope 3 holds letter 1. There are $n!$ orderings, all equally likely.</p>
     <p><b>Step 2: name one event per letter.</b> Let $A_i$ be the event "letter $i$ is in envelope $i$". For $n=3$, list all $3!=6$ outcomes and mark which of these events happen in each:</p>
@@ -1664,8 +1791,9 @@ function p0_derangements(){
     <p>That is the Step 6 sum with no last term — the derangement probability for $n$ letters is this series stopped after the $\\frac1{n!}$ term. The terms left off are tiny ($\\frac1{6!}\\approx0.0014$), so the answers settle almost at once: $\\frac12,\\ \\frac13,\\ 0.375,\\ 0.3667,\\ 0.3681$ for $n=2,\\dots,6$, against $e^{-1}\\approx0.3679$. With 6 letters or 6 million, about 37% of random shuffles leave every letter out of place.</p>
     <p>Shuffling labels at random is also the engine of a <b>permutation test</b> (Module 14), where this kind of calculation says how often chance alone produces a pattern.</p>
     
-<div class="task"><b>Four letters</b>Four letters are put into their four envelopes in a uniformly random order. What is the probability that no letter is in its own envelope? Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 1/4 or 0.25')}</div>`;
+<div class="task"><b>Seven letters</b>Seven letters are put into their seven envelopes in a uniformly random order. What is the probability that no letter is in its own envelope? Enter a decimal to four places.</div>
+    ${gateHTML('e.g. 0.3333')}</div></div>`;
+  gWire('drq',[[1,2,0.1],[2,1/5,0.002],[3,1/20,0.002],[4,0.368,0.006]],'drqprog','drqdone');
   function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
   /* ---- derangements ---- */
   const dn=document.getElementById('dn');let perm=null,sims=0,hits=0;
@@ -1683,11 +1811,11 @@ function p0_derangements(){
   document.getElementById('dsim').onclick=()=>{const n=+dn.value;for(let r=0;r<1000;r++){const p=shuffle_(n);sims++;if(p.every((L,e)=>L!==e))hits++;}drawD();};
   drawD();
 
-  numChk(document.getElementById('gate'),0.375,()=>{addReveal(`<div class="rh">✓ 9/24 = 0.375</div>
-    <p>With $n=4$ the formula stops after its fifth term:</p>
-    <div class="eqbox">$$P(\\text{none home})=1-\\frac1{1!}+\\frac1{2!}-\\frac1{3!}+\\frac1{4!}=1-1+\\frac12-\\frac16+\\frac1{24}=\\frac{9}{24}=0.375.$$</div>
-    <p>So 9 of the 24 orderings are derangements, already within $0.007$ of $e^{-1}\\approx0.368$. Listing them confirms it. Reading the letters in envelopes 1 to 4, the derangements with letter 2 in envelope 1 are 2143, 2341, 2413, and there are 3 more each with letter 3 or letter 4 in envelope 1: $3\\times3=9$.</p>`);},snapTo(0.375,0.0015));
-  setHints([`Use the formula with n = 4: 1 − 1/1! + 1/2! − 1/3! + 1/4!.`,`1 − 1 + 1/2 − 1/6 + 1/24 = 9/24, so the answer is 0.375.`]);
+  numChk(document.getElementById('gate'),1854/5040,()=>{addReveal(`<div class="rh">✓ 1854/5040 ≈ 0.3679</div>
+    <p>There are $7!=5040$ orderings — far too many to list. With $n=7$ the formula has eight terms:</p>
+    <div class="eqbox">$$P(\\text{none home})=\\sum_{j=0}^{7}\\frac{(-1)^j}{j!}=1-1+\\frac12-\\frac16+\\frac1{24}-\\frac1{120}+\\frac1{720}-\\frac1{5040}=\\frac{1854}{5040}\\approx0.3679.$$</div>
+    <p>So 1,854 of the 5,040 orderings are derangements. The answer agrees with $e^{-1}\\approx0.36788$ to four places: the terms after $j=7$ add up to less than $\\frac1{8!}\\approx0.000025$.</p>`);},snapTo(1854/5040,0.00025));
+  setHints([`Too many orderings to list (7! = 5040), so use the formula with n = 7: the alternating sum of 1/j! for j = 0 to 7.`,`1 − 1 + 1/2 − 1/6 + 1/24 − 1/120 + 1/720 − 1/5040 = 1854/5040 ≈ 0.3679.`]);
 }
 
 /* ---------- Beat 15: problem set ---------- */
@@ -1784,6 +1912,17 @@ function p1_conditional(){
     <p class="small" style="margin-top:6px">Blue cells: outcomes in $B$. Gold: outcomes in both $A$ and $B$. Gold outline: in $A$ but ruled out by $B$. Dots: only the rolls where $B$ happened.</p>
     <div class="readout"><div class="rdc"><div class="k">rolls where B happened</div><div class="v" id="q1">—</div></div><div class="rdc"><div class="k">of those, A happened</div><div class="v" id="q2">—</div></div><div class="rdc"><div class="k">share = A among B</div><div class="v" id="q3">—</div></div></div>
     <div class="readout"><div class="rdc"><div class="k">P(B) = |B|/36</div><div class="v" id="q4">—</div></div><div class="rdc"><div class="k">P(A ∩ B) = |A∩B|/36</div><div class="v" id="q5">—</div></div><div class="rdc"><div class="k">P(A | B) = |A∩B| / |B|</div><div class="v" id="q6">—</div></div><div class="rdc"><div class="k">P(A) with no hint</div><div class="v" id="q7">—</div></div></div>
+    
+    ${gQ('cdq',1,`Set $B$ = &ldquo;sum is 8&rdquo; and $A$ = &ldquo;red is 6&rdquo; above and roll a few hundred times. Then pin the value down: once you know the sum is 8, what is the probability that red is 6?`,
+      `The sum is 8 for five outcomes, $(2,6),(3,5),(4,4),(5,3),(6,2)$. The hint leaves only those, still equally likely, and one of them has red 6: $\\frac15$.`)}
+    ${gQ('cdq',2,`Before any hint, what is the probability that red is 6 <em>and</em> the sum is 8, as a share of all 36 outcomes?`,
+      `Only $(6,2)$: $\\frac1{36}$.`)}
+    ${gQ('cdq',3,`And the probability that the sum is 8, as a share of all 36?`,
+      `$\\frac5{36}$. Now divide: $\\frac{1/36}{5/36}=\\frac15$ — Problem 1's answer. The share of $A$ inside $B$ is the probability of both, divided by the probability of $B$.`)}
+    ${gQ('cdq',4,`Swap the roles: once you know red is 6, what is the probability that the sum is 8?`,
+      `Red is 6 for six outcomes, and only $(6,2)$ has sum 8: $\\frac16$, not $\\frac15$. Same overlap, divided by a different event.`)}
+    ${gProg('cdqprog')}
+    <div id="cdqdone" style="display:none">
     <p style="margin-top:14px"><b>Step 2: count it.</b> Switch to <b>zoom into B</b>. The sum is 8 for exactly 5 of the 36 outcomes: $(2,6),(3,5),(4,4),(5,3),(6,2)$. Knowing $B$ rules out the other 31. It says nothing to favor one of the remaining five over another, so they stay equally likely, and each now has probability $\\tfrac15$. Only $(6,2)$ has red 6, so $P(\\text{red }6\\mid\\text{sum }8)=\\tfrac15$, up from $\\tfrac16$.</p>
     <p><b>Step 3: the general definition.</b> When outcomes are not equally likely, go back to the shares. After $n$ rolls, let $n_B$ be the number with $B$ and $n_{A\\cap B}$ the number with both. The share of $A$ among the $B$-rolls is</p>
     <div class="eqbox">$$\\frac{n_{A\\cap B}}{n_B}=\\frac{n_{A\\cap B}/n}{n_B/n}\;\\longrightarrow\;\\frac{P(A\\cap B)}{P(B)}\\quad\\text{as }n\\text{ grows.}$$</div>
@@ -1795,7 +1934,8 @@ function p1_conditional(){
     <p class="small" id="q8"></p>
     <p>A language model's output is exactly this kind of object: a distribution over the next token <em>given</em> everything written so far. Each new token is a new condition.</p>
     <div class="task"><b>Double six</b>Two dice are rolled, and you are told that at least one of them shows a 6. What is the probability that both show a 6? Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 1/6 or 0.17')}</div>`;
+    ${gateHTML('e.g. 1/6 or 0.17')}</div></div>`;
+  gWire('cdq',[[1,1/5,0.002],[2,1/36,0.001],[3,5/36,0.002],[4,1/6,0.002]],'cdqprog','cdqdone');
 
   const PB=[['s8','sum = 8',(r,b)=>r+b===8],['six','at least one 6',(r,b)=>r===6||b===6],['dbl','doubles',(r,b)=>r===b],['s10','sum ≥ 10',(r,b)=>r+b>=10],['reven','red even',(r,b)=>r%2===0]];
   const PA=[['r6','red = 6',(r,b)=>r===6],['66','both 6',(r,b)=>r===6&&b===6],['s8','sum = 8',(r,b)=>r+b===8],['dbl','doubles',(r,b)=>r===b],['b5','blue ≥ 5',(r,b)=>b>=5]];
@@ -1846,6 +1986,17 @@ function p1_conditional(){
 function p1_multiply(){
   stage.innerHTML=`<div class="card"><h2>The multiplication rule: probabilities in stages</h2>
     <p>Draw two cards from a shuffled deck, one after the other, without putting the first back. What is the probability that both are aces? The first card is an ace with probability $\\tfrac4{52}$. Once it is drawn, the deck has changed — 51 cards, 3 aces — so the second card is an ace with probability $\\tfrac3{51}$, <em>given</em> the first was. The answer combines the two stages.</p>
+    
+    ${gQ('mlq',1,`Two cards are drawn without replacement. Suppose the first is an ace. Given that, what is the probability that the second is an ace?`,
+      `51 cards are left and 3 of them are aces: $\\frac3{51}$.`)}
+    ${gQ('mlq',2,`So what is the probability that both cards are aces?`,
+      `The first is an ace $\\frac4{52}$ of the time, and on those occasions the second is an ace $\\frac3{51}$ of the time: a share of a share, $\\frac4{52}\\cdot\\frac3{51}=\\frac1{221}\\approx0.0045$.`)}
+    ${gQ('mlq',3,`An urn holds 5 red and 3 blue balls. Draw two without replacement. What is the probability that both are red?`,
+      `$\\frac58$ for the first, then 4 red of the 7 left: $\\frac58\\cdot\\frac47=\\frac{20}{56}\\approx0.357$.`)}
+    ${gQ('mlq',4,`Same urn: what is the probability of exactly one red?`,
+      `Two ways: red then blue, $\\frac58\\cdot\\frac37=\\frac{15}{56}$, or blue then red, $\\frac38\\cdot\\frac57=\\frac{15}{56}$. They cannot both happen, so add: $\\frac{30}{56}\\approx0.536$.`)}
+    ${gProg('mlqprog')}
+    <div id="mlqdone" style="display:none">
     <p><b>Step 1: rearrange the definition.</b> Conditional probability was defined as $P(B\\mid A)=\\frac{P(A\\cap B)}{P(A)}$. Multiply both sides by $P(A)$:</p>
     <div class="defn"><span class="dt">Multiplication rule</span>$$P(A\\cap B)=P(A)\\,P(B\\mid A).$$
       In words: the probability that both happen is the probability that the first happens, times the probability that the second happens <em>given</em> the first.</div>
@@ -1875,7 +2026,8 @@ function p1_multiply(){
     <div class="eqbox">$$P(w_1,\\dots,w_L)=\\prod_{t=1}^{L}P(w_t\\mid w_1,\\dots,w_{t-1}).$$</div>
     <p>For example, if $P(\\text{the})=0.05$, $P(\\text{cat}\\mid\\text{the})=0.01$ and $P(\\text{sat}\\mid\\text{the cat})=0.2$, then $P(\\text{the cat sat})=0.05\\times0.01\\times0.2=10^{-4}$. Products of many small numbers underflow, so models work with $\\log P=\\sum_t\\log P(w_t\\mid w_{\\lt t})$; training a model means making this sum as large as possible on real text (Modules 7 and 12).</p>
     <div class="task"><b>Two trades</b>A trader's first trade wins with probability 0.6. Their results are streaky: after a win, the next trade wins with probability 0.7; after a loss, it wins with probability 0.4. What is the probability that exactly one of the first two trades wins? Enter a decimal.</div>
-    ${gateHTML('e.g. 1/2 or 0.5')}</div>`;
+    ${gateHTML('e.g. 1/2 or 0.5')}</div></div>`;
+  gWire('mlq',[[1,3/51,0.0015],[2,1/221,0.0002],[3,20/56,0.002],[4,30/56,0.002]],'mlqprog','mlqdone');
 
   const cv=document.getElementById('cvu'),ur=document.getElementById('ur'),ub=document.getElementById('ub');
   let draws=2,repl=false,sel=null;
@@ -1941,6 +2093,15 @@ function p1_total(){
     <div class="seg" id="seglv" style="margin-top:8px"></div>
     <div class="readout"><div class="rdc"><div class="k">shaded area: up</div><div class="v" id="t1">—</div></div><div class="rdc"><div class="k">shaded area: flat</div><div class="v" id="t2">—</div></div><div class="rdc"><div class="k">shaded area: down</div><div class="v" id="t3">—</div></div><div class="rdc"><div class="k">P(A) = all shaded area</div><div class="v" id="t4">—</div></div></div>
     <p class="small" id="t5" style="margin-top:8px"></p>
+    
+    ${gQ('tpq',1,`Use the square (or 1,000 days) to work out the strategy's overall win rate.`,
+      `Of 1,000 days: 500 up with 350 wins, 300 flat with 150, 200 down with 40 — 540 wins, a rate of $0.54$.`)}
+    ${gQ('tpq',2,`If up, flat and down days were equally common, what would the overall win rate be?`,
+      `$\\frac{0.7+0.5+0.2}{3}\\approx0.467$ — the plain average of the three rates. It differs from $0.54$ because up days, where the strategy does best, are the most common.`)}
+    ${gQ('tpq',3,`An urn holds 5 red and 3 blue balls. Draw two without replacement and look only at the second. What is the probability that it is red? Split by what the first ball was.`,
+      `First red ($\\frac58$): then 4 of 7 are red. First blue ($\\frac38$): then 5 of 7. Weighted: $\\frac58\\cdot\\frac47+\\frac38\\cdot\\frac57=\\frac{35}{56}=\\frac58$ — the same as the first ball.`)}
+    ${gProg('tpqprog')}
+    <div id="tpqdone" style="display:none">
     <p style="margin-top:14px"><b>Try first:</b> the plain average of the win rates is $\\frac{0.7+0.5+0.2}{3}\\approx0.47$, but the readout says $0.54$. Drag the strips to equal widths and the two agree — the plain average assumes every kind of day is equally common.</p>
     <p><b>Count it.</b> Of 1000 days: 500 up with 350 wins, 300 flat with 150, 200 down with 40. That is $540$ wins, a rate of $0.54$.</p>
     <p><b>Read it as area.</b> Each shaded rectangle is width $\\times$ height $=P(B_i)\\,P(A\\mid B_i)=P(A\\cap B_i)$ by the multiplication rule. The strips are disjoint and fill the square, so they cut $A$ into disjoint pieces, and additivity adds them:</p>
@@ -1966,7 +2127,8 @@ function p1_total(){
     <p><b>Why.</b> Unlooked-at, the second ball is just another random ball from the urn. Equivalently, the possible updates cancel: red first lowers the second's chance by $\\tfrac3{56}$, blue first raises it by $\\tfrac5{56}$, and $\\tfrac58\\cdot\\tfrac3{56}=\\tfrac38\\cdot\\tfrac5{56}$. This holds generally: averaged over what you might learn, your updated probability equals your current one — you cannot predict which way a belief will move. (The streaky trader's second trade, at $0.58$, is a different event from the first, not an update of it.)</p>
     <p>Split into cases, solve each, recombine: regime-switching market models (Module 9), mixture models (Module 13), and summing a variable out of a Bayesian network (Module 11) are all this law.</p>
     <div class="task"><b>A word in the inbox</b>40% of incoming email is spam. The word "free" appears in 25% of spam emails and in 2% of legitimate ones. What fraction of all emails contain "free"? Enter a decimal.</div>
-    ${gateHTML('e.g. 0.5')}</div>`;
+    ${gateHTML('e.g. 0.5')}</div></div>`;
+  gWire('tpq',[[1,0.54,0.002],[2,(0.7+0.5+0.2)/3,0.002],[3,5/8,0.002]],'tpqprog','tpqdone');
 
   const cv=document.getElementById('cvt4');const pl=plot(cv,{xmin:-0.09,xmax:1.05,ymin:-0.1,ymax:1.04*1.04});
   let w=[0.5,0.3,0.2],h=[0.7,0.5,0.2],level=false,drag=null;
@@ -2031,6 +2193,15 @@ function p1_bayes(){
     <div class="ctrls" style="margin-top:4px"><span class="slabel" id="bsL">P(+ | D) = 0.90</span><input type="range" id="bs" min="0.5" max="1" step="0.01" value="0.9"></div>
     <div class="ctrls" style="margin-top:4px"><span class="slabel" id="bfL">P(+ | Dᶜ) = 0.09</span><input type="range" id="bf" min="0" max="0.3" step="0.01" value="0.09"></div>
     <div class="readout"><div class="rdc"><div class="k">sick and positive</div><div class="v" id="b51">—</div></div><div class="rdc"><div class="k">healthy and positive</div><div class="v" id="b52">—</div></div><div class="rdc"><div class="k">all positives</div><div class="v" id="b53">—</div></div><div class="rdc"><div class="k">P(D | +)</div><div class="v" id="b54">—</div></div></div>
+    
+    ${gQ('byq',1,`Picture 1,000 people. How many have the disease <em>and</em> test positive?`,
+      `$1000\\times0.01=10$ have it, and $10\\times0.9=9$ of them test positive.`)}
+    ${gQ('byq',2,`How many of the 1,000 test positive in total?`,
+      `The 9 above, plus the healthy ones: $990\\times0.09\\approx89$. About 98 in all.`)}
+    ${gQ('byq',3,`So you tested positive. What is the probability that you have the disease?`,
+      `$\\frac{9}{98.1}\\approx0.092$ — about 9%, not 90%. Most positives come from the much larger healthy group.`)}
+    ${gProg('byqprog')}
+    <div id="byqdone" style="display:none">
     <p style="margin-top:14px">With the starting numbers: of 1000 people, $1000\\times0.01=10$ have the disease, and $10\\times0.9=9$ of them test positive. The other 990 are healthy, and $990\\times0.09\\approx89$ of them test positive too. So 98 people test positive, and only 9 of them are sick:</p>
     <div class="eqbox">$$P(D\\mid +)\\approx\\frac{9}{9+89}=\\frac{9}{98}\\approx0.09.$$</div>
     <p>About 9%, not 90%. The test is good, but the disease is rare: the healthy group is 99 times larger, so even its small false-positive rate produces ten times as many positives as the sick group does.</p>
@@ -2045,7 +2216,8 @@ function p1_bayes(){
     <p><b>Step 4: the two directions are different questions.</b> $P(+\\mid D)=0.9$ and $P(D\\mid +)\\approx0.09$ share the same numerator, $P(D\\cap+)$, the thin $D$ piece. The first divides it by the $D$ strip, which it nearly fills; the second divides it by all the shading, which it barely dents. Mixing them up is the confusion of the inverse, and ignoring the prior $P(D)$ is <b>base-rate neglect</b>. Move the $P(D)$ slider to see the prior's effect: at $P(D)=0.1$ the posterior is about 0.53, and at $0.5$ it is about 0.91.</p>
     <p>The same calculation powers a spam filter. In the last beat, 40% of email was spam and "free" appeared in 25% of spam and 2% of legitimate mail. Bayes turns that around: $P(\\text{spam}\\mid\\text{free})=\\frac{0.4\\times0.25}{0.112}\\approx0.89$ — the probability a filter needs, computed from the probabilities that are easy to measure.</p>
     <div class="task"><b>A trading signal</b>On 55% of days the market closes up. A signal fires before 60% of up days and before 30% of down days. The signal has just fired. What is the probability that the market closes up? Enter a decimal.</div>
-    ${gateHTML('e.g. 0.5')}</div>`;
+    ${gateHTML('e.g. 0.5')}</div></div>`;
+  gWire('byq',[[1,9,0.3],[2,98.1,0.6],[3,9/98.1,0.002]],'byqprog','byqdone');
 
   const cv=document.getElementById('cvb5'),bp=document.getElementById('bp'),bs=document.getElementById('bs'),bf=document.getElementById('bf');
   let view='people';
@@ -2137,6 +2309,15 @@ function p1_update(){
     <p>After one positive test the probability of disease went from $0.01$ to about $0.09$. Suppose you take a second test of the same kind, and it is also positive. Then a third. How does the probability move with each result? Use the same test as before: $P(+\\mid D)=0.9$, $P(+\\mid D^{c})=0.09$.</p>
     <p><b>Try it.</b> Add positive and negative results and watch where the probability goes. Each dot is your belief after one more result; the arrows show each move.</p>
     ${p1UpdHTML('u')}
+    
+    ${gQ('udq',1,`After one positive, $P(D\\mid +)\\approx0.0917$. A second test of the same kind is also positive. Use $0.0917$ as the prior in Bayes' theorem (beat 5): what is the probability of disease now?`,
+      `$\\frac{0.0917\\times0.9}{0.0917\\times0.9+0.9083\\times0.09}=\\frac{0.0825}{0.0825+0.0817}\\approx0.50$.`)}
+    ${gQ('udq',2,`Now in one step, straight from the definition: $P(D\\mid ++)=\\frac{P(D\\cap ++)}{P(++)}$. Among sick people both tests are positive with probability $0.9\\times0.9$, among healthy people with $0.09\\times0.09$. What is $P(D\\mid ++)$?`,
+      `$\\frac{0.01\\times0.81}{0.01\\times0.81+0.99\\times0.0081}=\\frac{0.0081}{0.0081+0.008019}\\approx0.50$ — the same answer as Problem 1.`)}
+    ${gQ('udq',3,`After the two positives, a third test comes back <em>negative</em>. What is the probability of disease now?`,
+      `A negative has likelihoods $0.1$ (sick) and $0.91$ (healthy): $\\frac{0.5025\\times0.1}{0.5025\\times0.1+0.4975\\times0.91}\\approx0.10$.`)}
+    ${gProg('udqprog')}
+    <div id="udqdone" style="display:none">
     <p style="margin-top:14px"><b>What to notice.</b> Each positive pushes the probability up, but by very different amounts: the first takes $0.01$ to $0.09$, the second $0.09$ to $0.50$, the third $0.50$ to about $0.91$. A negative pulls it back down. This beat shows how to compute each move and why "use the last answer as the new prior" is legitimate. Why the moves are so uneven is the subject of beat 8.</p>
     <p><b>Step 1: two positives, straight from the definition.</b> Write $++$ for "both tests positive". Nothing new is needed — it is the definition of conditional probability:</p>
     <div class="eqbox">$$P(D\\mid ++)=\\frac{P(D\\cap ++)}{P(++)}.$$</div>
@@ -2156,7 +2337,8 @@ function p1_update(){
       • <em>How test 2 behaves:</em> positive for 80% of sick people and 20% of healthy people. Its errors are unrelated to test 1's once disease status is fixed.<br>
       • <em>This patient's result on test 2:</em> <b>negative</b>.<br>
       What is the probability of disease now? Enter a decimal.</div>
-    ${gateHTML('e.g. 0.05')}</div>`;
+    ${gateHTML('e.g. 0.05')}</div></div>`;
+  gWire('udq',[[1,0.5025,0.003],[2,0.5025,0.003],[3,0.0999,0.003]],'udqprog','udqdone');
   p1UpdWire('u','p');
   numChk(document.getElementById('gate'),0.02463,()=>{addReveal(`<div class="rh">✓ ≈ 0.0246</div>
     <p>Use the first posterior as the prior (Step 2). The evidence is the patient's <em>negative</em> result, so the likelihoods are the chances of a negative in each group, the complements of the test's positive rates: $P(-\\mid D)=1-0.8=0.2$ and $P(-\\mid D^{c})=1-0.2=0.8$:</p>
@@ -2175,6 +2357,17 @@ function p1_odds(){
     <div class="ctrls" style="margin-top:4px"><span class="slabel" id="dsL">P(+ | D) = 0.90</span><input type="range" id="ds" min="0.3" max="0.99" step="0.01" value="0.9"></div>
     <div class="ctrls" style="margin-top:4px"><span class="slabel" id="dfL">P(+ | Dᶜ) = 0.09</span><input type="range" id="df" min="0.01" max="0.5" step="0.01" value="0.09"></div>
     <div class="readout"><div class="rdc"><div class="k">sick : healthy, before</div><div class="v" id="d1">—</div></div><div class="rdc"><div class="k">sick : healthy, after +</div><div class="v" id="d2">—</div></div><div class="rdc"><div class="k">after ÷ before</div><div class="v" id="d3">—</div></div><div class="rdc"><div class="k">P(+|D) ÷ P(+|Dᶜ)</div><div class="v" id="d4">—</div></div></div>
+    
+    ${gQ('odq',1,`With the starting sliders (prior $0.10$), divide the sick part by the healthy part in the <em>top</em> bar. What number do you get?`,
+      `$\\frac{0.1}{0.9}\\approx0.111$.`)}
+    ${gQ('odq',2,`Now the same ratio in the <em>middle</em> bar, the people who test positive.`,
+      `$\\frac{0.1\\times0.9}{0.9\\times0.09}=\\frac{0.09}{0.081}\\approx1.11$. The bottom bar gives the same ratio: stretching both parts by the same factor leaves their ratio alone.`)}
+    ${gQ('odq',3,`Divide Problem 2's answer by Problem 1's. Then move the prior slider and repeat. What factor do you get?`,
+      `$10$ every time, whatever the prior: it is $\\frac{P(+\\mid D)}{P(+\\mid D^{c})}=\\frac{0.9}{0.09}$, a property of the test alone.`)}
+    ${gQ('odq',4,`So a positive multiplies the sick : healthy ratio by 10. With a 1% prior the ratio starts at $1:99$. What is the probability of disease after a positive? (Turn the new ratio back into a probability.)`,
+      `$\\frac1{99}\\times10=\\frac{10}{99}$, so 10 sick for every 99 healthy: $\\frac{10}{10+99}=\\frac{10}{109}\\approx0.0917$ — beat 5's answer, without computing $P(+)$.`)}
+    ${gProg('odqprog')}
+    <div id="odqdone" style="display:none">
     <p style="margin-top:14px"><b>What to notice.</b> Look at the <em>ratio</em> of the sick part to the healthy part. Stretching the middle bar into the bottom one changes both parts by the same factor, so it does not change their ratio. And the ratio after the test is always the ratio before, times $P(+\\mid D)/P(+\\mid D^{c})$ — move the prior slider and the factor in the last two readouts stays the same; only the test's sliders change it.</p>
     <p><b>Step 1: odds.</b> That ratio has a name. The <b>odds</b> of an event compare its probability with the probability that it does not happen:</p>
     <div class="defn"><span class="dt">Odds</span>$$O(D)=\\frac{P(D)}{P(D^{c})}=\\frac{P(D)}{1-P(D)},\\qquad\\text{and back again:}\\quad P(D)=\\frac{O(D)}{1+O(D)}.$$
@@ -2202,7 +2395,8 @@ function p1_odds(){
     • <b>Posterior odds</b>: $10^{-7}\\times10^{6}=0.1$, so $P=\\frac{0.1}{1.1}\\approx0.09$.</p>
     <p>In counts: among 10 million people, about 10 innocent people match by chance, plus the true source, so a match alone leaves roughly a 1-in-11 chance. Strong evidence multiplies the odds by a million, but a tiny prior can absorb it. The same mistake reads a small p-value as the probability that a result is a fluke (Module 14).</p>
     <div class="task"><b>Only the ratio is known</b>A diagnostic report says only that a positive result has a likelihood ratio of 8. Before the test, a doctor puts the patient's chance of disease at 20%. The test is positive. What is the probability of disease now? Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 0.5')}</div>`;
+    ${gateHTML('e.g. 0.5')}</div></div>`;
+  gWire('odq',[[1,1/9,0.002],[2,(0.1*0.9)/(0.9*0.09),0.003],[3,10,0.01],[4,10/109,0.002]],'odqprog','odqdone');
   const cv=document.getElementById('cvod'),dp=document.getElementById('dp'),ds=document.getElementById('ds'),df=document.getElementById('df');
   const rat=x=>x>=1?x.toFixed(2)+' : 1':'1 : '+(1/x).toFixed(2);
   function draw(){const P=+dp.value,S=+ds.value,F=+df.value,a=P*S,b=(1-P)*F,t=a+b;
@@ -2229,6 +2423,17 @@ function p1_logodds(){
     <p>In beat 6 the same positive result moved the probability by $0.08$, then $0.41$, then $0.41$ again. In beat 7 each positive simply multiplied the odds by 10. Is there a scale on which each piece of evidence is one fixed step?</p>
     <p><b>Try it.</b> This is the chart from beat 6, but the line now measures $L=\\log_{10}(\\text{odds})$; the matching probabilities are marked above it. Add results and compare the moves.</p>
     ${p1UpdHTML('g')}
+    
+    ${gQ('loq',1,`The prior odds are $\\frac1{99}$. What is $\\log_{10}\\frac1{99}$?`,
+      `$-\\log_{10}99\\approx-1.996$, about $-2$.`)}
+    ${gQ('loq',2,`A positive multiplies the odds by 10. By how much does it change $\\log_{10}(\\text{odds})$?`,
+      `$\\log_{10}(10\\,O)=\\log_{10}10+\\log_{10}O=1+\\log_{10}O$: it adds exactly 1, whatever the odds were.`)}
+    ${gQ('loq',3,`After three positives, what is the probability of disease?`,
+      `$\\log_{10}$ odds $\\approx-2+3=1$, so the odds are about $10$ (exactly $\\frac{1000}{99}$), and $P=\\frac{1000}{1099}\\approx0.91$.`)}
+    ${gQ('loq',4,`A negative multiplies the odds by $\\frac{0.1}{0.91}$. How much does it add to $\\log_{10}(\\text{odds})$?`,
+      `$\\log_{10}0.1-\\log_{10}0.91\\approx-1+0.04=-0.96$ — almost exactly undoing one positive.`)}
+    ${gProg('loqprog')}
+    <div id="loqdone" style="display:none">
     <p style="margin-top:14px"><b>What to notice.</b> Every positive moves the dot the <em>same distance</em> to the right, and every negative the same distance to the left, wherever the dot starts. Change the test sliders and the step sizes change; change the prior and only the starting point moves.</p>
     <p><b>Step 1: the log of the odds form.</b> The log of a product is the sum of the logs (Calculus, Module 1), so take the log of both sides of posterior odds = prior odds × LR (beat 7). The right side is a product, so its log splits into a sum:</p>
     <div class="eqbox">$$\\log_{10}O(\\text{posterior})=\\log_{10}O(\\text{prior})+\\log_{10}\\mathrm{LR}.$$</div>
@@ -2248,7 +2453,8 @@ function p1_logodds(){
     <p>Each result contributes its own fixed amount, so the order does not matter, and one positive and one negative nearly cancel ($1-0.96=0.04$).</p>
     <p><em>Where you will see this again.</em> Machine learning uses natural logs, $\\ln O$, called the <b>logit</b>. Converting back: $P=\\frac{O}{1+O}$; divide top and bottom by $O$ to get $P=\\frac1{1+1/O}=\\frac1{1+e^{-\\ln O}}$ — the <b>sigmoid</b> function, the S-curve above with $e$ in place of 10. A logistic-regression classifier computes a logit as a weighted sum of features and passes it through the sigmoid: each feature adds its evidence to the log-odds, just as each test result does here. A naive-Bayes spam filter adds up the log-likelihood-ratios of the words in an email.</p>
     <div class="task"><b>A day of checks</b>A machine is faulty with prior probability $0.01$. An automatic check raises an alarm with probability $\\tfrac{10}{11}$ if the machine is faulty and $\\tfrac1{11}$ if it is fine, and the checks are conditionally independent given the machine's state. Over one day, 42 checks give 23 alarms and 19 all-clears, in some order. What is the probability the machine is faulty? Enter a decimal.</div>
-    ${gateHTML('e.g. 0.5')}</div>`;
+    ${gateHTML('e.g. 0.5')}</div></div>`;
+  gWire('loq',[[1,Math.log10(1/99),0.01],[2,1,0.01],[3,1000/1099,0.003],[4,Math.log10(0.1/0.91),0.01]],'loqprog','loqdone');
   p1UpdWire('g','L');
   const pl=plot(document.getElementById('cvsg'),{xmin:-3.5,xmax:3.5,ymin:-0.08,ymax:1.08});
   pl.grid();pl.hline(0,'#2b3a4f');pl.hline(1,'#2b3a4f',true);pl.curve(x=>Math.pow(10,x)/(1+Math.pow(10,x)),'#e8b84b');
@@ -2270,6 +2476,17 @@ function p1_independence(){
     <canvas id="cvi7" width="640" height="400" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">P(A | B)</div><div class="v" id="i1">—</div></div><div class="rdc"><div class="k">P(A)</div><div class="v" id="i2">—</div></div><div class="rdc"><div class="k">P(A ∩ B)</div><div class="v" id="i3">—</div></div><div class="rdc"><div class="k">P(A) · P(B)</div><div class="v" id="i4">—</div></div></div>
     <p class="small" id="i5" style="margin-top:8px;min-height:20px"></p>
+    
+    ${gQ('inq',1,`$P(B)=0.4$. Inside $B$, $A$ happens with probability $0.3$; outside $B$, also $0.3$. What is $P(A)$?`,
+      `$0.4\\times0.3+0.6\\times0.3=0.3$ — the same as both heights. Learning whether $B$ happened would not change it.`)}
+    ${gQ('inq',2,`Same $B$, but now $A$ has probability $0.6$ inside $B$ and $0.1$ outside. What is $P(A)$?`,
+      `$0.4\\times0.6+0.6\\times0.1=0.3$ again — but now $P(A\\mid B)=0.6\\ne0.3$: learning $B$ doubles the chance of $A$.`)}
+    ${gQ('inq',3,`Back to Problem 1. What is $P(A\\cap B)$?`,
+      `$P(B)\\,P(A\\mid B)=0.4\\times0.3=0.12$, which is exactly $P(A)\\,P(B)=0.3\\times0.4$. In Problem 2 it would be $0.24\\ne0.12$.`)}
+    ${gQ('inq',4,`A loaded die shows 6 with probability $0.5$ and each other face with $0.1$. $A$ = even, $B$ = at most 2. What is $P(A\\cap B)$?`,
+      `Only the face 2: $0.1$. But $P(A)P(B)=0.7\\times0.2=0.14$. On a fair die the same two sets give $\\frac16=\\frac12\\cdot\\frac13$ exactly.`)}
+    ${gProg('inqprog')}
+    <div id="inqdone" style="display:none">
     <p style="margin-top:14px"><b>What to notice.</b> Pick <b>independent</b>: the two heights are equal, the shading is flat, and the dashed $P(A)$ line sits at that same height, so $P(A\\mid B)=P(A)$. Learning $B$ changes nothing. In every other position the dashed line lies strictly between the two heights, so $P(A\\mid B)\\ne P(A)$.</p>
     <p><em>Why.</em> $P(A)$ is the weighted average of the two heights (beat 4): $P(A)=P(B)\\,P(A\\mid B)+P(B^{c})\\,P(A\\mid B^{c})$. If both heights equal $h$, then $P(A)=h\\,\\big(P(B)+P(B^{c})\\big)=h$. If they differ, an average with positive weights lies strictly between them, so it equals neither.</p>
     <p><b>Step 1: the definition.</b> "Learning $B$ does not change $A$" is $P(A\\mid B)=P(A)$. Substitute the definition of $P(A\\mid B)$ and multiply both sides by $P(B)$:</p>
@@ -2290,7 +2507,8 @@ function p1_independence(){
     <p>The same two sets, opposite verdicts. So independence is either <em>checked</em> in a given model, by computing both sides of the product, or <em>built in</em> when the model is made: for physically separate parts of an experiment — two dice, two unrelated machines — we choose probabilities that make them independent. The two-dice grid gives each cell $\\tfrac1{36}=\\tfrac16\\cdot\\tfrac16$ for exactly this reason, and "the feeds fail independently" in the gate below is this kind of statement.</p>
         <p>For two events, independence is one equation. With three or more, you can learn about the others one at a time or several together — the next beat asks what independence must mean then.</p>
     <div class="task"><b>Two data feeds</b>A trading system uses two data feeds that fail independently: feed A on 2% of days, feed B on 5%. The system raises a warning on any day at least one feed fails. On what fraction of days is there a warning? Enter a decimal.</div>
-    ${gateHTML('e.g. 0.05')}</div>`;
+    ${gateHTML('e.g. 0.05')}</div></div>`;
+  gWire('inq',[[1,0.3,0.002],[2,0.3,0.002],[3,0.12,0.002],[4,0.1,0.002]],'inqprog','inqdone');
 
   const cv=document.getElementById('cvi7');const pl=plot(cv,{xmin:-0.06,xmax:1.06,ymin:-0.14,ymax:1.08});
   let wB=0.4,hB=0.5,hC=0.5,drag=null;
@@ -2337,6 +2555,17 @@ function p1_mutual(){
     <canvas id="cvm8" width="640" height="300" style="margin-top:10px"></canvas>
     <div style="overflow-x:auto;margin:10px 0"><table id="mt8" style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.6;text-align:center"></table></div>
     <p class="small" id="m8v" style="min-height:20px"></p>
+    
+    ${gQ('muq',1,`For the coins, what is $P(A\\cap B)$? Compare it with $P(A)P(B)$.`,
+      `Only HH: $\\frac14=\\frac12\\cdot\\frac12$. The pair passes.`)}
+    ${gQ('muq',2,`What is $P(A\\cap C)$?`,
+      `First heads and the coins match: only HH, $\\frac14=\\frac12\\cdot\\frac12$. Passes too (and so does $B\\cap C$).`)}
+    ${gQ('muq',3,`What is $P(A\\cap B\\cap C)$? Compare it with $P(A)P(B)P(C)$.`,
+      `Only HH: $\\frac14$, but $\\frac12\\cdot\\frac12\\cdot\\frac12=\\frac18$.`)}
+    ${gQ('muq',4,`If you know both $A$ and $B$ happened, what is the probability of $C$?`,
+      `Both coins are heads, so they match: $1$, against $P(C)=\\frac12$. Each pair is independent, yet $A$ and $B$ <em>together</em> settle $C$.`)}
+    ${gProg('muqprog')}
+    <div id="muqdone" style="display:none">
     <p style="margin-top:12px"><b>What to notice.</b> Every pair passes: each event has probability $\\tfrac12$, and each pairwise intersection is a single outcome, $\\tfrac14=\\tfrac12\\cdot\\tfrac12$. Yet $A$ and $B$ <em>together</em> settle $C$: if both coins are heads, they match, so $P(C\\mid A\\cap B)=1$, while $P(C)=\\tfrac12$. Checking pairs missed this, and the last row of the table — the three together — is where it shows: $P(A\\cap B\\cap C)=\\tfrac14$, but $P(A)P(B)P(C)=\\tfrac18$.</p>
 
     <p><b>Step 1: what three independent events must satisfy.</b> We want each event to be independent, in beat 9's sense, of each other event <em>and</em> of the combination of the other two. Each other event gives the three pair equations, $P(A\\cap B)=P(A)P(B)$ and so on. For the combination, apply beat 9's definition to the two events $C$ and $A\\cap B$:</p>
@@ -2364,7 +2593,8 @@ function p1_mutual(){
     <p style="margin-top:12px">With $p=0.05$ and $n=20$: twenty strategies with no real edge, each with a 5% chance of passing a significance test by luck, give $1-0.95^{20}\\approx0.64$ — probably at least one false discovery.</p>
     <p>Every product in this beat assumed independence outright. Beat 6 also multiplied — $P(++\\mid D)=0.9\\times0.9$ — for two tests where a first positive makes a second more likely. The next beat shows why that product was still allowed.</p>
     <div class="task"><b>A system in series</b>A trading system needs three components to work: a data feed, a model server, and a broker connection. On a given day they fail independently with probabilities 0.1, 0.2, and 0.05. What is the probability that the system works all day? Enter a decimal.</div>
-    ${gateHTML('e.g. 0.5')}</div>`;
+    ${gateHTML('e.g. 0.5')}</div></div>`;
+  gWire('muq',[[1,1/4,0.002],[2,1/4,0.002],[3,1/4,0.002],[4,1,0.001]],'muqprog','muqdone');
 
   /* ---- two-coin grid ---- */
   const cv=document.getElementById('cvm8');const OUT=['HH','HT','TH','TT'];
@@ -2650,6 +2880,17 @@ function p1_puzzles(){
     <div class="ctrls"><button class="btn ghost" id="mstay" style="padding:10px 14px">Stay</button><button class="btn ghost" id="mswitch" style="padding:10px 14px">Switch</button><button class="btn ghost" id="mnew" style="padding:10px 14px">New game</button></div>
     <div class="seg" id="segmauto" style="margin-top:7px"></div>
     <div class="readout"><div class="rdc"><div class="k">staying: won / played</div><div class="v" id="m1">—</div></div><div class="rdc"><div class="k">switching: won / played</div><div class="v" id="m2">—</div></div><div class="rdc"><div class="k">games discarded</div><div class="v" id="m3">—</div></div></div>
+    
+    ${gQ('pzq',1,`Play or run 100 games each way. Then work it out: you pick one of three doors at random. What is the probability that your first pick is wrong?`,
+      `$\\frac23$. If your pick is wrong, the host must leave the car's door closed, so switching wins; if it is right, switching loses. Switching wins with probability $\\frac23$.`)}
+    ${gQ('pzq',2,`With 10 doors, where the host opens 8 goat doors, what is the probability that switching wins?`,
+      `Switching wins when your first pick was wrong: $\\frac9{10}$.`)}
+    ${gQ('pzq',3,`A family has two children, each a boy or a girl with probability $\\frac12$, independently. You are told that at least one is a boy. What is the probability that both are boys?`,
+      `The equally likely cases BB, BG, GB, GG; the news rules out GG; one of the three left is BB: $\\frac13$.`)}
+    ${gQ('pzq',4,`An urn holds 2 red and 2 blue balls. Draw two without replacement. You are told the <em>second</em> is red. What is the probability that the first was red?`,
+      `$P(R_1\\cap R_2)=\\frac24\\cdot\\frac13=\\frac16$ and $P(R_2)=\\frac12$, so $\\frac{1/6}{1/2}=\\frac13$ — not $\\frac12$.`)}
+    ${gProg('pzqprog')}
+    <div id="pzqdone" style="display:none">
     <p style="margin-top:14px">With a knowing host, switching wins about $\\tfrac23$ of the time and staying about $\\tfrac13$. With ten doors, where the host opens eight goat doors, switching wins about 90% of the time.</p>
     <p><b>The quick reason.</b> Switching wins exactly when your first pick was wrong. If your pick was wrong, the car is behind one of the other doors; the host opens all of them but one and never opens the car, so the one he leaves closed is the car. If your pick was right, every other door hides a goat, so the door he leaves closed is a goat. Your first pick is wrong with probability $\\tfrac23$ (or $\\tfrac9{10}$ with ten doors), so switching wins with that probability.</p>
     <p><b>The Bayes derivation.</b> Say you pick door 1 and the host opens door 3. Let $C_i$ be "the car is behind door $i$", each with prior $\\tfrac13$, and let $H_3$ be "the host opens door 3". The likelihoods come from the host's rule:</p>
@@ -2673,7 +2914,8 @@ function p1_puzzles(){
     <p>Here $P(R_1\\cap R_2)=\\tfrac24\\cdot\\tfrac13$ by the multiplication rule, and $P(R_2)=\\tfrac12$ by the second-ball result of beat 4. Knowing the second ball is red means one of the two reds is accounted for, so the first draw had only one red among the other three balls: $\\tfrac13$. Later observations are evidence about earlier events — which is how a filter infers a past hidden state from later measurements (Module 10).</p>
     <p>In all three puzzles the calculation itself was the module's standard toolkit — conditioning, the multiplication rule, total probability, Bayes. What decided the answer was the step before it: stating exactly which event was observed, and how it came to be observed. Module 3 turns from events to <em>random variables</em> — numbers produced by random experiments — and every tool from this module carries over.</p>
         <div class="task"><b>Four doors</b>Monty Hall with four doors: one car, three goats. You pick a door. The host, who knows where the car is, opens one of the other doors that has a goat. You then switch to one of the two remaining closed doors, chosen at random. What is the probability that you win the car? Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 1/2 or 0.5')}</div>`;
+    ${gateHTML('e.g. 1/2 or 0.5')}</div></div>`;
+  gWire('pzq',[[1,2/3,0.002],[2,0.9,0.002],[3,1/3,0.002],[4,1/3,0.002]],'pzqprog','pzqdone');
 
   const cv=document.getElementById('cvm10');
   let N=3,know=true,g=null,st={sw:0,sp:0,ww:0,wp:0,disc:0};
@@ -2805,48 +3047,67 @@ function p1_problems(){
 }
 
 
+
+/* ---------- shared: guided problems (answer box + Show me, then the rest of the beat opens) ---------- */
+function gQ(pre,n,q,after){return `<div class="task" id="${pre}${n}" style="margin-top:12px"><b>Problem ${n}</b>${q}
+      <div class="entry" style="margin-top:8px"><input type="text" inputmode="text" autocomplete="off" autocapitalize="off" placeholder="fraction or decimal"><button class="btn primary" style="flex:0 0 auto;padding:12px 18px">Check</button></div>
+      <div class="miniout"></div><span class="small showme" style="cursor:pointer;text-decoration:underline;color:var(--muted)">Show me</span>
+      <div class="sol" style="display:none;margin-top:8px">${after}</div></div>`;}
+function gProg(id){return `<p id="${id}" class="small" style="margin-top:14px;padding:10px 12px;border:1px dashed var(--line);border-radius:8px;color:var(--muted)">Solve or open the problems above to continue the beat.</p>`;}
+function gWire(pre,list,progId,doneId,onDone){let solved=0;const N=list.length;p0Set(progId,'Solve or open all '+N+' problems to continue the beat — 0 of '+N+' done.');
+  list.forEach(([n,ans,tol,parse])=>{const h=document.getElementById(pre+n);let done=false;
+    const fin=()=>{if(done)return;done=true;h.querySelector('.sol').style.display='block';h.querySelector('.showme').style.display='none';++solved;
+      p0Set(progId,'Solve or open all '+N+' problems to continue the beat — '+solved+' of '+N+' done.');
+      if(solved===N){document.getElementById(progId).style.display='none';const D=document.getElementById(doneId);D.style.display='block';renderMath(D);if(onDone)onDone();}};
+    numChk(h,ans,fin,parse||snapTo(ans,tol));h.querySelector('.showme').onclick=()=>{h.querySelector('input').disabled=true;h.querySelector('button').style.display='none';h.querySelector('.miniout').textContent='';fin();};});}
+
 /* ================= Module 3: Discrete Random Variables ================= */
 function p2_recall(){recallFrom(`Module 3 moves from events to numbers: the sum of two dice, a trade's profit, the number of heads. Every probability it computes is still the probability of an event, so it rests on Modules 1 and 2. Two named distributions later in the module need the geometric series and the series for $e^x$ from Calculus Module 7.`,['p1','calc_c6'],RECALL_HINT);}
 
 /* ---------- Beat 2: random variables and the pmf ---------- */
 function p2_rv(){
   stage.innerHTML=`<div class="card"><h2>Random variables and the pmf</h2>
-    <p>Modules 1 and 2 asked yes-or-no questions: did the event happen? Often what you care about is a <em>number</em>: the sum of two dice, the profit of a trade, the number of heads in ten tosses. How do you describe the probabilities of a number?</p>
-    <div class="defn"><span class="dt">The setup</span>Roll a red and a blue die: 36 equally likely outcomes (Module 1). Pick a number to read off each outcome — for example $X$ = the sum of the two dice. The outcome (red 3, blue 5) gives $X=8$.</div>
-    <p><b>Try it.</b> Each cell of the grid is one outcome, labelled with the number $X$ reads off it. The bars show, for each value $k$, the probability that $X=k$. Tap a bar or a cell to see which outcomes give that value. Then roll, and watch the dots.</p>
+    <p>Modules 1 and 2 asked yes-or-no questions: did the event happen? Often what you care about is a <em>number</em> — the sum of two dice, the profit of a trade, the number of heads in ten tosses. How do you describe the probabilities of a number? Work it out on two dice.</p>
+    <div class="defn"><span class="dt">The setup</span>Roll a red and a blue die: 36 equally likely outcomes (Module 1). Read one number off each outcome — to start, $X$ = the sum. The grid shows every outcome with its value of $X$; tap a cell to light up all the outcomes with the same value.</div>
     <div class="slabel">X =</div><div class="seg" id="segrx" style="margin-top:4px"></div>
     <canvas id="cvr2" width="640" height="330" style="margin-top:10px"></canvas>
-    <div class="seg" id="segrr" style="margin-top:8px"></div>
     <div class="readout"><div class="rdc"><div class="k">selected value k</div><div class="v" id="r1">—</div></div><div class="rdc"><div class="k">outcomes with X = k</div><div class="v" id="r2">—</div></div><div class="rdc"><div class="k">P(X = k)</div><div class="v" id="r3">—</div></div><div class="rdc"><div class="k">rolls so far</div><div class="v" id="r4">0</div></div></div>
-    <p style="margin-top:14px"><b>What to notice.</b> Every cell lights up under exactly one bar, so the bars always add to 1. Different choices of $X$ on the same 36 outcomes give different bars. And as you roll, the share of rolls with each value (the dots) settles on the bar's height, just as Module 1's shares settled on probabilities.</p>
-    <p><b>Step 1: a random variable is a function.</b> $X$ is a fixed rule: give it an outcome $\\omega$ and it returns a number $X(\\omega)$. Sum: $X(\\text{red }3,\\text{blue }5)=8$, always. Nothing about the rule is random. The randomness is only in which outcome happens.</p>
+    ${gQ('rq',1,`What is the probability that the sum is 8?`,
+      `Five outcomes give 8: $(2,6),(3,5),(4,4),(5,3),(6,2)$, so $\\frac5{36}$. "The sum is 8" is just an event — a set of outcomes — and its probability is counted as in Module 1.`)}
+    ${gQ('rq',2,`Work out the probability of each possible sum, $2$ through $12$, and add all eleven numbers. What is the total?`,
+      `$\\frac{1+2+3+4+5+6+5+4+3+2+1}{36}=\\frac{36}{36}=1$. Every one of the 36 cells has exactly one sum, so each cell is counted in exactly one of the eleven numbers.`)}
+    ${gQ('rq',3,`What is the probability that the sum is at least 10?`,
+      `Sums of 10, 11 and 12 come from $3+2+1=6$ outcomes, so $\\frac6{36}=\\frac16$ — the total of the three numbers for 10, 11 and 12 from Problem 2.`)}
+    ${gQ('rq',4,`Now read two other numbers off each outcome: $R$ = the red die and $B$ = the blue die. Both have probability $\\frac16$ for each of $1,\\dots,6$. What is the probability that $R=B$?`,
+      `The six diagonal cells, $\\frac6{36}=\\frac16$. So $R$ and $B$ are usually <em>different</em> — on (red 3, blue 5) one reads 3 and the other 5 — even though their lists of probabilities are identical.`)}
+    ${gProg('rvprog')}
+    <div id="rvdone" style="display:none">
+    <p style="margin-top:16px"><b>What you found.</b> Reading a number off each outcome turns every value $k$ into an event, "the number equals $k$" (Problem 1). The probabilities of those events always add to 1 (Problem 2), any question about the number is a sum of them (Problem 3), and the list of them does not pin down the number itself (Problem 4). Now the names.</p>
+    <p><b>Step 1: a random variable is a function.</b> The sum is a fixed rule: give it an outcome $\\omega$ and it returns a number $X(\\omega)$ — on (red 3, blue 5) it returns 8, always. Nothing about the rule is random; the randomness is only in which outcome happens.</p>
     <div class="defn"><span class="dt">Random variable</span>A <b>random variable</b> $X$ is a function from the sample space to the real numbers: each outcome $\\omega$ is sent to one number $X(\\omega)$. It is <b>discrete</b> when its values can be listed, $k_1,k_2,\\dots$</div>
-    <p><b>Step 2: each value is an event.</b> "$X=k$" is shorthand for the set of outcomes the function sends to $k$:</p>
-    <div class="eqbox">$$\\{X=k\\}=\\{\\omega: X(\\omega)=k\\}.$$</div>
-    <p>For the sum, $\\{X=8\\}=\\{(2,6),(3,5),(4,4),(5,3),(6,2)\\}$, so $P(X=8)=\\tfrac5{36}$. It is an ordinary event, and everything from Modules 1 and 2 applies to it. Listing $P(X=k)$ for every value gives the bars:</p>
+    <p><b>Step 2: each value is an event.</b> Problem 1's event is $\\{X=k\\}=\\{\\omega: X(\\omega)=k\\}$, the outcomes the function sends to $k$. Listing its probability for every value gives the bars, now switched on in the picture above:</p>
     <div class="defn"><span class="dt">Probability mass function (pmf)</span>The <b>pmf</b> of a discrete random variable $X$ is $p_X(k)=P(X=k)$, for each value $k$.</div>
-    <p><b>Step 3: why the bars add to 1.</b> A function sends each outcome to exactly one value. So:</p>
-    <p>• The events $\\{X=k\\}$ for different $k$ are <em>disjoint</em>: no outcome is sent to two values.<br>
-    • Together they <em>cover</em> the whole sample space: every outcome is sent somewhere.</p>
-    <p>They split the sample space, so by additivity (Module 1's axioms) their probabilities add to the probability of everything:</p>
-    <div class="eqbox">$$\\sum_k p_X(k)=\\sum_k P(X=k)=P(\\Omega)=1,\\qquad p_X(k)\\ge0.$$</div>
-    <p>Those two conditions are all a pmf needs: any list of non-negative numbers adding to 1 is the pmf of some random variable.</p>
-    <p><b>Step 4: any question about $X$ is a sum of bars.</b> "$X\\ge10$" is the union of the disjoint events $\\{X=10\\},\\{X=11\\},\\{X=12\\}$, so for the sum</p>
-    <div class="eqbox">$$P(X\\ge10)=p_X(10)+p_X(11)+p_X(12)=\\tfrac3{36}+\\tfrac2{36}+\\tfrac1{36}=\\tfrac16.$$</div>
-    <p>In general $P(X\\in S)=\\sum_{k\\in S}p_X(k)$ for any set of values $S$.</p>
-    <p><b>What the pmf keeps, and what it drops.</b> The pmf records how probability is spread over the values, and forgets which outcomes produced them. Choose <b>red die</b> and then <b>blue die</b>: two different functions — on (red 3, blue 5) one gives 3 and the other 5 — with the same pmf, $\\tfrac16$ on each of $1,\\dots,6$. Two random variables can share a pmf without being equal. For most questions about one variable, the pmf is all you need; the rest of this module works with pmfs. A language model's next-token output is a pmf too: a probability for each token in its vocabulary.</p>
+    <p><b>Step 3: why Problem 2 always gives 1.</b> A function sends each outcome to exactly one value. So the events $\\{X=k\\}$ for different $k$ are <em>disjoint</em> (no outcome is sent to two values), and together they <em>cover</em> the sample space (every outcome is sent somewhere) — they form a partition. By additivity (Module 1's axioms),</p>
+    <div class="eqbox">$$\\sum_k p_X(k)=P(\\Omega)=1,\\qquad p_X(k)\\ge0.$$</div>
+    <p>Those two conditions are all a pmf needs: any list of non-negative numbers adding to 1 is the pmf of some random variable. If $X$ takes infinitely many values (later in this module), the sum is an infinite series, by the countable form of additivity.</p>
+    <p><b>Step 4: why Problem 3 is a sum of bars.</b> "$X\\ge10$" is the union of the disjoint events $\\{X=10\\},\\{X=11\\},\\{X=12\\}$. In general, for any set of values $S$,</p>
+    <div class="eqbox">$$P(X\\in S)=\\sum_{k\\in S}p_X(k).$$</div>
+    <p><b>Step 5: what Problem 4 means.</b> The pmf records how probability is spread over the values, and forgets which outcomes produced them. $R$ and $B$ have the same pmf but are different functions. For questions about one variable alone the pmf is all you need, and the rest of this module works with pmfs; questions about two variables together (like $R=B$) need more, which is Module 5. A language model's next-token output is a pmf: a probability for each token in its vocabulary.</p>
+    <p>Roll the dice above and watch the dots: the share of rolls with each value settles on its bar, just as Module 1's shares settled on probabilities.</p>
+    <div class="seg" id="segrr" style="margin-top:8px"></div>
     <div class="task"><b>Find the constant</b>A random variable $X$ takes the values $1,2,3,4$, with $P(X=k)=c\\,k$ for some constant $c$. What is $P(X\\ge3)$? Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 0.5')}</div>`;
+    ${gateHTML('e.g. 0.5')}
+    </div></div>`;
   const cv=document.getElementById('cvr2');
   const F={sum:{f:(r,b)=>r+b,lab:'sum'},max:{f:(r,b)=>Math.max(r,b),lab:'larger die'},six:{f:(r,b)=>(r===6)+(b===6),lab:'number of sixes'},diff:{f:(r,b)=>r-b,lab:'red − blue'},red:{f:(r,b)=>r,lab:'red die'},blue:{f:(r,b)=>b,lab:'blue die'}};
-  let key='sum',sel=null,rolls=[];
+  let key='sum',sel=null,rolls=[],bars=false;
   const vals=()=>{const st=new Set();for(let r=1;r<=6;r++)for(let b=1;b<=6;b++)st.add(F[key].f(r,b));return [...st].sort((x,y)=>x-y);};
   const cnt=k=>{let n=0;for(let r=1;r<=6;r++)for(let b=1;b<=6;b++)if(F[key].f(r,b)===k)n++;return n;};
   const G={x0:34,y0:34,c:42},C={x0:322,x1:624,y0:34,y1:286};
   const col=(i,n)=>`hsl(${210-170*(n>1?i/(n-1):0)},55%,${44+10*(n>1?i/(n-1):0)}%)`;
   function draw(){const V=vals(),n=V.length,maxP=Math.max(...V.map(cnt))/36;
     const obs={};rolls.forEach(([r,b])=>{const v=F[key].f(r,b);obs[v]=(obs[v]||0)+1;});
-    p0Set('r1',sel===null?'—':String(sel));p0Set('r2',sel===null?'—':String(cnt(sel)));p0Set('r3',sel===null?'—':cnt(sel)+'/36 ≈ '+(cnt(sel)/36).toFixed(3));p0Set('r4',String(rolls.length));
+    p0Set('r1',sel===null?'—':String(sel));p0Set('r2',sel===null?'—':String(cnt(sel)));p0Set('r3',sel===null||!bars?'—':cnt(sel)+'/36 ≈ '+(cnt(sel)/36).toFixed(3));p0Set('r4',String(rolls.length));
     const ctx=cv.getContext&&cv.getContext('2d');if(!ctx)return;ctx.clearRect(0,0,cv.width,cv.height);
     ctx.font=p0Font(11);ctx.fillStyle='#9fb0c4';ctx.textAlign='center';
     for(let i=1;i<=6;i++){ctx.fillText('b'+i,G.x0+(i-0.5)*G.c,G.y0-8);}ctx.textAlign='right';for(let i=1;i<=6;i++)ctx.fillText('r'+i,G.x0-6,G.y0+(i-0.5)*G.c+4);
@@ -2854,6 +3115,7 @@ function p2_rv(){
       ctx.fillStyle=on?col(i,n):'#111a28';ctx.fillRect(x+1,y+1,G.c-2,G.c-2);if(sel!==null&&v===sel){ctx.strokeStyle='#e9eef6';ctx.lineWidth=2;ctx.strokeRect(x+1.5,y+1.5,G.c-3,G.c-3);}
       ctx.fillStyle=on?'#0b111b':'#3d4f66';ctx.textAlign='center';ctx.font=p0Font(13);ctx.fillText(String(v),x+G.c/2,y+G.c/2+5);}
     ctx.font=p0Font(11);ctx.fillStyle='#9fb0c4';ctx.textAlign='left';ctx.fillText('36 outcomes (red row, blue column)',G.x0,G.y0+6*G.c+20);
+    if(!bars){ctx.fillStyle='#5d6f85';ctx.font=p0Font(12);ctx.textAlign='center';ctx.fillText('the bars appear once you have',(C.x0+C.x1)/2,(C.y0+C.y1)/2-8);ctx.fillText('worked out the problems below',(C.x0+C.x1)/2,(C.y0+C.y1)/2+10);ctx.textAlign='left';return;}
     const bw=(C.x1-C.x0)/n,H=C.y1-C.y0,top=Math.max(maxP*1.15,0.05);
     ctx.strokeStyle='#2b3a4f';ctx.beginPath();ctx.moveTo(C.x0,C.y1);ctx.lineTo(C.x1,C.y1);ctx.stroke();
     V.forEach((v,i)=>{const pk=cnt(v)/36,h=H*pk/top,x=C.x0+i*bw;ctx.fillStyle=sel===null||v===sel?col(i,n):'#1c2738';ctx.fillRect(x+2,C.y1-h,bw-4,h);
@@ -2864,9 +3126,10 @@ function p2_rv(){
     ctx.textAlign='left';ctx.fillStyle='#9fb0c4';ctx.font=p0Font(11);ctx.fillText('P(X = k) for X = '+F[key].lab+(rolls.length?'   ·   dots: share of rolls':''),C.x0,C.y0-14);ctx.textAlign='left';}
   cv.addEventListener('pointerdown',e=>{const [X,Y]=p0XY(cv,e);const V=vals();
     if(X>=G.x0&&X<G.x0+6*G.c&&Y>=G.y0&&Y<G.y0+6*G.c){const b=Math.floor((X-G.x0)/G.c)+1,r=Math.floor((Y-G.y0)/G.c)+1,v=F[key].f(r,b);sel=sel===v?null:v;draw();}
-    else if(X>=C.x0&&X<=C.x1&&Y<=C.y1+20){const i=Math.floor((X-C.x0)/((C.x1-C.x0)/V.length));if(i>=0&&i<V.length){sel=sel===V[i]?null:V[i];draw();}}
+    else if(bars&&X>=C.x0&&X<=C.x1&&Y<=C.y1+20){const i=Math.floor((X-C.x0)/((C.x1-C.x0)/V.length));if(i>=0&&i<V.length){sel=sel===V[i]?null:V[i];draw();}}
     e.preventDefault();});
-  p0Seg('segrx',[['sum','sum'],['max','larger die'],['six','number of sixes'],['diff','red − blue'],['red','red die'],['blue','blue die']],'sum',k=>{key=k;sel=null;draw();});
+  p0Seg('segrx',[['sum','sum'],['max','larger die'],['six','number of sixes'],['diff','red − blue'],['red','red die (R)'],['blue','blue die (B)']],'sum',k=>{key=k;sel=null;draw();});
+  gWire('rq',[[1,5/36,0.002],[2,1,0.001],[3,1/6,0.002],[4,1/6,0.002]],'rvprog','rvdone',()=>{bars=true;draw();});
   const roll=n=>{for(let i=0;i<n;i++)rolls.push([1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)]);draw();};
   const sr=document.getElementById('segrr');sr.innerHTML=[['1','roll once'],['100','roll 100'],['1000','roll 1,000'],['0','clear rolls']].map(m=>`<span class="segb" data-k="${m[0]}">${m[1]}</span>`).join('');
   sr.querySelectorAll('.segb').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(k==='0'){rolls=[];draw();}else roll(+k);});
@@ -2882,34 +3145,35 @@ function p2_rv(){
 /* ---------- Beat 3: the cdf ---------- */
 function p2_cdf(){
   stage.innerHTML=`<div class="card"><h2>The cdf: probability up to a point</h2>
-    <p>The pmf answers "what is the chance $X$ equals $k$?" Many questions are "at most" questions instead: is the loss at most 500 dollars, is the waiting time at most 3 days, is the larger die at most 4? Each is a sum of bars (beat 2, Step 4). Is there one function that gives all those sums at once?</p>
-    <p><b>Try it.</b> The top shows beat 2's bars for $X$. Drag the white line to any position $x$ — not just whole numbers. The bars to its left (up to and including $x$) light up, and the bottom graph plots their total against $x$.</p>
+    <p>The pmf answers "what is the chance $X$ equals $k$?" Many questions are "at most" questions instead: is the loss at most 500 dollars, is the waiting time at most 3 days? Each is a sum of bars (beat 2). Is there one function that gives all those sums at once — and is it ever easier to work with than the pmf? Work it out.</p>
+    <div class="defn"><span class="dt">The setup</span>Two fair dice again. $X$ = the sum, and $M$ = the larger of the two (the maximum).</div>
+    ${gQ('fq',1,`What is the probability that the sum is at most 4, $P(X\\le4)$?`,
+      `Sums 2, 3, 4 come from $1+2+3=6$ outcomes: $\\frac6{36}$. A running total of the bars up to 4.`)}
+    ${gQ('fq',2,`What is $P(X\\le4.5)$?`,
+      `Still $\\frac6{36}$. No sum lies between 4 and 4.5, so moving the cut-off from 4 to 4.5 adds nothing. The running total only changes when the cut-off passes a value $X$ can take.`)}
+    ${gQ('fq',3,`What is the probability that the larger die is at most 3, $P(M\\le3)$? Try to find it without listing outcomes.`,
+      `"The larger is at most 3" means <em>both</em> dice are at most 3. Each die is at most 3 with probability $\\frac36$, and the dice are independent (Module 2), so $P(M\\le3)=\\frac36\\cdot\\frac36=\\frac9{36}$.`)}
+    ${gQ('fq',4,`Now the exact value: what is $P(M=3)$? Use Problem 3.`,
+      `"$M\\le3$" splits into "$M\\le2$" and "$M=3$", which are disjoint. By Problem 3's method $P(M\\le2)=\\frac26\\cdot\\frac26=\\frac4{36}$, so $P(M=3)=\\frac9{36}-\\frac4{36}=\\frac5{36}$: the difference of two "at most" probabilities.`)}
+    ${gProg('cdfprog')}
+    <div id="cdfdone" style="display:none">
+    <p style="margin-top:16px"><b>What you found.</b> "At most" probabilities are running totals of the bars (Problem 1) that stay flat between values (Problem 2). For the maximum they are easier than the bars — a one-line product (Problem 3) — and the bars come back as differences (Problem 4). That running total is the object of this beat.</p>
+    <p><b>Step 1: the definition.</b> For every real number $x$, "$X\\le x$" is an event, so it has a probability:</p>
+    <div class="defn"><span class="dt">Cumulative distribution function (cdf)</span>$$F_X(x)=P(X\\le x),\\qquad\\text{for every real }x.$$</div>
+    <p>Drag the white line through the picture: the bars at or left of it light up, and the bottom graph plots their total.</p>
     <div class="slabel">X =</div><div class="seg" id="segcx" style="margin-top:4px"></div>
     <canvas id="cvc3" width="640" height="440" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">line at x</div><div class="v" id="f1">—</div></div><div class="rdc"><div class="k">bars at or left of x</div><div class="v" id="f2">—</div></div><div class="rdc"><div class="k">their total = P(X ≤ x)</div><div class="v" id="f3">—</div></div></div>
-    <p style="margin-top:14px"><b>What to notice.</b> The total is a staircase. Between two values of $X$ — say from $x=4$ to $x=4.9$ for the sum — nothing changes: no new bar is crossed. At each value it jumps up, and the jump is exactly that value's bar. Far left it is 0, far right it is 1, and it never goes down.</p>
-    <p><b>Step 1: the definition.</b> For every real number $x$, "$X\\le x$" is an event — the outcomes $X$ sends to a number at most $x$ — so it has a probability:</p>
-    <div class="defn"><span class="dt">Cumulative distribution function (cdf)</span>$$F_X(x)=P(X\\le x),\\qquad\\text{for every real }x.$$</div>
-    <p><b>Step 2: from the pmf to the cdf.</b> "$X\\le x$" is the union of the disjoint events $\\{X=k\\}$ for the values $k\\le x$ (beat 2, Step 4), so</p>
-    <div class="eqbox">$$F_X(x)=\\sum_{k\\le x}p_X(k).$$</div>
-    <p>That is the running total you dragged. It explains the flat steps: moving $x$ between two values adds no new $k$ to the sum.</p>
-    <p><b>Step 3: from the cdf back to the pmf.</b> For a value $k$ of the sum, with the next value below it $k-1$: "$X\\le k$" splits into the disjoint events "$X\\le k-1$" and "$X=k$". Additivity gives $F_X(k)=F_X(k-1)+p_X(k)$, so</p>
+    <p style="margin-top:14px"><b>Step 2: from the pmf to the cdf (Problems 1–2).</b> "$X\\le x$" is the union of the disjoint events $\\{X=k\\}$ for the values $k\\le x$, so $F_X(x)=\\sum_{k\\le x}p_X(k)$ — the running total. Between two values no new $k$ joins the sum, so the graph is a flat step; at each value it jumps.</p>
+    <p><b>Step 3: from the cdf back to the pmf (Problem 4).</b> For a value $k$, with the next value below it $k-1$, "$X\\le k$" splits into the disjoint events "$X\\le k-1$" and "$X=k$". Additivity gives $F_X(k)=F_X(k-1)+p_X(k)$, so</p>
     <div class="eqbox">$$p_X(k)=F_X(k)-F_X(k-1):$$</div>
-    <p>each bar is the height of the jump at $k$. The pmf and the cdf carry the same information; either one rebuilds the other. On the staircase the filled dot sits on <em>top</em> of each jump: $F_X(k)$ includes the bar at $k$, because the definition says $\\le$.</p>
-    <p><b>Step 4: what every cdf looks like.</b></p>
-    <p>• <em>Never decreases.</em> If $x\\le y$, every outcome with $X\\le x$ also has $X\\le y$, so $\\{X\\le x\\}\\subseteq\\{X\\le y\\}$, and a smaller event cannot have a larger probability (Module 1). So $F_X(x)\\le F_X(y)$.<br>
-    • <em>From 0 to 1.</em> Below the smallest value no outcome qualifies, so $F_X=0$; at or above the largest, every outcome does, so $F_X=1$. (A variable with infinitely many values only approaches 0 and 1 at the far ends.)</p>
-    <p><b>Step 5: intervals.</b> For $a\\lt b$, "$X\\le b$" splits into the disjoint events "$X\\le a$" and "$a\\lt X\\le b$", so</p>
-    <div class="eqbox">$$P(a\\lt X\\le b)=F_X(b)-F_X(a).$$</div>
-    <p>For the sum: $P(4\\lt X\\le 7)=F_X(7)-F_X(4)=\\tfrac{21}{36}-\\tfrac6{36}=\\tfrac{15}{36}$, the bars at 5, 6, 7. Watch the strict and non-strict signs: $a$ itself is excluded, $b$ included.</p>
-    <h2 style="margin-top:22px">Where the cdf is easier than the pmf: the maximum</h2>
-    <p>Let $M$ be the larger of the two dice. Its pmf takes some counting. Its cdf takes one line. "The larger die is at most $m$" means "both dice are at most $m$", and the dice are independent (Module 2), so the probability is a product:</p>
-    <div class="eqbox">$$F_M(m)=P(\\text{red}\\le m)\\,P(\\text{blue}\\le m)=\\frac m6\\cdot\\frac m6=\\frac{m^2}{36},\\qquad m=1,\\dots,6.$$</div>
-    <p>Then Step 3 gives the pmf as the jumps:</p>
-    <div class="eqbox">$$p_M(m)=F_M(m)-F_M(m-1)=\\frac{m^2-(m-1)^2}{36}=\\frac{2m-1}{36}.$$</div>
-    <p>Check it in the picture with <b>larger die</b>: the bars are $\\tfrac1{36},\\tfrac3{36},\\tfrac5{36},\\dots,\\tfrac{11}{36}$. The same trick works for the largest of any number of independent variables, and for the smallest through "all are above $m$". The cdf is also the one description that works for every random variable, including the continuous ones of Module 4, where every single value has probability 0 and the pmf is useless.</p>
-    <div class="task"><b>Three dice</b>Roll three fair dice. Let $Y$ be the largest of the three. What is $P(Y=5)$? Enter a fraction or a decimal.</div>
-    ${gateHTML('e.g. 1/6 or 0.17')}</div>`;
+    <p>each bar is the height of the jump at $k$. The pmf and the cdf carry the same information. The filled dot sits on <em>top</em> of each jump, because $F_X(k)$ includes the bar at $k$ — the definition says $\\le$.</p>
+    <p><b>Step 4: what every cdf looks like.</b> It never decreases: if $x\\le y$, then $\\{X\\le x\\}\\subseteq\\{X\\le y\\}$, and a smaller event cannot have a larger probability (Module 1). It is 0 below the smallest value, where no outcome qualifies, and 1 at or above the largest, where every outcome does. (A variable with infinitely many values only approaches 0 and 1 at the far ends.)</p>
+    <p><b>Step 5: intervals.</b> For $a\\lt b$, "$X\\le b$" splits into "$X\\le a$" and "$a\\lt X\\le b$", so $P(a\\lt X\\le b)=F_X(b)-F_X(a)$. For the sum, $P(4\\lt X\\le7)=\\frac{21}{36}-\\frac6{36}=\\frac{15}{36}$, the bars at 5, 6, 7.</p>
+    <p><b>Step 6: the maximum, in general (Problems 3–4).</b> For the larger of two dice, $F_M(m)=\\frac m6\\cdot\\frac m6=\\frac{m^2}{36}$, and the jumps give $p_M(m)=\\frac{m^2-(m-1)^2}{36}=\\frac{2m-1}{36}$ — check it with <b>larger die</b> in the picture. The same works for the largest of any number of independent variables, with <em>any</em> pmfs, where listing outcomes is hopeless. The cdf is also the one description that works for every random variable, including the continuous ones of Module 4, where every single value has probability 0 and the pmf says nothing.</p>
+    <div class="task"><b>The worst day</b>A strategy's daily loss $X$, in thousands, takes the values $0,1,2,3$ with probabilities $0.5,\\ 0.3,\\ 0.15,\\ 0.05$. Losses on different days are independent. Over 5 trading days, let $W$ be the worst (largest) daily loss. What is $P(W=2)$? Enter a decimal.</div>
+    ${gateHTML('e.g. 0.25')}
+    </div></div>`;
   const cv=document.getElementById('cvc3');
   const F={sum:{f:(r,b)=>r+b,lab:'sum'},max:{f:(r,b)=>Math.max(r,b),lab:'larger die'},six:{f:(r,b)=>(r===6)+(b===6),lab:'number of sixes'}};
   let key='sum',x=7,drag=false;
@@ -2941,11 +3205,86 @@ function p2_cdf(){
   const end=()=>drag=false;cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
   p0Seg('segcx',[['sum','sum'],['max','larger die'],['six','number of sixes']],'sum',k=>{key=k;const P=pmf();x=(P[0][0]+P[P.length-1][0])/2;draw();});
   draw();
-  numChk(document.getElementById('gate'),61/216,()=>{addReveal(`<div class="rh">✓ 61/216 ≈ 0.282</div>
-    <p>The cdf first: "the largest is at most $m$" means all three dice are at most $m$, and the dice are independent, so $F_Y(m)=\\left(\\tfrac m6\\right)^3$. Then the jump at 5 (Step 3):</p>
-    <div class="eqbox">$$P(Y=5)=F_Y(5)-F_Y(4)=\\frac{5^3}{216}-\\frac{4^3}{216}=\\frac{125-64}{216}=\\frac{61}{216}\\approx0.282.$$</div>
-    <p>In words: of the $125$ ways for all three dice to be at most 5, remove the $64$ where all are at most 4 — what is left has at least one 5 and nothing higher.</p>`);},snapTo(61/216,0.0015));
-  setHints([`Find the cdf first: P(Y ≤ m) = P(all three dice ≤ m). Then P(Y = 5) is the jump F(5) − F(4).`,`F(m) = (m/6)³, so P(Y = 5) = (125 − 64)/216 = 61/216 ≈ 0.282.`]);
+  gWire('fq',[[1,6/36,0.002],[2,6/36,0.002],[3,9/36,0.002],[4,5/36,0.002]],'cdfprog','cdfdone',()=>draw());
+  numChk(document.getElementById('gate'),0.95**5-0.8**5,()=>{addReveal(`<div class="rh">✓ ≈ 0.446</div>
+    <p>The values are not equally likely, so there is nothing to count — work through the cdf. One day's cdf: $F_X(1)=0.5+0.3=0.8$ and $F_X(2)=0.8+0.15=0.95$. "The worst of 5 days is at most $m$" means every day is at most $m$; the days are independent, so $F_W(m)=F_X(m)^5$. Then the jump at 2:</p>
+    <div class="eqbox">$$P(W=2)=F_W(2)-F_W(1)=0.95^5-0.8^5\\approx0.7738-0.3277=0.446.$$</div>
+    <p>A one-in-twenty bad day becomes a better-than-one-in-five event over a week ($1-0.95^5\\approx0.23$ for $W=3$) — the reason risk limits are set on the worst day, not the typical one.</p>`);},snapTo(0.95**5-0.8**5,0.0015));
+  setHints([`Work with "at most": the worst of 5 days is at most m exactly when every day is at most m. So P(W ≤ m) = P(X ≤ m)⁵. Then take the jump at 2.`,`P(X ≤ 2) = 0.95, P(X ≤ 1) = 0.8, so P(W = 2) = 0.95⁵ − 0.8⁵ ≈ 0.446.`]);
+}
+
+
+/* ---------- Beat 4: expectation ---------- */
+function p2_expect(){
+  stage.innerHTML=`<div class="card"><h2>Expectation: the long-run average</h2>
+    <p>A pmf is a whole list of numbers. Often you want one: if you repeat the experiment many times, what do you get <em>on average</em>? For a trading strategy that is the question — what does a trade earn on average? Work it out before it gets a name.</p>
+    <p><b>The tool.</b> The bars are a pmf. Draw from it many times and watch the running average of the draws (the gold mark on the axis). You can drag a bar's top to reshape the pmf; the others rescale so the total stays 1.</p>
+    <div class="seg" id="segep"></div>
+    <canvas id="cve3" width="640" height="300" style="margin-top:10px"></canvas>
+    <div class="seg" id="segedraw" style="margin-top:8px"></div>
+    <div class="readout"><div class="rdc"><div class="k">draws so far</div><div class="v" id="e1">0</div></div><div class="rdc"><div class="k">average of the draws</div><div class="v" id="e2">—</div></div><div class="rdc"><div class="k">balance point</div><div class="v" id="e3">—</div></div></div>
+    ${gQ('xq',1,`Choose <b>fair die</b> and draw a few thousand times. Where does the average settle? Then exactly: in 600 rolls you expect about 100 of each face. What is the average of those 600 results?`,
+      `$\\frac{100\\cdot1+100\\cdot2+\\cdots+100\\cdot6}{600}=\\frac{1+2+\\cdots+6}{6}=3.5$. The draws' average settles there too — at a value no single roll can show.`)}
+    ${gQ('xq',2,`Choose <b>trade</b>: a trade makes $+2$ with probability $0.3$, $0$ with probability $0.5$, and $-1$ with probability $0.2$. Over 1,000 trades, about how much is the total profit?`,
+      `About 300 trades make $+2$ (total $600$), 500 make $0$, and 200 make $-1$ (total $-200$): about $400$.`)}
+    ${gQ('xq',3,`So what is the average profit per trade?`,
+      `$\\frac{400}{1000}=0.4$. Written out, that is $\\frac{300\\cdot2+500\\cdot0+200\\cdot(-1)}{1000}=2\\cdot0.3+0\\cdot0.5+(-1)\\cdot0.2$: each value times its probability, added up. The 1,000 cancelled.`)}
+    ${gQ('xq',4,`Now trade twice the size and pay a fee of $0.1$ per trade: the profit becomes $2X-0.1$, where $X$ is the profit above. What is the average profit per trade now?`,
+      `The values become $2\\cdot2-0.1=3.9$, $-0.1$ and $2\\cdot(-1)-0.1=-2.1$, with the same probabilities: $3.9\\cdot0.3+(-0.1)\\cdot0.5+(-2.1)\\cdot0.2=1.17-0.05-0.42=0.7$. That is $2\\cdot0.4-0.1$: doubling and paying the fee did the same to the average.`)}
+    ${gProg('xprog')}
+    <div id="xdone" style="display:none">
+    <p style="margin-top:16px"><b>What you found.</b> The long-run average of many draws is each value times its probability, added up (Problems 1–3). It need not be a value the variable can take (3.5). And scaling and shifting the variable scales and shifts its average (Problem 4).</p>
+    <p><b>Step 1: from the average of draws to a formula.</b> Draw $n$ times and let $n_k$ be the number of draws equal to $k$. The draws add up to $\\sum_k k\\,n_k$, so their average is</p>
+    <div class="eqbox">$$\\frac1n\\sum_k k\\,n_k=\\sum_k k\\cdot\\frac{n_k}{n}\;\\longrightarrow\;\\sum_k k\\,p_X(k)\\quad\\text{as }n\\text{ grows,}$$</div>
+    <p>because each share $\\frac{n_k}{n}$ settles at $p_X(k)$ (Module 1). The limit is the definition:</p>
+    <div class="defn"><span class="dt">Expectation (expected value, mean)</span>$$E[X]=\\sum_k k\\,p_X(k),$$ the probability-weighted average of the values of $X$. It is also written $\\mu$ or $\\mu_X$. (If $X$ has infinitely many values, the sum is a series, and $E[X]$ exists when the series of $|k|\\,p_X(k)$ converges — Calculus Module 7.)</div>
+    <p><b>Step 2: the balance point.</b> The triangle now under the bars sits at $E[X]$. Think of each bar as a weight $p_X(k)$ at position $k$ on a weightless rod. The rod balances where the weights' pulls cancel: each weight pulls with its distance times its size, $(k-\\mu)\\,p_X(k)$, and at $\\mu=E[X]$ these add to zero —</p>
+    <div class="eqbox">$$\\sum_k (k-\\mu)\\,p_X(k)=\\sum_k k\\,p_X(k)-\\mu\\sum_k p_X(k)=\\mu-\\mu\\cdot1=0.$$</div>
+    <p>Drag a bar far from the centre and watch the triangle move toward it: a small probability far away pulls as hard as a large one nearby.</p>
+    <p><b>Step 3: scaling and shifting (Problem 4).</b> Let $Y=aX+b$. $Y$ equals $ak+b$ exactly when $X$ equals $k$, so it takes the value $ak+b$ with probability $p_X(k)$. Then</p>
+    <div class="eqbox">$$E[aX+b]=\\sum_k (ak+b)\\,p_X(k)=a\\sum_k k\\,p_X(k)+b\\sum_k p_X(k)=a\\,E[X]+b.$$</div>
+    <p>Changing units (dollars to cents, $a=100$), adding a fixed fee ($b=-0.1$), or sizing a position ($a=2$) all act on the average the same way.</p>
+    <p><b>Step 4: what the average is not.</b> It is not a value you will necessarily see (3.5 on a die), and it is not the most likely value. Choose <b>long shot</b>: a ticket that usually pays nothing but occasionally pays 10. Its average is pulled far to the right by the rare large payout, while most draws land at 0. A bet that wins 100 with probability $0.01$ and loses 1 otherwise has $E=100\\cdot0.01-1\\cdot0.99=0.01\\gt0$, yet loses on 99% of plays. The expectation is the long-run average per trial — in trading, the <em>edge</em> — and it says nothing about how far single results stray from it. That spread is the next beat.</p>
+    <div class="task"><b>After costs</b>A strategy's trade gains 3 with probability $0.25$, gains 1 with probability $0.25$, and loses 2 with probability $0.5$. You trade $1.5$ units per trade, so gains and losses scale by $1.5$, and the broker charges a fixed $0.1$ per trade. What is the expected net profit per trade? Enter a decimal.</div>
+    ${gateHTML('e.g. 0.25')}
+    </div></div>`;
+  const cv=document.getElementById('cve3');
+  const P={die:[[1,1],[2,1],[3,1],[4,1],[5,1],[6,1]],trade:[[-1,0.2],[0,0.5],[2,0.3]],sum:[[2,1],[3,2],[4,3],[5,4],[6,5],[7,6],[8,5],[9,4],[10,3],[11,2],[12,1]],shot:[[0,0.5],[1,0.2],[2,0.1],[3,0.08],[5,0.07],[10,0.05]]};
+  let key='die',pm=null,draws=0,tot=0,shown=false,drag=-1;
+  const norm=()=>{const t=pm.reduce((a,q)=>a+q[1],0);pm=pm.map(q=>[q[0],q[1]/t]);};
+  const load=k=>{key=k;pm=P[k].map(q=>q.slice());norm();draws=0;tot=0;draw();};
+  const mean=()=>pm.reduce((a,q)=>a+q[0]*q[1],0);
+  const L=40,R=620,T=24,B=230;
+  const rng=()=>{const v=pm.map(q=>q[0]);return [Math.min(...v)-1,Math.max(...v)+1];};
+  const X=v=>{const [a,b]=rng();return L+(R-L)*(v-a)/(b-a);};
+  const top=()=>Math.max(0.2,Math.max(...pm.map(q=>q[1]))*1.2);
+  function draw(){const mu=mean();p0Set('e1',String(draws));p0Set('e2',draws?(tot/draws).toFixed(3):'—');p0Set('e3',shown?'E[X] = '+mu.toFixed(3):'—');
+    const ctx=cv.getContext&&cv.getContext('2d');if(!ctx)return;ctx.clearRect(0,0,cv.width,cv.height);const [a,b]=rng(),H=B-T,tp=top();
+    ctx.strokeStyle='#2b3a4f';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(L,B);ctx.lineTo(R,B);ctx.stroke();
+    const step=b-a>14?2:1;ctx.font=p0Font(11);ctx.fillStyle='#9fb0c4';ctx.textAlign='center';for(let v=Math.ceil(a);v<=b;v+=step)ctx.fillText(String(v),X(v),B+15);
+    const bw=Math.min(34,(X(1)-X(0))*0.7);
+    pm.forEach(([v,q])=>{const h=H*q/tp;ctx.fillStyle='#4a6fa5';ctx.fillRect(X(v)-bw/2,B-h,bw,h);ctx.fillStyle='#e9eef6';ctx.fillRect(X(v)-bw/2,B-h-3,bw,3);
+      if(pm.length<=7){ctx.fillStyle='#d6e0ee';ctx.fillText(q.toFixed(2),X(v),B-h-8);}});
+    if(draws){const xa=X(tot/draws);ctx.fillStyle='#e8b84b';ctx.beginPath();ctx.moveTo(xa,B-2);ctx.lineTo(xa-7,B-14);ctx.lineTo(xa+7,B-14);ctx.closePath();ctx.fill();ctx.font=p0Font(11);ctx.fillText('average of draws',xa,B-18);}
+    if(shown){const xm=X(mu);ctx.fillStyle='#e9eef6';ctx.beginPath();ctx.moveTo(xm,B+20);ctx.lineTo(xm-12,B+42);ctx.lineTo(xm+12,B+42);ctx.closePath();ctx.fill();ctx.fillStyle='#d6e0ee';ctx.font=p0Font(12);ctx.fillText('E[X] = '+mu.toFixed(2),xm,B+58);}
+    ctx.textAlign='left';}
+  const hit=px=>{let best=-1,bd=1e9;pm.forEach(([v],i)=>{const d=Math.abs(X(v)-px);if(d<bd){bd=d;best=i;}});return bd<24?best:-1;};
+  const setH=(i,py)=>{const tp=top(),q=Math.max(0.002,Math.min(0.95,(B-py)/(B-T)*tp));const rest=1-pm[i][1];const scale=rest>0?(1-q)/rest:0;pm=pm.map((r,j)=>j===i?[r[0],q]:[r[0],r[1]*scale]);norm();draws=0;tot=0;draw();};
+  cv.style.touchAction='none';
+  cv.addEventListener('pointerdown',e=>{const [px,py]=p0XY(cv,e);drag=hit(px);if(drag>=0){try{cv.setPointerCapture(e.pointerId);}catch(z){}setH(drag,py);}e.preventDefault();});
+  cv.addEventListener('pointermove',e=>{if(drag<0)return;const [,py]=p0XY(cv,e);setH(drag,py);e.preventDefault();});
+  const end=()=>drag=-1;cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  const sample=()=>{let u=Math.random(),c=0;for(const [v,q] of pm){c+=q;if(u<c)return v;}return pm[pm.length-1][0];};
+  p0Seg('segep',[['die','fair die'],['trade','trade'],['sum','sum of two dice'],['shot','long shot']],'die',load);
+  const sd=document.getElementById('segedraw');sd.innerHTML=[['10','draw 10'],['100','draw 100'],['1000','draw 1,000'],['0','clear']].map(m=>`<span class="segb" data-k="${m[0]}">${m[1]}</span>`).join('');
+  sd.querySelectorAll('.segb').forEach(b=>b.onclick=()=>{const n=+b.dataset.k;if(!n){draws=0;tot=0;}else for(let i=0;i<n;i++){tot+=sample();draws++;}draw();});
+  load('die');
+  gWire('xq',[[1,3.5,0.01],[2,400,1],[3,0.4,0.002],[4,0.7,0.002]],'xprog','xdone',()=>{shown=true;draw();});
+  numChk(document.getElementById('gate'),-0.1,()=>{addReveal(`<div class="rh">✓ −0.1</div>
+    <p>First the expectation of one unit: $E[X]=3\\cdot0.25+1\\cdot0.25+(-2)\\cdot0.5=0.75+0.25-1=0$. The net profit is $1.5X-0.1$, so by Step 3</p>
+    <div class="eqbox">$$E[1.5X-0.1]=1.5\\,E[X]-0.1=1.5\\cdot0-0.1=-0.1.$$</div>
+    <p>A strategy that wins half its trades and has zero edge before costs loses $0.1$ per trade after them — and sizing up does not help, because $1.5\\times0=0$.</p>`);},snapTo(-0.1,0.002));
+  setHints([`Find E[X] for one unit first (each value times its probability). Then the net profit is 1.5X − 0.1, so use E[aX + b] = a·E[X] + b.`,`E[X] = 0.75 + 0.25 − 1 = 0, so E[1.5X − 0.1] = 1.5·0 − 0.1 = −0.1.`]);
 }
 
 /* ================= boot ================= */
