@@ -150,7 +150,7 @@ const MODULES=[
   outro:`Every beat in this module is about one pair: a hypothesis and the evidence for it. Conditioning restricts the sample space to what you know, and everything else follows from that.`,
   outroHTML:`<div style="text-align:left;margin-top:14px"><p style="margin-bottom:6px"><b>The module in one frame.</b> $H$ is a hypothesis, with prior probability $P(H)$; $E$ is evidence.</p><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px;line-height:1.5"><tr style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.3px"><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">beat</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">concept</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">in symbols</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">what it says about $H$ and $E$</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">2</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Conditional probability</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(E\\mid H)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">How likely the evidence is in the world where the hypothesis holds. Conditioning means restricting to what is known.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">3</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Multiplication and chain rule</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H\\cap E)=P(H)\\,P(E\\mid H)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">The chance of hypothesis and evidence together, built one step at a time.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">4</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Total probability</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(E)=P(H)P(E\\mid H)+P(H^{c})P(E\\mid H^{c})$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">The overall chance of the evidence: an average over the hypotheses, weighted by their priors.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">5</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Bayes' theorem</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H\\mid E)=\\dfrac{P(H)\\,P(E\\mid H)}{P(E)}$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Flips the question: from evidence given hypothesis to hypothesis given evidence. Prior becomes posterior.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">6</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Repeated evidence</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H\\mid E_1\\cap E_2)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">The posterior after $E_1$ is the prior for $E_2$.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">7</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Odds and likelihood ratio</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$\\dfrac{P(H\\mid E)}{P(H^{c}\\mid E)}=\\dfrac{P(H)}{P(H^{c})}\\cdot\\dfrac{P(E\\mid H)}{P(E\\mid H^{c})}$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">The strength of the evidence as one number, separate from the prior. No $P(E)$ needed.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">8</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Log-odds</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$\\log O_{\\text{post}}=\\log O_{\\text{prior}}+\\log\\mathrm{LR}$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Each piece of evidence adds a fixed amount; order does not matter.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">9</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Independence</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H\\mid E)=P(H)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Evidence that says nothing about the hypothesis.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">10</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Many events</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H\\mid E_1\\cap E_2)=P(H)$, products for trials</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">No combination of the others moves any one event; repeated trials multiply.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">11</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Conditional independence</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(E_1\\cap E_2\\mid H)=P(E_1\\mid H)\\,P(E_2\\mid H)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">How pieces of evidence relate to each other: unrelated once the hypothesis is known. Lets every update reuse the same likelihoods.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">12</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Explaining away</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(H_1\\mid E\\cap H_2)\\ne P(H_1\\mid E)$</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Two independent hypotheses for the same evidence become dependent once the evidence is seen.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">13</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Simpson's paradox</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">$P(E\\mid H)$ within groups vs overall</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">The same comparison can reverse depending on which grouping you condition on, because the group weights differ.</td></tr><tr><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">14</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">Puzzles</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">what exactly is $E$?</td><td style="padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top">State exactly what was observed and how it was produced; that fixes $P(E\mid H)$.</td></tr></table></div></div>`,
   beats:[p1_recall,p1_conditional,p1_multiply,p1_total,p1_bayes,p1_update,p1_odds,p1_logodds,p1_independence,p1_mutual,p1_condind,p1_explain,p1_simpson,p1_puzzles,p1_problems]},
- {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:false,outro:'',beats:[]},
+ {id:'p2',title:'Discrete Random Variables',sub:'Pmf and cdf, expectation and variance, indicators and linearity; Bernoulli, binomial, geometric, categorical, and Poisson.',ready:true,outro:`A random variable is a function from outcomes to numbers; its pmf lists the probability of each value.`,beats:[p2_recall,p2_rv]},
  {id:'p3',title:'Continuous Random Variables',sub:'Densities as limits of histograms; uniform, exponential, Gaussian, and lognormal; transforming a variable with the $|g\'|$ factor.',ready:false,outro:'',beats:[]},
  {id:'p4',title:'Joint Distributions',sub:'Marginals and conditionals, covariance and correlation, the covariance matrix, the multivariate Gaussian, and the Jacobian density formula.',ready:false,outro:'',beats:[]},
  {id:'p5',title:'Limit Theorems & Monte Carlo',sub:'Markov, Chebyshev, and Hoeffding; the law of large numbers; the central limit theorem; Monte Carlo and importance sampling; fat tails.',ready:false,outro:'',beats:[]},
@@ -369,6 +369,32 @@ const RECALL={
     a:"$P=\\prod_{j=1}^{k-1}(1-\\tfrac jn)$. Use $1-x\\approx e^{-x}$ on each factor and add the exponents: $\\sum_{j=1}^{k-1}\\tfrac jn=\\tfrac{k(k-1)}{2n}=\\binom k2/n$.", b:11},
    {q:"State inclusion–exclusion for three events, and explain why each outcome in the union is counted exactly once.",
     a:"$|A\\cup B\\cup C|=$ singles $-$ pairwise intersections $+$ the triple. An outcome in $m$ of the events is counted $\\binom m1-\\binom m2+\\cdots$ times, which is $1$ because $(1-1)^m=0$.", b:12}
+ ]},
+ p1:{title:'Module 2 — Conditioning, Independence & Bayes', cues:[
+   {q:"What is $P(A\\mid B)$, and why does the definition divide by $P(B)$?",
+    a:"The long-run share of $A$ among the trials where $B$ happened: $P(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}$. Only the part of $A$ inside $B$ counts, and dividing by $P(B)$ rescales $B$ to total 1 — $B$ becomes the new sample space.", b:1},
+   {q:"How does the chain rule build the probability of several events together?",
+    a:"One conditional at a time: $P(A\\cap B\\cap C)=P(A)\\,P(B\\mid A)\\,P(C\\mid A\\cap B)$. A language model scores a sentence this way, token by token.", b:2},
+   {q:"State total probability, and read it as an average.",
+    a:"If $B_1,\\dots,B_n$ split the sample space, $P(A)=\\sum_i P(B_i)\\,P(A\\mid B_i)$: the average of the conditional probabilities, weighted by how likely each case is.", b:3},
+   {q:"State Bayes' theorem. Why does a positive result on an accurate test for a rare disease still leave the disease unlikely?",
+    a:"$P(H\\mid E)=\\frac{P(H)\\,P(E\\mid H)}{P(E)}$. The healthy group is so much larger that its few false positives outnumber the true positives from the small sick group: the base rate matters.", b:4},
+   {q:"How do you update on a second piece of evidence, and what does that require?",
+    a:"The posterior after the first becomes the prior for the second. That reuses the same likelihoods only if the pieces of evidence are conditionally independent given the hypothesis.", b:5},
+   {q:"State the odds form of Bayes' theorem.",
+    a:"Posterior odds = prior odds × likelihood ratio, with $\\mathrm{LR}=\\frac{P(E\\mid H)}{P(E\\mid H^{c})}$. No $P(E)$ is needed, and the LR describes the evidence alone.", b:6},
+   {q:"What happens to the update in log-odds?",
+    a:"$\\log O_{\\text{post}}=\\log O_{\\text{prior}}+\\log\\mathrm{LR}$: each piece of evidence adds a fixed amount, so many pieces add up and their order does not matter.", b:7},
+   {q:"When are $A$ and $B$ independent, and why are disjoint events with positive probabilities never independent?",
+    a:"When $P(A\\cap B)=P(A)P(B)$, equivalently $P(A\\mid B)=P(A)$: learning $B$ changes nothing. Disjoint events have overlap $0\\ne P(A)P(B)$; learning one rules the other out.", b:8},
+   {q:"What does mutual independence of many events require, and what is $P(\\text{at least one success})$ in $n$ independent trials?",
+    a:"A product equation for every group of two or more. Then any run of results is a product, and $P(\\text{at least one})=1-(1-p)^n$.", b:9},
+   {q:"What is conditional independence, and how can two test results be dependent yet conditionally independent?",
+    a:"$P(A\\cap B\\mid C)=P(A\\mid C)\\,P(B\\mid C)$. Given disease status the tests are unrelated, but overall a first positive raises the chance of disease and so of a second positive: a common cause.", b:10},
+   {q:"What is explaining away?",
+    a:"Two independent causes become dependent once you condition on an effect they share: if the grass is wet and the sprinkler ran, rain is no longer needed to explain it.", b:11},
+   {q:"How can one option be better in every group but worse overall?",
+    a:"Each overall rate is a weighted average of the group rates, with each option's own weights. If the options are spread differently across the groups, the weights can reverse the comparison (Simpson's paradox).", b:12}
  ]},
  calc_c0:{title:'Calculus · Module 1 — Functions & the Building Blocks', ext:{course:'calc',m:0}, cues:[
    {q:"What are the log laws, and what does $\\ln$ do to a product of many factors?",
@@ -2776,6 +2802,80 @@ function p1_problems(){
     <p>(c) Total probability over what he opens: $P(H_3)\\cdot\\frac12+P(H_2)\\cdot1=\\frac23\\cdot\\frac12+\\frac13\\cdot1=\\frac23$. Still $\\frac23$: switching wins exactly when your first pick was wrong, whatever his rule. His rule changes only how that $\\frac23$ is spread over the doors he might open.</p>`)
   +`</div>`;
   setHints([]);unlock();
+}
+
+
+/* ================= Module 3: Discrete Random Variables ================= */
+function p2_recall(){recallFrom(`Module 3 moves from events to numbers: the sum of two dice, a trade's profit, the number of heads. Every probability it computes is still the probability of an event, so it rests on Modules 1 and 2. Two named distributions later in the module need the geometric series and the series for $e^x$ from Calculus Module 7.`,['p1','calc_c6'],RECALL_HINT);}
+
+/* ---------- Beat 2: random variables and the pmf ---------- */
+function p2_rv(){
+  stage.innerHTML=`<div class="card"><h2>Random variables and the pmf</h2>
+    <p>Modules 1 and 2 asked yes-or-no questions: did the event happen? Often what you care about is a <em>number</em>: the sum of two dice, the profit of a trade, the number of heads in ten tosses. How do you describe the probabilities of a number?</p>
+    <div class="defn"><span class="dt">The setup</span>Roll a red and a blue die: 36 equally likely outcomes (Module 1). Pick a number to read off each outcome — for example $X$ = the sum of the two dice. The outcome (red 3, blue 5) gives $X=8$.</div>
+    <p><b>Try it.</b> Each cell of the grid is one outcome, labelled with the number $X$ reads off it. The bars show, for each value $k$, the probability that $X=k$. Tap a bar or a cell to see which outcomes give that value. Then roll, and watch the dots.</p>
+    <div class="slabel">X =</div><div class="seg" id="segrx" style="margin-top:4px"></div>
+    <canvas id="cvr2" width="640" height="330" style="margin-top:10px"></canvas>
+    <div class="seg" id="segrr" style="margin-top:8px"></div>
+    <div class="readout"><div class="rdc"><div class="k">selected value k</div><div class="v" id="r1">—</div></div><div class="rdc"><div class="k">outcomes with X = k</div><div class="v" id="r2">—</div></div><div class="rdc"><div class="k">P(X = k)</div><div class="v" id="r3">—</div></div><div class="rdc"><div class="k">rolls so far</div><div class="v" id="r4">0</div></div></div>
+    <p style="margin-top:14px"><b>What to notice.</b> Every cell lights up under exactly one bar, so the bars always add to 1. Different choices of $X$ on the same 36 outcomes give different bars. And as you roll, the share of rolls with each value (the dots) settles on the bar's height, just as Module 1's shares settled on probabilities.</p>
+    <p><b>Step 1: a random variable is a function.</b> $X$ is a fixed rule: give it an outcome $\\omega$ and it returns a number $X(\\omega)$. Sum: $X(\\text{red }3,\\text{blue }5)=8$, always. Nothing about the rule is random. The randomness is only in which outcome happens.</p>
+    <div class="defn"><span class="dt">Random variable</span>A <b>random variable</b> $X$ is a function from the sample space to the real numbers: each outcome $\\omega$ is sent to one number $X(\\omega)$. It is <b>discrete</b> when its values can be listed, $k_1,k_2,\\dots$</div>
+    <p><b>Step 2: each value is an event.</b> "$X=k$" is shorthand for the set of outcomes the function sends to $k$:</p>
+    <div class="eqbox">$$\\{X=k\\}=\\{\\omega: X(\\omega)=k\\}.$$</div>
+    <p>For the sum, $\\{X=8\\}=\\{(2,6),(3,5),(4,4),(5,3),(6,2)\\}$, so $P(X=8)=\\tfrac5{36}$. It is an ordinary event, and everything from Modules 1 and 2 applies to it. Listing $P(X=k)$ for every value gives the bars:</p>
+    <div class="defn"><span class="dt">Probability mass function (pmf)</span>The <b>pmf</b> of a discrete random variable $X$ is $p_X(k)=P(X=k)$, for each value $k$.</div>
+    <p><b>Step 3: why the bars add to 1.</b> A function sends each outcome to exactly one value. So:</p>
+    <p>• The events $\\{X=k\\}$ for different $k$ are <em>disjoint</em>: no outcome is sent to two values.<br>
+    • Together they <em>cover</em> the whole sample space: every outcome is sent somewhere.</p>
+    <p>They split the sample space, so by additivity (Module 1's axioms) their probabilities add to the probability of everything:</p>
+    <div class="eqbox">$$\\sum_k p_X(k)=\\sum_k P(X=k)=P(\\Omega)=1,\\qquad p_X(k)\\ge0.$$</div>
+    <p>Those two conditions are all a pmf needs: any list of non-negative numbers adding to 1 is the pmf of some random variable.</p>
+    <p><b>Step 4: any question about $X$ is a sum of bars.</b> "$X\\ge10$" is the union of the disjoint events $\\{X=10\\},\\{X=11\\},\\{X=12\\}$, so for the sum</p>
+    <div class="eqbox">$$P(X\\ge10)=p_X(10)+p_X(11)+p_X(12)=\\tfrac3{36}+\\tfrac2{36}+\\tfrac1{36}=\\tfrac16.$$</div>
+    <p>In general $P(X\\in S)=\\sum_{k\\in S}p_X(k)$ for any set of values $S$.</p>
+    <p><b>What the pmf keeps, and what it drops.</b> The pmf records how probability is spread over the values, and forgets which outcomes produced them. Choose <b>red die</b> and then <b>blue die</b>: two different functions — on (red 3, blue 5) one gives 3 and the other 5 — with the same pmf, $\\tfrac16$ on each of $1,\\dots,6$. Two random variables can share a pmf without being equal. For most questions about one variable, the pmf is all you need; the rest of this module works with pmfs. A language model's next-token output is a pmf too: a probability for each token in its vocabulary.</p>
+    <div class="task"><b>Find the constant</b>A random variable $X$ takes the values $1,2,3,4$, with $P(X=k)=c\\,k$ for some constant $c$. What is $P(X\\ge3)$? Enter a fraction or a decimal.</div>
+    ${gateHTML('e.g. 0.5')}</div>`;
+  const cv=document.getElementById('cvr2');
+  const F={sum:{f:(r,b)=>r+b,lab:'sum'},max:{f:(r,b)=>Math.max(r,b),lab:'larger die'},six:{f:(r,b)=>(r===6)+(b===6),lab:'number of sixes'},diff:{f:(r,b)=>r-b,lab:'red − blue'},red:{f:(r,b)=>r,lab:'red die'},blue:{f:(r,b)=>b,lab:'blue die'}};
+  let key='sum',sel=null,rolls=[];
+  const vals=()=>{const st=new Set();for(let r=1;r<=6;r++)for(let b=1;b<=6;b++)st.add(F[key].f(r,b));return [...st].sort((x,y)=>x-y);};
+  const cnt=k=>{let n=0;for(let r=1;r<=6;r++)for(let b=1;b<=6;b++)if(F[key].f(r,b)===k)n++;return n;};
+  const G={x0:34,y0:34,c:42},C={x0:322,x1:624,y0:34,y1:286};
+  const col=(i,n)=>`hsl(${210-170*(n>1?i/(n-1):0)},55%,${44+10*(n>1?i/(n-1):0)}%)`;
+  function draw(){const V=vals(),n=V.length,maxP=Math.max(...V.map(cnt))/36;
+    const obs={};rolls.forEach(([r,b])=>{const v=F[key].f(r,b);obs[v]=(obs[v]||0)+1;});
+    p0Set('r1',sel===null?'—':String(sel));p0Set('r2',sel===null?'—':String(cnt(sel)));p0Set('r3',sel===null?'—':cnt(sel)+'/36 ≈ '+(cnt(sel)/36).toFixed(3));p0Set('r4',String(rolls.length));
+    const ctx=cv.getContext&&cv.getContext('2d');if(!ctx)return;ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.font=p0Font(11);ctx.fillStyle='#9fb0c4';ctx.textAlign='center';
+    for(let i=1;i<=6;i++){ctx.fillText('b'+i,G.x0+(i-0.5)*G.c,G.y0-8);}ctx.textAlign='right';for(let i=1;i<=6;i++)ctx.fillText('r'+i,G.x0-6,G.y0+(i-0.5)*G.c+4);
+    for(let r=1;r<=6;r++)for(let b=1;b<=6;b++){const v=F[key].f(r,b),i=V.indexOf(v),x=G.x0+(b-1)*G.c,y=G.y0+(r-1)*G.c,on=sel===null||v===sel;
+      ctx.fillStyle=on?col(i,n):'#111a28';ctx.fillRect(x+1,y+1,G.c-2,G.c-2);if(sel!==null&&v===sel){ctx.strokeStyle='#e9eef6';ctx.lineWidth=2;ctx.strokeRect(x+1.5,y+1.5,G.c-3,G.c-3);}
+      ctx.fillStyle=on?'#0b111b':'#3d4f66';ctx.textAlign='center';ctx.font=p0Font(13);ctx.fillText(String(v),x+G.c/2,y+G.c/2+5);}
+    ctx.font=p0Font(11);ctx.fillStyle='#9fb0c4';ctx.textAlign='left';ctx.fillText('36 outcomes (red row, blue column)',G.x0,G.y0+6*G.c+20);
+    const bw=(C.x1-C.x0)/n,H=C.y1-C.y0,top=Math.max(maxP*1.15,0.05);
+    ctx.strokeStyle='#2b3a4f';ctx.beginPath();ctx.moveTo(C.x0,C.y1);ctx.lineTo(C.x1,C.y1);ctx.stroke();
+    V.forEach((v,i)=>{const pk=cnt(v)/36,h=H*pk/top,x=C.x0+i*bw;ctx.fillStyle=sel===null||v===sel?col(i,n):'#1c2738';ctx.fillRect(x+2,C.y1-h,bw-4,h);
+      if(sel===v){ctx.strokeStyle='#e9eef6';ctx.lineWidth=2;ctx.strokeRect(x+2,C.y1-h,bw-4,h);}
+      ctx.fillStyle='#9fb0c4';ctx.textAlign='center';ctx.font=p0Font(n>8?10:12);ctx.fillText(String(v),x+bw/2,C.y1+14);
+      if(n<=7||sel===v){ctx.fillStyle='#d6e0ee';ctx.fillText(cnt(v)+'/36',x+bw/2,C.y1-h-6);}
+      if(rolls.length){const sh=(obs[v]||0)/rolls.length,y=C.y1-H*Math.min(sh,top)/top;ctx.fillStyle='#e8b84b';ctx.beginPath();ctx.arc(x+bw/2,y,4,0,7);ctx.fill();}});
+    ctx.textAlign='left';ctx.fillStyle='#9fb0c4';ctx.font=p0Font(11);ctx.fillText('P(X = k) for X = '+F[key].lab+(rolls.length?'   ·   dots: share of rolls':''),C.x0,C.y0-14);ctx.textAlign='left';}
+  cv.addEventListener('pointerdown',e=>{const [X,Y]=p0XY(cv,e);const V=vals();
+    if(X>=G.x0&&X<G.x0+6*G.c&&Y>=G.y0&&Y<G.y0+6*G.c){const b=Math.floor((X-G.x0)/G.c)+1,r=Math.floor((Y-G.y0)/G.c)+1,v=F[key].f(r,b);sel=sel===v?null:v;draw();}
+    else if(X>=C.x0&&X<=C.x1&&Y<=C.y1+20){const i=Math.floor((X-C.x0)/((C.x1-C.x0)/V.length));if(i>=0&&i<V.length){sel=sel===V[i]?null:V[i];draw();}}
+    e.preventDefault();});
+  p0Seg('segrx',[['sum','sum'],['max','larger die'],['six','number of sixes'],['diff','red − blue'],['red','red die'],['blue','blue die']],'sum',k=>{key=k;sel=null;draw();});
+  const roll=n=>{for(let i=0;i<n;i++)rolls.push([1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)]);draw();};
+  const sr=document.getElementById('segrr');sr.innerHTML=[['1','roll once'],['100','roll 100'],['1000','roll 1,000'],['0','clear rolls']].map(m=>`<span class="segb" data-k="${m[0]}">${m[1]}</span>`).join('');
+  sr.querySelectorAll('.segb').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(k==='0'){rolls=[];draw();}else roll(+k);});
+  draw();
+  numChk(document.getElementById('gate'),0.7,()=>{addReveal(`<div class="rh">✓ 7/10 = 0.7</div>
+    <p>A pmf must add to 1 (Step 3): $c\\cdot1+c\\cdot2+c\\cdot3+c\\cdot4=10c=1$, so $c=\\tfrac1{10}$. Then "$X\\ge3$" is the sum of two bars (Step 4):</p>
+    <div class="eqbox">$$P(X\\ge3)=p_X(3)+p_X(4)=\\tfrac3{10}+\\tfrac4{10}=\\tfrac7{10}.$$</div>
+    <p>The pmf here was given as a formula, not built from a sample space — Step 3's two conditions are all it needs to be valid.</p>`);},snapTo(0.7,0.0015));
+  setHints([`The probabilities must add to 1: c·1 + c·2 + c·3 + c·4 = 1. Find c, then add the bars for 3 and 4.`,`10c = 1, so c = 1/10, and P(X ≥ 3) = 3/10 + 4/10 = 7/10.`]);
 }
 
 /* ================= boot ================= */
