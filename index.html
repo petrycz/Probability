@@ -3496,7 +3496,6 @@ function p2_indep(){
   stage.innerHTML=`<div class="card"><h2>Independent random variables</h2>
     <p>Beat 7 found that $\\operatorname{Var}(X+Y)=\\operatorname{Var}(X)+\\operatorname{Var}(Y)+2\\operatorname{Cov}(X,Y)$, and that for two independent coin-flip days the cross term came out exactly 0. Does independence always make it 0 — and what does "independent" even mean for random variables, rather than events?</p>
     <p><b>The tool.</b> Two dice, red $R$ and blue $B$. Each cell of the grid is one outcome, labelled with the product $RB$. Choose <b>separate dice</b>, or <b>glued dice</b>, where the blue die always shows $7$ minus the red one.</p>
-    ${gAnchor(`Two dice are two experiments, but $RB$ or $R+B$ only means something if $R$ and $B$ are functions on <em>one</em> $\\Omega$. Take $\\Omega$ to be all 36 ordered pairs $\\omega=(r,b)$ (Module 1's multiplication principle) and let each variable read its own coordinate: $R(\\omega)=r$, $B(\\omega)=b$. Then $RB$ is the ordinary pointwise product $\\omega\\mapsto R(\\omega)\\,B(\\omega)$, one number per cell. For example $\\omega=(3,5)$ gives $R(\\omega)B(\\omega)=15$. Laid out as the grid, those 36 numbers are the matrix $\\mathbf r\\mathbf b^{\\mathsf T}$ with $\\mathbf r=\\mathbf b=(1,\\dots,6)$: an outer product, the shape of $uu^{\\mathsf T}$ in Linear Algebra Module 3. So the outer product of two separate variables and the pointwise product on the space of pairs are the same thing. When $X$ and $Y$ already share one $\\Omega$ (the single die in Step 2), no space of pairs is needed: multiply outcome by outcome.`)}
     <div class="seg" id="segid"></div>
     <canvas id="cvi8" width="640" height="300" style="margin-top:10px"></canvas>
     <div class="readout"><div class="rdc"><div class="k">E[R]</div><div class="v" id="i1">—</div></div><div class="rdc"><div class="k">E[B]</div><div class="v" id="i2">—</div></div><div class="rdc"><div class="k">E[RB]</div><div class="v" id="i3">—</div></div><div class="rdc"><div class="k">E[R]·E[B]</div><div class="v" id="i4">—</div></div></div>
@@ -3569,43 +3568,38 @@ function p2_indep(){
 
 function p2_sqrtn(){
   stage.innerHTML=`<div class="card"><h2>The square-root law</h2>
-    <p>Beat 7 gave the variance of a sum of two variables: the two variances plus twice the covariance. Beat 8 showed that independent variables have covariance 0. A strategy trades many independent days. How does the standard deviation of the total — how far a typical history ends from the expected total (beat 5) — grow with the number of days $n$?</p>
-    <p><b>The picture.</b> Each day wins $+1$ with probability $0.55$ and loses $1$ with probability $0.45$: mean $\\mu=0.1$, standard deviation $\\sigma\\approx0.995$ (beat 5). Each grey line is one simulated history, the running total after $n$ days. The gold line is the expected total $n\\mu$. The blue band is the expected total plus or minus one standard deviation of the total; below you find out why its half-width is $\\sqrt n\\,\\sigma$.</p>
+    <p>Beat 8 showed that independent variables have zero covariance. A year of trading is 250 days, not two. As the number of independent days grows, how fast does the total's typical swing grow compared with its expected value?</p>
+    <p><b>The picture.</b> Each day wins $+1$ with probability $0.55$ and loses $1$ with probability $0.45$: mean $\\mu=0.1$, standard deviation $\\sigma\\approx0.995$ (beat 5). Each grey line is one simulated history, the running total after $n$ days. The gold line is the expected total $n\\mu$; the blue band is the expected total plus or minus $\\sqrt n\\,\\sigma$.</p>
     <canvas id="cvq9" width="640" height="300"></canvas>
     <div class="row" style="margin-top:8px"><button class="btn" id="q9new">New 40 histories</button></div>
     <div class="readout"><div class="rdc"><div class="k">expected total, day 250</div><div class="v" id="q1">25</div></div><div class="rdc"><div class="k">√250·σ</div><div class="v" id="q2">15.7</div></div><div class="rdc"><div class="k">histories ending in band</div><div class="v" id="q3">—</div></div></div>
-    <p class="small">From day 100 to day 250 the expected total grows 2.5 times, but the band's half-width only about 1.6 times.</p>
-    ${gQ('qq',1,`Three independent days, each with variance 1. Beat 7's formula with three terms is: the three variances, plus twice the covariance of each pair (1 and 2, 1 and 3, 2 and 3). What is the variance of the 3-day total?`,
-      `$\\operatorname{Var}=1+1+1+2\\big(\\operatorname{Cov}_{12}+\\operatorname{Cov}_{13}+\\operatorname{Cov}_{23}\\big)$. The days are independent, so each covariance is $0$ (beat 8). Variance $=3$.`)}
-    ${gQ('qq',2,`100 independent days, each with standard deviation 1. What is the standard deviation of the 100-day total?`,
-      `Each variance is $1^2=1$, the covariances are $0$, so the variance of the total is $100$ and its standard deviation is $\\sqrt{100}=10$. The expected total is 100 times one day's; the standard deviation only 10 times.`)}
+    <p class="small">The band's half-width grows like a square root: day 100 to day 250 multiplies the days by 2.5 but the width by only about 1.6. Below you find out why.</p>
+    ${gQ('qq',1,`Expand $(D_1+D_2+D_3)^2$, where $D_i$ is day $i$'s deviation from its mean. Apart from the three squares $D_1^2,D_2^2,D_3^2$, how many different mixed products $D_iD_j$ (with $i\\lt j$) appear?`,
+      `$(D_1+D_2+D_3)^2=D_1^2+D_2^2+D_3^2+2D_1D_2+2D_1D_3+2D_2D_3$. Three mixed products: $D_1D_2$, $D_1D_3$, $D_2D_3$, each twice.`)}
+    ${gQ('qq',2,`Three independent days, each with variance 1. Average the expansion of Problem 1: what is the variance of the 3-day total? (Beat 8: independent variables have covariance 0.)`,
+      `Each $E[D_i^2]=1$, each $E[D_iD_j]=\\operatorname{Cov}=0$. Variance $1+1+1+0=3$.`)}
+    ${gQ('qq',3,`100 independent days, each with standard deviation 1. What is the standard deviation of the 100-day total?`,
+      `The variance is $100\\times1=100$, so the standard deviation is $\\sqrt{100}=10$ — not $100$.`)}
+    ${gQ('qq',4,`Same 100 days. The average day is the total divided by 100. What is its standard deviation? (Beat 5: $\\sigma_{aX}=|a|\\,\\sigma_X$.)`,
+      `$\\frac1{100}\\times10=0.1$.`)}
     ${gProg('qprog')}
     <div id="qdone" style="display:none">
-    <p style="margin-top:16px"><b>What you found.</b> With independent days the variances simply add, so the variance of the total grows like $n$, and the standard deviation — the square root of the variance — grows like $\\sqrt n$. That is the whole law. Steps 1–2 check that beat 7's formula really extends to $n$ terms and that every cross term is 0.</p>
-    <p><b>Step 1: the variance of a sum of $n$.</b> Example first, three days. Write $D_i=X_i-\\mu_i$ for day $i$'s deviation from its mean. The total's mean is $\\mu_1+\\mu_2+\\mu_3$ (beat 6), so its deviation is $D_1+D_2+D_3$ (as in beat 7, Step 1). Square it:</p>
+    <p style="margin-top:16px"><b>What you found.</b> Three independent days of variance 1 gave a total of variance 3, and 100 such days a standard deviation of 10, not 100; averaging those 100 days shrank the spread to $0.1$. The steps below show why the spread grows like $\\sqrt n$.</p>
+    <p><b>Step 1: the square of a long sum.</b> For $X_1+\\cdots+X_n$, the mean is $\\mu_1+\\cdots+\\mu_n$ (beat 6), so the deviation of the total is $D_1+\\cdots+D_n$ with $D_i=X_i-\\mu_i$, exactly as in beat 7, Step 1. Squaring a sum of $n$ numbers gives every product $D_iD_j$: the $n$ squares $D_i^2$ (when $i=j$), and each mixed pair twice ($D_1D_2$ and $D_2D_1$). For three terms,</p>
     <div class="eqbox">$$(D_1+D_2+D_3)^2=D_1^2+D_2^2+D_3^2+2D_1D_2+2D_1D_3+2D_2D_3.$$</div>
-    <p>Average each term (linearity, beat 6). $E[D_i^2]=\\operatorname{Var}(X_i)$ (beat 5) and $E[D_iD_j]=\\operatorname{Cov}(X_i,X_j)$ (beat 7), so</p>
-    <div class="eqbox">$$\\operatorname{Var}(X_1+X_2+X_3)=\\operatorname{Var}(X_1)+\\operatorname{Var}(X_2)+\\operatorname{Var}(X_3)+2\\operatorname{Cov}(X_1,X_2)+2\\operatorname{Cov}(X_1,X_3)+2\\operatorname{Cov}(X_2,X_3).$$</div>
-    <p>With $n$ days the square has the same shape: the $n$ squares $D_i^2$, plus $2D_iD_j$ for every pair $i\\lt j$ (there are $\\binom n2$ pairs, Module 1). So the variance of the total is the sum of the $n$ variances plus twice the sum of all $\\binom n2$ covariances.</p>
-    <p><b>Step 2: independence removes every cross term.</b> Take one pair, days 1 and 2. $D_1$ is $X_1$ shifted by the constant $\\mu_1$, so $\\{D_1=a\\}=\\{X_1=a+\\mu_1\\}$; the same holds for $D_2$. So $D_1$ and $D_2$ are independent because $X_1$ and $X_2$ are, and beat 8's product rule applies: $E[D_1D_2]=E[D_1]\\,E[D_2]$. Each factor is 0, because a deviation averages to 0: $E[D_1]=E[X_1]-\\mu_1=0$ (beat 6). So $\\operatorname{Cov}(X_1,X_2)=0\\cdot0=0$, and the same argument works for every pair.</p>
-    <p>The argument only ever used two days at a time, so it needs each pair to be independent, not Module 2, beat 10's stronger mutual independence.</p>
-    <p><b>Step 3: the law.</b> Take $n$ independent days, each with mean $\\mu$ and standard deviation $\\sigma$, so variance $\\sigma^2$. Then</p>
-    <div class="eqbox">$$\\begin{aligned}E[\\text{total}]&=n\\mu\\\\ \\operatorname{Var}(\\text{total})&=\\underbrace{\\sigma^2+\\cdots+\\sigma^2}_{n}=n\\sigma^2\\\\ \\text{SD}(\\text{total})&=\\sqrt{n\\sigma^2}=\\sqrt n\\,\\sigma\\end{aligned}$$</div>
-    <p>Problem 2 is this with $n=100$, $\\sigma=1$. In the picture, $n=250$ and $\\sigma\\approx0.995$ give $\\sqrt{250}\\times0.995\\approx15.7$: most histories end within about 15.7 of the expected 25.</p>
-    <p style="margin-top:18px"><b>What this means for a backtest.</b> You never see a strategy's edge $\\mu$, its expected daily profit. What you see is one backtest of $n$ days, and your estimate of $\\mu$ is that backtest's average daily profit, $\\bar X=\\frac{\\text{total}}{n}$. A different $n$-day history would have given a different average, so $\\bar X$ is itself a random variable: a function of the $n$-day history. Its standard deviation says how far your estimate typically lands from the true $\\mu$.</p>
-    ${gQ('qr',3,`A 100-day backtest, daily standard deviation 1. The average is the total times $\\frac1{100}$, and multiplying by a constant $a$ multiplies the standard deviation by $|a|$ (beat 5). What is the standard deviation of the average?`,
-      `The total has standard deviation $10$ (Problem 2), so the average has $\\frac1{100}\\times10=0.1$.`)}
-    ${gQ('qr',4,`You want the estimate twice as precise: standard deviation $0.05$ instead of $0.1$. How many days of backtest does that take?`,
-      `With $n$ days the total has standard deviation $\\sqrt n$, so the average has $\\frac{\\sqrt n}{n}=\\frac1{\\sqrt n}$. Setting $\\frac1{\\sqrt n}=0.05$ gives $\\sqrt n=20$, $n=400$: four times the data for twice the precision.`)}
-    ${gProg('rprog')}
-    <div id="rdone" style="display:none">
-    <p style="margin-top:16px"><b>Step 4: the precision of an average.</b> In general the average is the total times $\\frac1n$, so by beat 5's scaling rule</p>
-    <div class="eqbox">$$\\operatorname{Var}(\\bar X)=\\left(\\tfrac1n\\right)^2 n\\sigma^2=\\frac{\\sigma^2}{n},\\qquad \\text{SD}(\\bar X)=\\frac{\\sigma}{\\sqrt n}.$$</div>
-    <p>The estimate does home in on $\\mu$, but slowly: halving its error takes four times the days (Problem 4). This is also why Module 1's long-run shares settled down at all; Module 6 makes it precise.</p>
-    <p><b>Step 5: annualising.</b> Over $n$ days the expected total divided by its standard deviation is $\\frac{n\\mu}{\\sqrt n\\,\\sigma}=\\sqrt n\\cdot\\frac\\mu\\sigma$. That ratio for one day is the daily Sharpe ratio $\\frac\\mu\\sigma$; over a year of 252 trading days it is $\\sqrt{252}$ times larger. That is why a daily Sharpe ratio is multiplied by $\\sqrt{252}$ — and the rule is only valid when the days are independent, since it rests on Step 2.</p>
-    <div class="task"><b>How long a backtest?</b>A strategy's daily profit is $+3$ with probability $0.2$, $+1$ with probability $0.5$, and $-2$ with probability $0.3$ (beat 5's gate: mean $0.5$, variance $3.25$). Days are independent. How many backtest days are needed for the standard deviation of the average daily profit to be $0.1$?</div>
-    ${gateHTML('e.g. 200')}
-    </div></div></div>`;
+    <p>With $n$ terms the same thing happens: the squares $D_1^2,\\dots,D_n^2$, plus $2D_iD_j$ for every pair $i\\lt j$ — that is $\\frac{n(n-1)}2$ pairs (Module 1's $\\binom n2$; Problem 1 had $\\binom32=3$).</p>
+    <p><b>Step 2: average every term.</b> The variance of the total is the average of this square. Average term by term (linearity, beat 6):</p>
+    <div class="eqbox">$$E\\Big[\\big(\\textstyle\\sum_i D_i\\big)^2\\Big]=\\sum_i E[D_i^2]+2\\sum_{i\\lt j}E[D_iD_j].$$</div>
+    <p>By definition $E[D_i^2]=\\operatorname{Var}(X_i)$ (beat 5) and $E[D_iD_j]=\\operatorname{Cov}(X_i,X_j)$ (beat 7), so</p>
+    <div class="eqbox">$$\\operatorname{Var}(X_1+\\cdots+X_n)=\\sum_i\\operatorname{Var}(X_i)+2\\sum_{i\\lt j}\\operatorname{Cov}(X_i,X_j).$$</div>
+    <p>If every pair $X_i,X_j$ is independent, each covariance is 0 (beat 8), every cross term drops, and the variances add: $\\operatorname{Var}(X_1+\\cdots+X_n)=\\operatorname{Var}(X_1)+\\cdots+\\operatorname{Var}(X_n)$. The formula only ever involves two variables at a time, so independence of each pair is all it needs; Module 2, beat 10's stronger mutual independence is not required. Problem 2 is this with three 1s.</p>
+    <p><b>Step 3: the square-root law.</b> Take $n$ independent days, each with mean $\\mu$ and standard deviation $\\sigma$. The total has mean $n\\mu$ (beat 6) and variance $\\sigma^2+\\cdots+\\sigma^2=n\\sigma^2$ (Step 2), so its standard deviation is $\\sqrt{n\\sigma^2}=\\sqrt n\\,\\sigma$. The expected profit grows like $n$, the typical swing only like $\\sqrt n$ — Problem 3, and the band in the picture above.</p>
+    <p><b>Step 4: what it means.</b></p>
+    <p>• <em>Annualising.</em> The ratio of mean to standard deviation is $\\frac{n\\mu}{\\sqrt n\\,\\sigma}=\\sqrt n\\cdot\\frac\\mu\\sigma$. So a daily Sharpe ratio is multiplied by $\\sqrt{252}$ to annualise it — valid only if the days are independent.<br>
+    • <em>Averages settle.</em> The average of $n$ days is the total times $\\frac1n$, so by beat 5's scaling rule its variance is $\\left(\\frac1n\\right)^2n\\sigma^2=\\frac{\\sigma^2}n$ and its standard deviation is $\\frac\\sigma{\\sqrt n}$ (Problem 4). That is how far a backtest's average can be trusted, and why Module 1's long-run shares settled at all (Module 6 makes this precise).</p>
+    <div class="task"><b>A year of trading</b>A strategy's daily profit is $+3$ with probability $0.2$, $+1$ with probability $0.5$, and $-2$ with probability $0.3$ (beat 5's gate: mean $0.5$, variance $3.25$). Days are independent. What is the standard deviation of the total profit over 250 trading days? Enter a decimal.</div>
+    ${gateHTML('e.g. 20')}
+    </div></div>`;
   const cv=document.getElementById('cvq9'),N=250,mu=0.1,sd=Math.sqrt(1-0.01);
   p0Set('q2',(Math.sqrt(N)*sd).toFixed(1));
   function draw(){const paths=[];let inb=0;for(let k=0;k<40;k++){let t=0;const pa=[0];for(let n=1;n<=N;n++){t+=Math.random()<0.55?1:-1;pa.push(t);}paths.push(pa);if(Math.abs(t-N*mu)<=Math.sqrt(N)*sd)inb++;}
@@ -3621,12 +3615,12 @@ function p2_sqrtn(){
     ctx.strokeStyle='#d4a640';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(X(0),Y(0));ctx.lineTo(X(N),Y(N*mu));ctx.stroke();ctx.lineWidth=1;
     ctx.textAlign='left';ctx.font=p0Font(11);ctx.fillStyle='#d4a640';ctx.fillText('n·μ',X(N)-28,Y(N*mu)-6);ctx.fillStyle='#6fa8e8';ctx.fillText('n·μ ± √n·σ',X(150),Y(150*mu+Math.sqrt(150)*sd)-8);}
   document.getElementById('q9new').onclick=draw;draw();
-  gWire('qq',[[1,3,0.001],[2,10,0.01]],'qprog','qdone');
-  gWire('qr',[[3,0.1,0.001],[4,400,0.5]],'rprog','rdone');
-  numChk(document.getElementById('gate'),325,()=>{addReveal(`<div class="rh">✓ 325</div>
-    <p>The standard deviation of the average is $\\frac{\\sigma}{\\sqrt n}$ (Step 4), with $\\sigma=\\sqrt{3.25}\\approx1.80$. Set $\\frac{\\sqrt{3.25}}{\\sqrt n}=0.1$: square both sides, $\\frac{3.25}{n}=0.01$, so $n=325$ days — well over a year.</p>
-    <p>Even then, a typical backtest's average is off by $0.1$ from a true edge of $0.5$, a 20% error, and only if the days really are independent.</p>`);},snapTo(325,1));
-  setHints([`The average of n independent days has standard deviation σ/√n (Step 4), with σ² = 3.25. Set that equal to 0.1 and solve for n.`,`3.25/n = 0.01, so n = 325.`]);
+  gWire('qq',[[1,3,0.001],[2,3,0.001],[3,10,0.01],[4,0.1,0.001]],'qprog','qdone');
+  const g=Math.sqrt(250*3.25);
+  numChk(document.getElementById('gate'),g,()=>{addReveal(`<div class="rh">✓ ≈ 28.5</div>
+    <p>The days are independent, so the variances add (Step 2): $\\operatorname{Var}(\\text{total})=250\\times3.25=812.5$, and the standard deviation is $\\sqrt{812.5}\\approx28.5$ — that is, $\\sqrt{250}\\times\\sqrt{3.25}\\approx15.8\\times1.80$ (Step 3).</p>
+    <p>The expected total is $250\\times0.5=125$. A typical year lands within about $28.5$ of that, so a year that makes 70 or 180 is entirely ordinary — one year of results says little about the edge.</p>`);},snapTo(g,0.05));
+  setHints([`Independent days: the variance of the total is the sum of the daily variances, 250 × 3.25. Then take the square root.`,`Var = 250 × 3.25 = 812.5, so the standard deviation is √812.5 ≈ 28.5.`]);
 }
 
 /* ================= boot ================= */
