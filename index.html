@@ -563,7 +563,7 @@ function p0_intro(){
     ${gProg('wpqprog')}
     <div id="wpqdone" style="display:none">
     <p style="margin-top:14px">After one roll the share can only be 0 or 1. Each new roll changes it by at most $1/n$, so as $n$ grows the swings shrink and the path flattens toward a fixed level. That level is the probability of the event:</p>
-    <div class="eqbox">$$P(A)\;=\;\\text{the value the share }\\frac{n_A}{n}\\text{ settles at as }n\\text{ grows}.$$</div>
+    <div class="eqbox">$$P(A)\\;=\\;\\text{the value the share }\\frac{n_A}{n}\\text{ settles at as }n\\text{ grows}.$$</div>
     <p>Now watch the last readout while rolling: the six bars add to exactly $1$, every time. Each roll lands on exactly one face, so the six counts add to $n$ and the six shares add to $n/n=1$ — at every $n$, not only in the limit. Probabilities are the values these shares settle at, so they keep the same two properties:</p>
     <div class="defn"><span class="dt">Why probabilities live between 0 and 1, and total 1</span>
       <b>$0\\le P(A)\\le1$.</b> A share of the trials is never negative and never more than all of them. $P(A)=1$ means $A$ happens on all of the trials in the long run; $P(A)=0$, on none of them.<br>
@@ -1206,7 +1206,7 @@ function p0_multiply(){
 
     <h2 style="margin-top:22px">Ordered selections and permutations</h2>
     <p>Two cases come up constantly. Choose $k$ items in order from $n$ distinct items:</p>
-    <div class="defn"><span class="dt">With repetition</span>Every stage has all $n$ options: $\;n\\cdot n\\cdots n=n^k$ sequences.</div>
+    <div class="defn"><span class="dt">With repetition</span>Every stage has all $n$ options: $\\;n\\cdot n\\cdots n=n^k$ sequences.</div>
     <div class="defn"><span class="dt">Without repetition</span>Stage 1 has $n$ options, stage 2 has $n-1$ (one item is used up, whichever it was), stage 3 has $n-2$, and stage $k$ has $n-k+1$:
       $$n(n-1)(n-2)\\cdots(n-k+1)=\\frac{n!}{(n-k)!},$$
       where $n!=n(n-1)\\cdots2\\cdot1$ is <b>$n$ factorial</b>; dividing by $(n-k)!$ cancels the factors below $n-k+1$. Each such sequence is an <b>ordered selection</b>, or $k$-permutation. Taking all $k=n$ items gives the number of <b>permutations</b> (orderings) of $n$ items, $n!$ — which requires $0!=1$ so that $\\frac{n!}{0!}=n!$.</div>
@@ -1925,7 +1925,7 @@ function p1_conditional(){
     <div id="cdqdone" style="display:none">
     <p style="margin-top:14px"><b>Step 2: count it.</b> Switch to <b>zoom into B</b>. The sum is 8 for exactly 5 of the 36 outcomes: $(2,6),(3,5),(4,4),(5,3),(6,2)$. Knowing $B$ rules out the other 31. It says nothing to favor one of the remaining five over another, so they stay equally likely, and each now has probability $\\tfrac15$. Only $(6,2)$ has red 6, so $P(\\text{red }6\\mid\\text{sum }8)=\\tfrac15$, up from $\\tfrac16$.</p>
     <p><b>Step 3: the general definition.</b> When outcomes are not equally likely, go back to the shares. After $n$ rolls, let $n_B$ be the number with $B$ and $n_{A\\cap B}$ the number with both. The share of $A$ among the $B$-rolls is</p>
-    <div class="eqbox">$$\\frac{n_{A\\cap B}}{n_B}=\\frac{n_{A\\cap B}/n}{n_B/n}\;\\longrightarrow\;\\frac{P(A\\cap B)}{P(B)}\\quad\\text{as }n\\text{ grows.}$$</div>
+    <div class="eqbox">$$\\frac{n_{A\\cap B}}{n_B}=\\frac{n_{A\\cap B}/n}{n_B/n}\\;\\longrightarrow\\;\\frac{P(A\\cap B)}{P(B)}\\quad\\text{as }n\\text{ grows.}$$</div>
     <div class="defn"><span class="dt">Conditional probability</span>For events $A$ and $B$ with $P(B)\\gt0$,
       $$P(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}.$$
       Only the part of $A$ inside $B$ counts, and dividing by $P(B)$ rescales $B$ so that its total is 1: $B$ becomes the new sample space.</div>
@@ -2211,7 +2211,7 @@ function p1_bayes(){
     <p>The numerator is the $D$ piece of the shading: by the multiplication rule, $P(D\\cap +)=P(D)\\,P(+\\mid D)$. The denominator is all the shading: by total probability over the partition $D,D^{c}$, $P(+)=P(D)\\,P(+\\mid D)+P(D^{c})\\,P(+\\mid D^{c})$. Substituting both:</p>
     <div class="defn"><span class="dt">Bayes' theorem</span>
       $$P(D\\mid +)=\\frac{P(D)\\,P(+\\mid D)}{P(D)\\,P(+\\mid D)+P(D^{c})\\,P(+\\mid D^{c})}=\\frac{0.01\\times0.9}{0.01\\times0.9+0.99\\times0.09}=\\frac{0.009}{0.0981}\\approx0.092.$$
-      For any partition $B_1,\\dots,B_m$ and event $A$ with $P(A)\\gt0$: $\;P(B_j\\mid A)=\\dfrac{P(B_j)\\,P(A\\mid B_j)}{\\sum_i P(B_i)\\,P(A\\mid B_i)}$.</div>
+      For any partition $B_1,\\dots,B_m$ and event $A$ with $P(A)\\gt0$: $\\;P(B_j\\mid A)=\\dfrac{P(B_j)\\,P(A\\mid B_j)}{\\sum_i P(B_i)\\,P(A\\mid B_i)}$.</div>
     <p>The three ingredients have names that recur through the course. $P(D)$ is the <b>prior</b>: the probability before the evidence. $P(+\\mid D)$ is the <b>likelihood</b>: how probable the evidence is under each possibility. $P(D\\mid +)$ is the <b>posterior</b>: the probability after the evidence.</p>
     <p><b>Step 4: the two directions are different questions.</b> $P(+\\mid D)=0.9$ and $P(D\\mid +)\\approx0.09$ share the same numerator, $P(D\\cap+)$, the thin $D$ piece. The first divides it by the $D$ strip, which it nearly fills; the second divides it by all the shading, which it barely dents. Mixing them up is the confusion of the inverse, and ignoring the prior $P(D)$ is <b>base-rate neglect</b>. Move the $P(D)$ slider to see the prior's effect: at $P(D)=0.1$ the posterior is about 0.53, and at $0.5$ it is about 0.91.</p>
     <p>The same calculation powers a spam filter. In the last beat, 40% of email was spam and "free" appeared in 25% of spam and 2% of legitimate mail. Bayes turns that around: $P(\\text{spam}\\mid\\text{free})=\\frac{0.4\\times0.25}{0.112}\\approx0.89$ — the probability a filter needs, computed from the probabilities that are easy to measure.</p>
@@ -3239,7 +3239,7 @@ function p2_expect(){
     <div id="xdone" style="display:none">
     <p style="margin-top:16px"><b>What you found.</b> The long-run average of many draws is each value times its probability, added up (Problems 1–3). It need not be a value the variable can take (3.5). And scaling and shifting the variable scales and shifts its average (Problem 4).</p>
     <p><b>Step 1: from the average of draws to a formula.</b> Draw $n$ times and let $n_k$ be the number of draws equal to $k$. The draws add up to $\\sum_k k\\,n_k$, so their average is</p>
-    <div class="eqbox">$$\\frac1n\\sum_k k\\,n_k=\\sum_k k\\cdot\\frac{n_k}{n}\;\\longrightarrow\;\\sum_k k\\,p_X(k)\\quad\\text{as }n\\text{ grows,}$$</div>
+    <div class="eqbox">$$\\frac1n\\sum_k k\\,n_k=\\sum_k k\\cdot\\frac{n_k}{n}\\;\\longrightarrow\\;\\sum_k k\\,p_X(k)\\quad\\text{as }n\\text{ grows,}$$</div>
     <p>because each share $\\frac{n_k}{n}$ settles at $p_X(k)$ (Module 1). The limit is the definition:</p>
     <div class="defn"><span class="dt">Expectation (expected value, mean)</span>$$E[X]=\\sum_k k\\,p_X(k),$$ the probability-weighted average of the values of $X$. It is also written $\\mu$ or $\\mu_X$. (If $X$ has infinitely many values, the sum is a series, and $E[X]$ exists when the series of $|k|\\,p_X(k)$ converges — Calculus Module 7.)</div>
     ${gAnchor(`$\\Omega$ is the set of possible results of one trade, and $X$ sends each result to its profit, cutting $\\Omega$ into three sets: $\\{X=2\\}$ (the trades that make 2), $\\{X=0\\}$ and $\\{X=-1\\}$. $E[X]$ weights each set's label by the set's probability. Written over outcomes instead of values, $E[X]=\\sum_{\\omega}X(\\omega)\\,P(\\{\\omega\\})$; grouping the outcomes by their value gives back $\\sum_k k\\,p_X(k)$. On a finite $\\Omega$, list the outcomes in a fixed order; then $X$ is a vector with one entry per outcome, its value $X(\\omega)$ (Module 1, beat 6's linear-algebra box wrote events this way, as 0/1 vectors), and $E[X]=p\\cdot X$, its dot product with the vector $p$ of outcome probabilities (Linear Algebra, Module 3). So $E$ is a linear map $\\mathbb R^{|\\Omega|}\\to\\mathbb R$: the $1\\times|\\Omega|$ matrix $p^{\\mathsf T}$, whose columns are the probabilities of single outcomes (Linear Algebra, Module 1: the columns are the images of the basis vectors). It squashes a whole function on $\\Omega$ to one number.`)}
@@ -3513,15 +3513,29 @@ function p2_indep(){
     <p><b>Step 1: independence for random variables.</b> Module 2 called two events independent when $P(A\\cap B)=P(A)P(B)$. A random variable cuts $\\Omega$ into pieces $\\{X=a\\}$, one per value (beat 2). Call $X$ and $Y$ independent when every piece of $X$'s partition is independent of every piece of $Y$'s:</p>
     <div class="defn"><span class="dt">Independent random variables</span>$X$ and $Y$ are <b>independent</b> when $$P(X=a\\text{ and }Y=b)=P(X=a)\\,P(Y=b)\\qquad\\text{for all values }a,b.$$ "$X=a$ and $Y=b$" is the event $\\{X=a\\}\\cap\\{Y=b\\}$, often written $\\{X=a,\\,Y=b\\}$.</div>
     ${gAnchor(`For the separate dice, $\\{R=a\\}$ is a row of the grid and $\\{B=b\\}$ a column. Their intersection is one cell, with probability $\\frac1{36}=\\frac16\\cdot\\frac16$: a row and a column are independent events, in Module 2's sense, for every row and column. For glued dice, $\\{R=3\\}\\cap\\{B=5\\}$ is empty (if $R=3$ then $B=4$), so its probability is $0\\ne\\frac16\\cdot\\frac16$.`)}
-    <p><b>Step 2: the pieces of a pair.</b> Intersect every piece $\\{X=a\\}$ with every piece $\\{Y=b\\}$. The results $\\{X=a,\\,Y=b\\}$ are again a partition of $\\Omega$:</p>
-    <p>• <em>Disjoint:</em> an outcome in two of them would give $X$ two values or $Y$ two values, and a function gives one.<br>
-    • <em>Covering:</em> every outcome $\\omega$ has some value $X(\\omega)=a$ and some value $Y(\\omega)=b$, so it lies in $\\{X=a,\\,Y=b\\}$.</p>
-    <p>On the dice grid these pieces are the single cells: rows cut by columns.</p>
-    <p><b>Step 3: the average of a product.</b> Start from expectation written over outcomes (beat 4's set-terms note, used again in beat 6): $E[XY]=\\sum_\\omega X(\\omega)Y(\\omega)\\,P(\\omega)$. Group the outcomes by the piece $\\{X=a,\\,Y=b\\}$ they lie in (Step 2 says each lies in exactly one):</p>
-    <p>• Inside the piece, every outcome has $X(\\omega)Y(\\omega)=ab$, so its terms add to $ab$ times the total probability of the piece, $ab\\,P(X=a,\\,Y=b)$.<br>
-    • Adding over all pieces,</p>
-    <div class="eqbox">$$E[XY]=\\sum_a\\sum_b ab\;P(X=a,\\,Y=b).$$</div>
-    <p>This holds for any $X$ and $Y$; it is beat 5's rule $E[g(X)]=\\sum_k g(k)\\,p_X(k)$, with the pieces of a pair in place of the pieces of one variable.</p>
+    <p><b>Step 2: the pieces of a pair.</b> To compute anything about $X$ and $Y$ together, we need to cut $\\Omega$ by both of them at once. Start with an example where the pieces are not single cells.</p>
+    <p><em>Example.</em> Roll one die, $\\Omega=\\{1,2,3,4,5,6\\}$, each outcome $\\frac16$. Let $X=1$ if the roll is even and $0$ if odd, and $Y=1$ if the roll is at least 4 and $0$ otherwise. Each variable cuts $\\Omega$ in two (beat 2):</p>
+    <p>• $X$: $\\{X=0\\}=\\{1,3,5\\}$ and $\\{X=1\\}=\\{2,4,6\\}$.<br>
+    • $Y$: $\\{Y=0\\}=\\{1,2,3\\}$ and $\\{Y=1\\}=\\{4,5,6\\}$.</p>
+    <p>Now intersect each piece of $X$ with each piece of $Y$ — four combinations:</p>
+    <div style="overflow-x:auto;margin:10px 0"><table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.6;text-align:center"><tr style="color:var(--muted);font-size:11px;letter-spacing:.3px"><td style="padding:5px;border-bottom:1px solid var(--line)">piece</td><td style="padding:5px;border-bottom:1px solid var(--line)">outcomes in it</td><td style="padding:5px;border-bottom:1px solid var(--line)">probability</td></tr>
+    <tr><td>$\\{X=0,\\,Y=0\\}=\\{1,3,5\\}\\cap\\{1,2,3\\}$</td><td>$\\{1,3\\}$</td><td>$\\frac26$</td></tr>
+    <tr><td>$\\{X=0,\\,Y=1\\}=\\{1,3,5\\}\\cap\\{4,5,6\\}$</td><td>$\\{5\\}$</td><td>$\\frac16$</td></tr>
+    <tr><td>$\\{X=1,\\,Y=0\\}=\\{2,4,6\\}\\cap\\{1,2,3\\}$</td><td>$\\{2\\}$</td><td>$\\frac16$</td></tr>
+    <tr><td>$\\{X=1,\\,Y=1\\}=\\{2,4,6\\}\\cap\\{4,5,6\\}$</td><td>$\\{4,6\\}$</td><td>$\\frac26$</td></tr></table></div>
+    <p>Read down the middle column: $\\{1,3\\},\\{5\\},\\{2\\},\\{4,6\\}$. Every roll from 1 to 6 appears, and none appears twice. So the four pieces are a partition of $\\Omega$ (Module 1): they don't overlap, and together they make up all of $\\Omega$. Their probabilities add to $\\frac26+\\frac16+\\frac16+\\frac26=1$.</p>
+    <p><em>Why this always happens.</em> Take any $X$ and $Y$ and form all the pieces $\\{X=a,\\,Y=b\\}=\\{X=a\\}\\cap\\{Y=b\\}$.</p>
+    <p>• <em>No overlap.</em> In the example, could roll 4 be in two pieces, say $\\{X=1,Y=1\\}$ and $\\{X=0,Y=1\\}$? That would need $X(4)=1$ and $X(4)=0$ at once. But $X$ is a function: it gives roll 4 exactly one value, $X(4)=1$. In general, an outcome $\\omega$ in two different pieces would need two different values of $X(\\omega)$ or two different values of $Y(\\omega)$, which a function cannot have.<br>
+    • <em>Nothing left out.</em> In the example, take roll 5: $X(5)=0$ (odd) and $Y(5)=1$ (at least 4), so roll 5 is in $\\{X=0,\\,Y=1\\}$. In general, any outcome $\\omega$ has some value $X(\\omega)=a$ and some value $Y(\\omega)=b$, so it lies in the piece $\\{X=a,\\,Y=b\\}$.</p>
+    <p>On the two-dice grid above, $\\{R=a\\}$ is a row and $\\{B=b\\}$ a column, so each piece $\\{R=a,\\,B=b\\}$ is a single cell: the 36 cells are the partition.</p>
+    <p><b>Step 3: the average of a product.</b> Same example first. $XY$ is the function $\\omega\\mapsto X(\\omega)Y(\\omega)$. Compute $E[XY]$ two ways.</p>
+    <p>• <em>Outcome by outcome</em> (beat 4's set-terms form, $E[Z]=\\sum_\\omega Z(\\omega)\\,P(\\{\\omega\\})$): the products for rolls $1,\\dots,6$ are $0\\cdot0,\\;1\\cdot0,\\;0\\cdot0,\\;1\\cdot1,\\;0\\cdot1,\\;1\\cdot1$, that is $0,0,0,1,0,1$. So $E[XY]=\\frac16(0+0+0+1+0+1)=\\frac26$.<br>
+    • <em>Piece by piece:</em> inside each piece of the table, $X$ and $Y$ are fixed, so $XY$ is fixed too: $0\\cdot0$ on $\\{1,3\\}$, $0\\cdot1$ on $\\{5\\}$, $1\\cdot0$ on $\\{2\\}$, $1\\cdot1$ on $\\{4,6\\}$. Grouping the six terms by piece:
+    $$E[XY]=0\\cdot0\\cdot\\tfrac26+0\\cdot1\\cdot\\tfrac16+1\\cdot0\\cdot\\tfrac16+1\\cdot1\\cdot\\tfrac26=\\tfrac26.$$
+    Same answer, because it is the same six terms added in a different order: rolls 4 and 6 were collected into one term, $1\\cdot1\\cdot P(\\{4,6\\})$.</p>
+    <p><em>In general.</em> Start from $E[XY]=\\sum_\\omega X(\\omega)Y(\\omega)\\,P(\\{\\omega\\})$ and group the outcomes by the piece $\\{X=a,\\,Y=b\\}$ they lie in (Step 2: each lies in exactly one, so no term is lost or counted twice). Inside that piece every outcome has $X(\\omega)Y(\\omega)=ab$, so its terms add to $ab$ times the sum of their probabilities, which is $ab\\,P(X=a,\\,Y=b)$. Adding over all pieces:</p>
+    <div class="eqbox">$$E[XY]=\\sum_a\\sum_b ab\\;P(X=a,\\,Y=b).$$</div>
+    <p>This holds for any $X$ and $Y$, independent or not. It is the same grouping beat 5 used for $E[g(X)]=\\sum_k g(k)\\,p_X(k)$, now with the pieces of a pair instead of the pieces of one variable.</p>
     <p><b>Step 4: independence factors the sum.</b> Now assume $X$ and $Y$ are independent and replace each $P(X=a,\\,Y=b)$ by $P(X=a)\\,P(Y=b)$ (Step 1):</p>
     <div class="eqbox">$$E[XY]=\\sum_a\\sum_b \\big(a\\,P(X=a)\\big)\\big(b\\,P(Y=b)\\big).$$</div>
     <p>Do the inner sum first, with $a$ fixed. The factor $a\\,P(X=a)$ does not involve $b$, so it comes out of the inner sum, leaving $\\sum_b b\\,P(Y=b)=E[Y]$:</p>
