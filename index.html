@@ -3815,15 +3815,17 @@ function p2_poisson(){
     <p>Back to $n=1000$, $p=0.003$, so $q=1-p=0.997$. A calculator is fine.</p>
     ${gQ('pq',1,`What is $P(X=0)$, exactly? (Module 2, beat 10: no rejection among 1000 independent orders.)`,
       `All 1000 orders go through: $0.997^{1000}\\approx0.0496$.`)}
-    ${gQ('pq',2,`The ratio of neighbouring binomial probabilities is $\\frac{P(X=k+1)}{P(X=k)}=\\frac{n-k}{k+1}\\cdot\\frac pq$ (derived in Step 1 below). Compute it for $k=0$.`,
-      `$\\frac{1000}{1}\\cdot\\frac{0.003}{0.997}=\\frac{3}{0.997}\\approx3.009$. Almost exactly $\\lambda=3$.`)}
-    ${gQ('pq',3,`Now the ratio for $k=1$: $\\frac{P(X=2)}{P(X=1)}$.`,
-      `$\\frac{999}{2}\\cdot\\frac{0.003}{0.997}\\approx1.503$. Almost exactly $\\frac\\lambda2=1.5$.`)}
-    ${gQ('pq',4,`Use only $\\lambda=3$: take $P(X=0)\\approx e^{-3}$ and the ratios $\\approx\\frac\\lambda1$ and $\\frac\\lambda2$. Estimate $P(X=2)$.`,
-      `$P(X=1)\\approx e^{-3}\\cdot3$ and $P(X=2)\\approx e^{-3}\\cdot3\\cdot\\frac32=4.5\\,e^{-3}\\approx0.224$. The exact binomial value is $\\binom{1000}2(0.003)^2(0.997)^{998}\\approx0.2243$.`)}
+    ${gQ('pq',2,`Keep the mean at 3 but spread it over far more chances: $n=1{,}000{,}000$ orders, each rejected with probability $p=0.000003$. Now what is $P(X=0)$?`,
+      `$(1-0.000003)^{1000000}\\approx0.04979$. Barely different from Problem 1: as the chances multiply and each gets rarer, $P(X=0)$ settles to a fixed number. That number is $e^{-3}=0.04979$ — Step 3 shows why.`)}
+    ${gQ('pq',3,`Back to $n=1000$. Write $P(X=1)$ and $P(X=0)$ from beat 10's pmf and divide. Cancel everything you can. What number is left?`,
+      `$\\frac{P(X=1)}{P(X=0)}=\\frac{\\binom{1000}1\\,p\\,q^{999}}{\\binom{1000}0\\,q^{1000}}=\\frac{1000\\,p}{q}$, since $\\binom{1000}1=1000$, $\\binom{1000}0=1$ and $\\frac{q^{999}}{q^{1000}}=\\frac1q$. That is $\\frac{3}{0.997}\\approx3.009$: almost exactly the mean, $3$.`)}
+    ${gQ('pq',4,`Same for $\\frac{P(X=2)}{P(X=1)}$. Use $\\binom n2=\\frac{n(n-1)}2$ (Module 1, beat 9).`,
+      `$\\frac{\\binom{1000}2\\,p^2q^{998}}{\\binom{1000}1\\,p\\,q^{999}}=\\frac{1000\\cdot999/2}{1000}\\cdot\\frac pq=\\frac{999}{2}\\cdot\\frac{0.003}{0.997}\\approx1.503$: almost exactly $\\frac32$.`)}
+    ${gQ('pq',5,`Problems 3 and 4 gave about $\\frac31$ and $\\frac32$. Guess $\\frac{P(X=6)}{P(X=5)}$, then check it by cancelling as before.`,
+      `The pattern says $\\frac36=0.5$. Cancelling: $\\frac{\\binom{1000}6}{\\binom{1000}5}\\cdot\\frac pq=\\frac{995}{6}\\cdot\\frac{0.003}{0.997}\\approx0.499$ (the $\\binom n{k+1}/\\binom nk$ step is done in general in Step 1).`)}
     ${gProg('pprog')}
     <div id="pdone" style="display:none">
-    <p style="margin-top:16px"><b>What you found.</b> With 1000 chances, $P(X=0)$ was close to $e^{-3}$, each ratio $\\frac{P(X=k+1)}{P(X=k)}$ was close to $\\frac\\lambda{k+1}$, and those two facts alone gave $P(X=2)$ to three decimals. Neither $n$ nor $p$ was needed — only $\\lambda=np$. The steps below show why, and what happens as $n$ grows without limit.</p>
+    <p style="margin-top:16px"><b>What you found.</b> $P(X=0)$ barely moved when the same mean was spread over a thousand times more chances: it settles to a fixed number. And each ratio $\\frac{P(X=k+1)}{P(X=k)}$ came out close to $\\frac{3}{k+1}$, where $3=\\lambda=np$ is the mean. Neither $n$ nor $p$ mattered separately — only $\\lambda$. The steps below do the cancellation for every $k$, find the fixed number, and chain the ratios into a pmf.</p>
     <p><b>Step 1: the ratio of neighbours.</b> Beat 10's pmf is $P(X=k)=\\binom nk p^kq^{n-k}$. Divide the $k+1$ term by the $k$ term, one piece at a time. The powers:</p>
     <div class="eqbox">$$\\frac{p^{k+1}q^{n-k-1}}{p^kq^{n-k}}=p^{1}\\,q^{-1}=\\frac pq.$$</div>
     <p>The binomial coefficients, written with factorials (Module 1, beat 9): the $n!$ cancels, and the rest regroups into two ratios,</p>
@@ -3832,13 +3834,13 @@ function p2_poisson(){
     <div class="eqbox">$$\\frac{P(X=k+1)}{P(X=k)}=\\frac{n-k}{k+1}\\cdot\\frac pq.$$</div>
     <p><b>Step 2: many chances, fixed mean.</b> Keep the mean fixed at $\\lambda$ and let the number of chances grow, so $p=\\frac\\lambda n$. Put that into the ratio, and in the numerator write $(n-k)\\cdot\\frac\\lambda n=\\lambda\\left(1-\\frac kn\\right)$:</p>
     <div class="eqbox">$$\\frac{n-k}{k+1}\\cdot\\frac{\\lambda/n}{1-\\lambda/n}=\\frac{1}{k+1}\\cdot\\frac{\\lambda\\,(1-k/n)}{1-\\lambda/n}\\;\\longrightarrow\\;\\frac{\\lambda}{k+1}\\qquad(n\\to\\infty),$$</div>
-    <p>because $\\frac kn\\to0$ and $\\frac\\lambda n\\to0$ for fixed $k$ and $\\lambda$. Problem 2 had $\\frac{3}{0.997}$; the $0.997$ is the $1-\\frac\\lambda n$ that disappears.</p>
+    <p>because $\\frac kn\\to0$ and $\\frac\\lambda n\\to0$ for fixed $k$ and $\\lambda$. Problem 3 had $\\frac{3}{0.997}$; the $0.997$ is the $1-\\frac\\lambda n$ that disappears.</p>
     <p><b>Step 3: the chance of zero.</b> $P(X=0)=\\left(1-\\frac\\lambda n\\right)^n$. Take its logarithm: $n\\ln\\left(1-\\frac\\lambda n\\right)$. Taylor's series $\\ln(1-x)=-x-\\frac{x^2}2-\\cdots$ (Calculus Module 7, used the same way in Module 1, beat 12) with $x=\\frac\\lambda n$ gives</p>
     <div class="eqbox">$$n\\ln\\!\\left(1-\\frac\\lambda n\\right)=n\\left(-\\frac\\lambda n-\\frac{\\lambda^2}{2n^2}-\\cdots\\right)=-\\lambda-\\frac{\\lambda^2}{2n}-\\cdots\\;\\longrightarrow\\;-\\lambda,$$</div>
-    <p>so $P(X=0)\\to e^{-\\lambda}$. Problem 1: $0.997^{1000}=0.0496$ against $e^{-3}=0.0498$.</p>
-    <p><b>Step 4: chain the ratios.</b> Start at $P(X=0)=e^{-\\lambda}$ and multiply by the limiting ratios one at a time, as in Problem 4:</p>
+    <p>so $P(X=0)\\to e^{-\\lambda}$. Problems 1 and 2: $0.0496$ with a thousand chances, $0.04979$ with a million, and $e^{-3}=0.04979$.</p>
+    <p><b>Step 4: chain the ratios.</b> Start at $P(X=0)=e^{-\\lambda}$ and multiply by the limiting ratios one at a time:</p>
     <div class="eqbox">$$P(X=1)=e^{-\\lambda}\\cdot\\frac\\lambda1,\\quad P(X=2)=e^{-\\lambda}\\cdot\\frac\\lambda1\\cdot\\frac\\lambda2,\\quad P(X=3)=e^{-\\lambda}\\cdot\\frac\\lambda1\\cdot\\frac\\lambda2\\cdot\\frac\\lambda3,\\;\\dots$$</div>
-    <p>After $k$ steps the numerators make $\\lambda^k$ and the denominators $1\\cdot2\\cdots k=k!$.</p>
+    <p>After $k$ steps the numerators make $\\lambda^k$ and the denominators $1\\cdot2\\cdots k=k!$. Check with $\\lambda=3$: $P(X=2)=e^{-3}\\cdot\\frac{9}{2}\\approx0.224$, against the exact binomial $\\binom{1000}2(0.003)^2(0.997)^{998}\\approx0.2243$.</p>
     <div class="defn"><span class="dt">Poisson distribution</span>A count $X$ is <b>Poisson($\\lambda$)</b> if $$P(X=k)=e^{-\\lambda}\\frac{\\lambda^k}{k!},\\qquad k=0,1,2,\\dots$$ It is the limit of binomial($n,\\frac\\lambda n$) as $n\\to\\infty$: a count of many independent chances, each rare, with mean $\\lambda$.</div>
     <p>The probabilities add to 1: $\\sum_k\\frac{\\lambda^k}{k!}=e^\\lambda$ (the Taylor series of $e^x$, Calculus Module 7), so the total is $e^{-\\lambda}e^{\\lambda}=1$.</p>
     ${gAnchor(`Each binomial($n,\\frac\\lambda n$) lives on its own $\\Omega$, the $2^n$ histories of $n$ trials. The Poisson is not a limit of those spaces but of their pmfs: for each fixed $k$, the number $P(X=k)$ converges (Steps 2–4). A Poisson count can take any value $0,1,2,\\dots$, so its pmf is a sequence with infinitely many entries — like beat 11's geometric — whose entries add to 1.`)}
@@ -3867,7 +3869,7 @@ function p2_poisson(){
     ctx.strokeStyle='#26354a';ctx.beginPath();ctx.moveTo(L,Bt);ctx.lineTo(R,Bt);ctx.stroke();
     ctx.fillStyle='#9fb0c4';ctx.font=p0Font(11);ctx.textAlign='center';const st=Math.max(1,Math.ceil(K/12));for(let k=0;k<=K;k+=st)ctx.fillText(String(k),X(k),Bt+15);ctx.fillText('k = count',(L+R)/2,Bt+30);ctx.textAlign='left';ctx.fillText('P(X=k)',L+4,T+4);}
   sl.oninput=draw;p0Seg('segpn',[['5','n = 5'],['10','n = 10'],['30','n = 30'],['100','n = 100'],['1000','n = 1000']],'10',v=>{n=+v;draw();});draw();
-  gWire('pq',[[1,Math.pow(0.997,1000),0.0005],[2,3/0.997,0.002],[3,999/2*0.003/0.997,0.002],[4,4.5*Math.exp(-3),0.002]],'pprog','pdone',()=>{done=true;p0Set('pnote','Gold outline: Poisson(λ), the shape the bars settle to as n grows (Steps 2–4).');draw();});
+  gWire('pq',[[1,Math.pow(0.997,1000),0.0005],[2,Math.exp(-3),0.0003],[3,3/0.997,0.002],[4,999/2*0.003/0.997,0.002],[5,0.5,0.0015]],'pprog','pdone',()=>{done=true;p0Set('pnote','Gold outline: Poisson(λ), the shape the bars settle to as n grows (Steps 2–4).');draw();});
   const l=2.4,e=Math.exp(-l),g=1-e*(1+l+l*l/2+l*l*l/6+l*l*l*l/24);
   numChk(document.getElementById('gate'),g,()=>{addReveal(`<div class="rh">✓ ≈ 0.096</div>
     <p>Many independent, rare chances with mean $\\lambda=2.4$: Poisson($2.4$). “5 or more” is the complement of $0,1,2,3,4$:</p>
