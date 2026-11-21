@@ -3939,26 +3939,45 @@ function p2_problems(){
   stage.innerHTML=`<div class="card"><h2>Problem set</h2>
     <p>Work each problem on paper first. If you get stuck, open the hint before the solution. The problems follow the order of the module; a calculator is fine.</p>
     <p><b>Variables given only by a mean and a standard deviation.</b> Some problems say just “daily return with mean $0.05\\%$ and standard deviation $1\\%$”. Read that as <em>any</em> discrete random variable with that mean and standard deviation, as in this module. Every rule these problems use — linearity (beat 6), $\\operatorname{Var}(aX+b)=a^2\\operatorname{Var}X$ (beat 5), the variance of a sum (beat 7), the $\\sqrt n$ law (beat 9) — was derived for an arbitrary pmf and uses only means, variances and covariances. So the answer is the same whatever the full list of values is, and you never need it.</p>
-  `+P('pmf and cdf',1,
+  `
+  +P('pmf and cdf',1,
     `<p>A strategy's daily profit $X$ (in units) has pmf $P(X=-1)=0.3$, $P(X=0)=0.2$, $P(X=1)=0.3$, $P(X=2)=0.2$. You run three independent copies of it on different markets. On a given day the copies make $X_1,X_2,X_3$, and $M=\\max(X_1,X_2,X_3)$ is the best of the three that day. (a) Find the cdf values $F(-1),F(0),F(1)$ of one copy. (b) Find the pmf of $M$. (c) Find $E[M]$ and compare it with $E[X]$.</p>`,
     `<p>(b) The best of three is at most $x$ exactly when all three are at most $x$ (beat 3). Then $P(M=x)=P(M\\le x)-P(M\\le x-1)$.</p>`,
     `<p>(a) Add the pmf up to each value: $F(-1)=0.3$, $F(0)=0.5$, $F(1)=0.8$ (and $F(2)=1$).</p>
     <p>(b) $\\{M\\le x\\}=\\{X_1\\le x\\}\\cap\\{X_2\\le x\\}\\cap\\{X_3\\le x\\}$, and the copies are independent, so $P(M\\le x)=F(x)^3$: $0.027$, $0.125$, $0.512$, $1$ at $x=-1,0,1,2$. Differences of neighbours give the pmf:</p>
     <div class="eqbox">$$P(M=-1)=0.027,\\quad P(M=0)=0.125-0.027=0.098,\\quad P(M=1)=0.512-0.125=0.387,\\quad P(M=2)=1-0.512=0.488.$$</div>
     <p>(c) $E[M]=-1(0.027)+0(0.098)+1(0.387)+2(0.488)=1.336$, while $E[X]=-0.3+0+0.3+0.4=0.4$. Reporting the best of several strategies more than triples the apparent average — the selection did that, not any edge. This is why a backtest that picks the best of many variants looks better than the strategy will trade.</p>`)
-  +P('expectation of a function',2,
+  +P('pmf and cdf',2,
+    `<p>Three servers run independently. Each one's lifetime $X$ (in days) has pmf $P(X=1)=0.1$, $P(X=2)=0.3$, $P(X=3)=0.4$, $P(X=4)=0.2$. The system goes down when the <em>first</em> server fails, at day $L=\\min(X_1,X_2,X_3)$. (a) For one server, find $P(X\\gt k)$ for $k=1,2,3$. (b) Find the pmf of $L$. (c) Compare $E[L]$ with $E[X]$.</p>`,
+    `<p>The earliest failure is after day $k$ exactly when all three servers last past day $k$: $\\{L\\gt k\\}=\\{X_1\\gt k\\}\\cap\\{X_2\\gt k\\}\\cap\\{X_3\\gt k\\}$. Then $P(L=k)=P(L\\gt k-1)-P(L\\gt k)$. This is Problem 1's idea with “$\\gt$” instead of “$\\le$”.</p>`,
+    `<p>(a) $P(X\\gt1)=0.9$, $P(X\\gt2)=0.6$, $P(X\\gt3)=0.2$ (add the pmf above $k$, or $1-F(k)$).</p>
+    <p>(b) By independence, $P(L\\gt k)=P(X\\gt k)^3$: $0.729$, $0.216$, $0.008$ for $k=1,2,3$ (and $P(L\\gt0)=1$). Differences give the pmf:</p>
+    <div class="eqbox">$$P(L=1)=1-0.729=0.271,\\quad P(L=2)=0.729-0.216=0.513,$$ $$P(L=3)=0.216-0.008=0.208,\\quad P(L=4)=0.008.$$</div>
+    <p>(c) $E[L]=0.271+2(0.513)+3(0.208)+4(0.008)=1.953$ days, against $E[X]=0.1+0.6+1.2+0.8=2.7$. Three servers in series fail sooner than one: the weakest link sets the lifetime.</p>`)
+  +P('expectation of a function',3,
     `<p>Tomorrow's price change $X$ is equally likely to be $-2,-1,0,1,2$. A call option pays $g(X)=\\max(X,0)$. (a) Find $E[X]$ and $g(E[X])$. (b) Find $E[g(X)]$. (c) Find $E[X^2]$ and $(E[X])^2$. What do (a)–(c) say about moving $E$ inside a function?</p>`,
     `<p>(b) Beat 5: $E[g(X)]=\\sum_k g(k)\\,P(X=k)$ — apply $g$ to each value, then average.</p>`,
     `<p>(a) $E[X]=\\frac15(-2-1+0+1+2)=0$, so $g(E[X])=\\max(0,0)=0$.</p>
     <p>(b) $g$ maps the values to $0,0,0,1,2$, so $E[g(X)]=\\frac15(0+0+0+1+2)=0.6$. The option is worth $0.6$ on average, not $0$: it keeps the up moves and discards the down moves, and averaging after that is not the same as averaging first.</p>
     <p>(c) $E[X^2]=\\frac15(4+1+0+1+4)=2$, while $(E[X])^2=0$. The gap is exactly the variance: $\\operatorname{Var}(X)=E[(X-0)^2]=2$.</p>
     <p>In general $E[g(X)]\\ne g(E[X])$. Only for $g(x)=ax+b$ can $E$ pass inside (beat 5); for any other $g$, compute $E[g(X)]$ from the pmf.</p>`)
-  +P('variance and scaling',3,
+  +P('expectation of a function',4,
+    `<p>A strategy's daily return $X$ is $+20\\%$ or $-10\\%$ with probability $\\frac12$ each, independently each day, and your wealth is multiplied by $1+X$ each day. (a) Find $E[X]$. (b) After $n$ days wealth is $(1+X_1)\\cdots(1+X_n)=e^{\\ln(1+X_1)+\\cdots+\\ln(1+X_n)}$. Over many days the average of the $\\ln(1+X_i)$ settles to $E[\\ln(1+X)]$ (beat 4: the mean is the long-run average), so wealth grows like $e^{\\,n\\,E[\\ln(1+X)]}$ and $E[\\ln(1+X)]$ is the growth rate per day. Compute it. (c) Compare it with $\\ln(1+E[X])$. Starting from wealth 1, what is the wealth after 100 days on a path with exactly 50 up days and 50 down days?</p>`,
+    `<p>(b) is $E[g(X)]$ with $g(x)=\\ln(1+x)$: apply $g$ to each value, then average (beat 5). Do not put $E[X]$ into $g$.</p>`,
+    `<p>(a) $E[X]=\\frac12(0.2)+\\frac12(-0.1)=0.05$: $+5\\%$ a day on average.</p>
+    <p>(b) $E[\\ln(1+X)]=\\frac12\\ln1.2+\\frac12\\ln0.9=\\frac12(0.1823)+\\frac12(-0.1054)\\approx0.0385$.</p>
+    <p>(c) $\\ln(1+E[X])=\\ln1.05\\approx0.0488$, larger. A path with 50 up days and 50 down days — the typical mix — ends at $1.2^{50}\\,0.9^{50}=e^{100\\times0.0385}\\approx47$ — not $1.05^{100}\\approx132$. The gap is the cost of volatility: a $-10\\%$ day needs more than a $+10\\%$ day to recover, so the average return overstates the growth you actually get. Again $E[g(X)]\\ne g(E[X])$.</p>`)
+  +P('variance and scaling',5,
     `<p>A strategy's daily return $R$ has mean $0.1\\%$ and standard deviation $1\\%$. You run it with 3× leverage and pay $0.01\\%$ a day in financing, so your return is $3R-0.01\\%$. (a) Find the mean and standard deviation of your return. (b) The ratio mean ÷ SD (the daily Sharpe ratio) was $0.1$ unlevered. What is it levered? Does leverage improve it?</p>`,
     `<p>Beat 5: $E[aR+b]=aE[R]+b$ and $\\sigma_{aR+b}=|a|\\,\\sigma_R$ — the shift $b$ moves the mean but not the spread.</p>`,
     `<p>(a) Mean: $3(0.1\\%)-0.01\\%=0.29\\%$. SD: $3\\times1\\%=3\\%$; the $-0.01\\%$ shifts every outcome equally, so it does not change the spread.</p>
     <p>(b) $\\frac{0.29}{3}\\approx0.097$, slightly <em>below</em> $0.1$. Leverage multiplies the mean and the SD by the same factor 3, so on its own it cannot change their ratio; the financing cost only lowers the mean. Leverage scales risk and reward together — it never turns a poor ratio into a good one.</p>`)
-  +P('indicators and linearity',4,
+  +P('variance and scaling',6,
+    `<p>(a) Daily temperature $C$ in °C has mean $20$ and standard deviation $5$. In °F it is $F=1.8C+32$. Find the mean, standard deviation and variance of $F$. (b) For any $X$ with mean $\\mu$ and standard deviation $\\sigma\\gt0$, let $Z=\\frac{X-\\mu}\\sigma$ (the <em>standardized</em> value, or z-score). Find $E[Z]$ and $\\text{SD}(Z)$.</p>`,
+    `<p>Beat 5: $E[aX+b]=aE[X]+b$ and $\\text{SD}(aX+b)=|a|\\,\\text{SD}(X)$. For (b), write $Z=\\frac1\\sigma X-\\frac\\mu\\sigma$, which is $aX+b$ with $a=\\frac1\\sigma$, $b=-\\frac\\mu\\sigma$.</p>`,
+    `<p>(a) Mean $1.8(20)+32=68$°F. SD $1.8\\times5=9$°F (the $+32$ shifts every day equally, so it adds no spread). Variance $9^2=81$.</p>
+    <p>(b) $E[Z]=\\frac1\\sigma\\mu-\\frac\\mu\\sigma=0$ and $\\text{SD}(Z)=\\frac1\\sigma\\cdot\\sigma=1$. Standardizing moves any variable to mean 0 and standard deviation 1; $Z$ measures “how many standard deviations from the mean” — the language of “3-sigma” in Problem 19, and the starting point of Module 4's normal distribution.</p>`)
+  +P('indicators and linearity',7,
     `<p>A backtest of pure noise: 250 daily returns, independent and all with the same pmf. Assume no two days have exactly the same return. Day $k$ sets a <em>new high</em> if its return is the largest of days $1,\\dots,k$. (a) What is the probability that day $k$ sets a new high? (b) What is the expected number of new highs in the year? (c) <em>Extra:</em> roughly how many highs would you expect in 10 years of noise?</p>`,
     `<p>Write the count as a sum of indicators, $N=\\sum_k\\mathbf 1\\{\\text{day }k\\text{ is a high}\\}$ (beat 6). For (a): among the first $k$ returns, which position holds the largest?</p>`,
     `<p>(a) Look at the first $k$ returns. They are independent with the same pmf, so swapping any two days changes no probabilities: the largest of the $k$ is equally likely to be on any of the $k$ days. No two returns are equal, so exactly one day holds the largest: $k$ equal probabilities that add to 1, each $\\frac1k$. So</p>
@@ -3966,7 +3985,28 @@ function p2_problems(){
     <p>(b) $N=\\sum_{k=1}^{250}\\mathbf 1\\{\\text{day }k\\text{ is a high}\\}$, and the mean of an indicator is its probability, so by linearity (beat 6) — which needs no independence —</p>
     <div class="eqbox">$$E[N]=\\sum_{k=1}^{250}\\frac1k=1+\\frac12+\\frac13+\\cdots+\\frac1{250}\\approx6.10.$$</div>
     <p>(c) <em>Extra.</em> The sum $\\sum_{k\\le n}\\frac1k$ is a Riemann sum for $\\int\\frac{dt}t$, so it grows like $\\ln n$ (Calculus Module 5): it lies between $\\ln(n+1)$ and $1+\\ln n$. For $n=2520$ days that is about $7.8$ to $8.8$ (exactly $\\approx8.4$). Ten times the days give only about $2.3$ more highs ($\\ln10\\approx2.3$). Pure noise produces a handful of “new highs” every year, so a new high alone is weak evidence of anything.</p>`)
-  +P('covariance and diversification',5,
+  +P('indicators and linearity',8,
+    `<p>30 people are in a room; birthdays are independent and uniform over 365 days. (a) What is the expected number of <em>pairs</em> of people who share a birthday? Count every pair: if three people share a day, that day gives 3 pairs. (b) What is the expected number of <em>different</em> birthdays among the 30?</p>`,
+    `<p>Write each count as a sum of indicators (beat 6). (a) One indicator per pair of people: “these two share a birthday”. (b) One indicator per day of the year: “at least one of the 30 has this birthday” — use the complement, “none of the 30 has it”.</p>`,
+    `<p>(a) There are $\\binom{30}2=435$ pairs, and a given pair shares a birthday with probability $\\frac1{365}$ (whatever the first person's birthday, the second matches it with that chance). By linearity, $E[\\text{shared pairs}]=435\\times\\frac1{365}\\approx1.19$. This is Module 1's birthday handshake count: 435 handshakes, each a $\\frac1{365}$ chance. (If instead you counted only days shared by exactly two people, each person would need exactly one partner and the other 28 to avoid that day: $30\\cdot\\frac{29}{365}\\left(\\frac{364}{365}\\right)^{28}\\big/2\\approx1.10$. The gap to $1.19$ is the pairs inside triples and larger groups.)</p>
+    <p>(b) A given day is nobody's birthday with probability $\\left(\\frac{364}{365}\\right)^{30}\\approx0.921$ (30 independent misses), so it is somebody's with probability $0.079$. Summing over 365 days: $E[\\text{different birthdays}]=365\\,(1-0.921)\\approx28.8$. On average, about 1.2 birthdays are “lost” to sharing — consistent with (a).</p>`)
+  +P('indicators and linearity',9,
+    `<p>A load balancer sends 50 requests, each independently to one of 20 servers chosen uniformly at random. (a) What is the expected number of servers that get no request at all? (b) What is the expected number of servers that get exactly one request?</p>`,
+    `<p>One indicator per server (beat 6), so each expected count is $20\\times$ the probability for a single server. (a) The server is idle when all 50 requests miss it. (b) Exactly one of the 50 hits it: choose which one, it hits ($\\frac1{20}$), the other 49 miss — that is the binomial pmf at $k=1$ (beat 10).</p>`,
+    `<p>(a) A request misses a given server with probability $\\frac{19}{20}$; all 50 miss it, independently, with probability $\\left(\\frac{19}{20}\\right)^{50}\\approx0.0769$. By linearity, $E[\\text{idle servers}]=20\\times0.0769\\approx1.54$.</p>
+    <p>(b) A given server gets exactly one request with probability $50\\cdot\\frac1{20}\\cdot\\left(\\frac{19}{20}\\right)^{49}\\approx0.2025$, so $E[\\text{servers with one request}]=20\\times0.2025\\approx4.05$. Neither count needed the joint behaviour of the servers — only one server at a time.</p>`)
+  +P('indicators and linearity',10,
+    `<p>Ten analysts each write a forecast. The forecasts are shuffled and handed back at random, one each, with every arrangement equally likely. (a) What is the expected number of analysts who get their own forecast back? (b) What if there were 1000 analysts?</p>`,
+    `<p>One indicator per analyst: “analyst $i$ gets their own”. Its probability: count the arrangements that give analyst $i$ their own forecast, out of all $n!$ arrangements (Module 1).</p>`,
+    `<p>(a) If analyst $i$ gets their own, the other $9$ forecasts can be arranged among the other $9$ analysts in $9!$ ways, out of $10!$ arrangements in all: $P=\\frac{9!}{10!}=\\frac1{10}$. By linearity, $E[\\text{own forecast}]=10\\times\\frac1{10}=1$.</p>
+    <p>(b) The same count gives $\\frac{999!}{1000!}=\\frac1{1000}$ each, and $1000\\times\\frac1{1000}=1$. The expected number of matches is $1$ for every $n$. Compare Module 1, beat 14: the chance that <em>nobody</em> gets their own is about $\\frac1e\\approx37\\%$, yet on average exactly one person does — the indicators are dependent, but linearity does not care.</p>`)
+  +P('indicators and linearity',11,
+    `<p>A strategy's days are independent: each is a win with probability $0.5$, otherwise a loss. A <em>winning streak</em> is a run of consecutive winning days that cannot be extended (it may be a single day). Over 100 days, what is the expected number of winning streaks?</p>`,
+    `<p>Count each streak once, by the day it starts. For example, W W L W has two streaks, starting on days 1 and 4. Use one indicator per day: “a streak starts on day $i$”. When does that happen on day 1, and on a later day?</p>`,
+    `<p>A streak starts on day 1 when day 1 is a win: probability $0.5$. It starts on day $i\\ge2$ when day $i$ is a win and day $i-1$ was a loss: probability $0.5\\times0.5=0.25$ (independent days). In the example W W L W the indicators are $1,0,0,1$, summing to the 2 streaks. By linearity,</p>
+    <div class="eqbox">$$E[\\text{streaks}]=0.5+99\\times0.25=25.25.$$</div>
+    <p>So 100 fair days produce about 25 winning streaks — a long record full of streaks is what pure chance looks like.</p>`)
+  +P('covariance and diversification',12,
     `<p>Two strategies have daily returns $A$ and $B$, in percent: the gain per unit of money invested, so they do not depend on how much you put in. $\\operatorname{Var}(A)=4$ is the variance of your return if all your money is in $A$; likewise $\\operatorname{Var}(B)=1$; and $\\operatorname{Cov}(A,B)=-1$. You choose to put a fraction $w$ of your money into $A$ and the rest, $1-w$, into $B$. Your daily return is then the weighted average $wA+(1-w)B$. (a) What is its variance if you split 50/50 ($w=\\frac12$)? (b) Which split $w$ makes the variance smallest, and what is that variance?</p>`,
     `<p>Use beat 7's formula $\\operatorname{Var}(X+Y)=\\operatorname{Var}X+\\operatorname{Var}Y+2\\operatorname{Cov}(X,Y)$ with $X=wA$ and $Y=(1-w)B$. You need how each piece scales: $\\operatorname{Var}(wA)=w^2\\operatorname{Var}(A)$ (beat 5), and the covariance scales the same way — see the first step of the solution. For (b), set the derivative in $w$ to zero (Calculus Module 4).</p>`,
     `<p><em>How the pieces scale.</em> $wA$ deviates from its mean by $w$ times $A$'s deviation: $D_{wA}=wD_A$. So $\\operatorname{Var}(wA)=E[(wD_A)^2]=w^2\\operatorname{Var}(A)$ (beat 5), and the covariance, which is the average of the product of deviations (beat 7), picks up both constants:</p>
@@ -3975,14 +4015,19 @@ function p2_problems(){
     <div class="eqbox">$$V(w)=w^2(4)+(1-w)^2(1)+2w(1-w)(-1)=4w^2+1-2w+w^2-2w+2w^2=7w^2-4w+1.$$</div>
     <p>(a) $V(\\tfrac12)=\\frac74-2+1=0.75$ — lower than either strategy alone (4 and 1), because the negative covariance makes them partly cancel.</p>
     <p>(b) $V'(w)=14w-4=0$ gives $w=\\frac27$, and $V''=14\\gt0$ makes it a minimum: $V(\\tfrac27)=7\\cdot\\frac4{49}-\\frac87+1=\\frac47-\\frac87+1=\\frac37\\approx0.43$. Even the riskier strategy earns a place (2/7 of the money) because it moves against the other.</p>`)
-  +P('zero covariance is not independence',6,
+  +P('covariance and hedging',13,
+    `<p>A stock's daily return $X$ and a futures contract's daily return $Y$ each have variance 1, and $\\operatorname{Cov}(X,Y)=0.8$. (a) Find $\\operatorname{Var}(X+Y)$ and $\\operatorname{Var}(X-Y)$. (b) You hold the stock and sell $h$ units of the future, so your return is $X-hY$. Which $h$ makes the variance smallest, and what are that variance and standard deviation?</p>`,
+    `<p>Beat 7: $\\operatorname{Var}(X+Y)=\\operatorname{Var}X+\\operatorname{Var}Y+2\\operatorname{Cov}(X,Y)$. A constant in front scales the deviation, so $\\operatorname{Var}(hY)=h^2\\operatorname{Var}Y$ and $\\operatorname{Cov}(X,-hY)=-h\\operatorname{Cov}(X,Y)$ (see Problem 12's solution). For (b), set the derivative in $h$ to zero.</p>`,
+    `<p>(a) $\\operatorname{Var}(X+Y)=1+1+2(0.8)=3.6$ and $\\operatorname{Var}(X-Y)=1+1-2(0.8)=0.4$. Positive covariance makes the sum swing more and the difference swing less.</p>
+    <p>(b) $V(h)=\\operatorname{Var}(X)+h^2\\operatorname{Var}(Y)-2h\\operatorname{Cov}(X,Y)=1+h^2-1.6h$. $V'(h)=2h-1.6=0$ gives $h=0.8$ (and $V''=2\\gt0$, a minimum). Then $V(0.8)=1+0.64-1.28=0.36$, SD $0.6$. The hedge cuts the stock's daily swing by 40%; the rest is risk the future cannot remove. The best $h$ is $\\frac{\\operatorname{Cov}(X,Y)}{\\operatorname{Var}(Y)}$ — the same formula as a least-squares slope (Linear Algebra Module 3).</p>`)
+  +P('zero covariance is not independence',14,
     `<p>$X$ is equally likely to be $-1$, $0$ or $1$, and $Y=X^2$. (a) Find $\\operatorname{Cov}(X,Y)$. (b) Are $X$ and $Y$ independent? (c) A data pipeline transforms two features so that their covariance is 0. Does that make them independent?</p>`,
     `<p>(a) Use $\\operatorname{Cov}(X,Y)=E[XY]-E[X]\\,E[Y]$ (beat 8), and note $XY=X\\cdot X^2=X^3$. (b) Independence needs $P(X=a,Y=b)=P(X=a)P(Y=b)$ for every pair (beat 8); try $a=0,b=0$.</p>`,
     `<p>(a) $E[X]=0$. $XY=X^3$ takes the values $-1,0,1$ equally often, so $E[XY]=0$. Then $\\operatorname{Cov}(X,Y)=0-0\\cdot E[Y]=0$.</p>
     <p>(b) $Y=0$ happens exactly when $X=0$: $P(X=0,Y=0)=\\frac13$, but $P(X=0)P(Y=0)=\\frac13\\cdot\\frac13=\\frac19$. Not independent — in fact $Y$ is completely determined by $X$.</p>
     <p>Covariance measures only whether large values of one go with large (or small) values of the other — a straight-line tendency. Here large $|X|$ goes with large $Y$ on both sides, the positive and negative halves cancel, and the covariance is 0. Independence implies zero covariance (beat 8); the reverse fails.</p>
     <p>(c) No. Zero covariance removes only the straight-line tendency; the features can still be strongly dependent, as $X$ and $X^2$ are.</p>`)
-  +P('the square-root law',7,
+  +P('the square-root law',15,
     `<p>A strategy's daily return has mean $0.05\\%$ and standard deviation $1\\%$, independently from day to day, over 252 trading days a year. (a) A year's total return is the sum of its 252 daily returns. What are its mean and standard deviation, and their ratio (the annual Sharpe ratio)? (b) You don't know the true daily mean; you estimate it from a backtest by calculating the average of its $n$ daily returns. That calculated average depends on which $n$-day history you happened to get, so for each $n$ it is a random variable with its own mean and standard deviation:</p>
     <p>• $n=1$: the average is just one day's return — mean $0.05\\%$, standard deviation $1\\%$.<br>
     • $n=2$: the average of 2 days — mean $0.05\\%$ again (beat 6), but a smaller standard deviation.<br>
@@ -3991,7 +4036,7 @@ function p2_problems(){
     `<p>Means always add (beat 6): a year's mean is $252\\mu$. For independent days the variances add too (beat 9): a year's variance is $252\\sigma^2$, so its SD is $\\sqrt{252}\\,\\sigma$. The average of $n$ days is the total times $\\frac1n$, so its SD is $\\frac{\\sqrt n\\,\\sigma}{n}=\\frac\\sigma{\\sqrt n}$ (beat 5's scaling).</p>`,
     `<p>(a) Mean: $252\\times0.05\\%=12.6\\%$. Variance: $252\\times(1\\%)^2$, so SD $=\\sqrt{252}\\times1\\%\\approx15.9\\%$. Ratio: $\\frac{12.6}{15.9}\\approx0.79$, which is the daily ratio $0.05$ times $\\sqrt{252}$: the mean grows like $n$, the SD like $\\sqrt n$.</p>
     <p>(b) We need $\\frac{1\\%}{\\sqrt n}=\\frac{0.05\\%}2=0.025\\%$, so $\\sqrt n=40$ and $n=1600$ days — about $6.3$ years. Even then the estimate is typically off by half its own size. Small daily edges are very hard to confirm from data: the noise in the average shrinks only like $\\frac1{\\sqrt n}$.</p>`)
-  +P('binomial',8,
+  +P('binomial',16,
     `<p>Five classifiers each label an example correctly with probability $0.7$. Whether one classifier is right is independent of whether the others are. The ensemble outputs the label that at least 3 of the 5 give (a majority vote). (a) What is the probability the vote is correct? (b) What is the expected number of classifiers that are correct, and its standard deviation? (c) Why does “errors are independent” matter so much?</p>`,
     `<p>The number $X$ of correct classifiers is binomial($5,0.7$) (beat 10): $P(X=k)=\\binom5k0.7^k0.3^{5-k}$, $E[X]=np$, $\\text{SD}=\\sqrt{np(1-p)}$. The vote is right when $X\\ge3$.</p>`,
     `<p>(a) With $X\\sim$ binomial($5,0.7$) and $P(X=k)=\\binom5k0.7^k0.3^{5-k}$ (Module 1, beat 10):</p>
@@ -3999,25 +4044,25 @@ function p2_problems(){
     <p>The ensemble is right 83.7% of the time, against 70% for one classifier.</p>
     <p>(b) $E[X]=5\\times0.7=3.5$ and $\\operatorname{SD}=\\sqrt{5\\times0.7\\times0.3}\\approx1.02$ (beat 10).</p>
     <p>(c) The binomial needs independent trials. If all five classifiers were copies of one model, they would make the same mistakes: the vote would be right exactly when one model is, 70%. Ensembles gain only to the extent that their members' errors are not tied together, which is why they are trained on different data or with different methods.</p>`)
-  +P('geometric',9,
+  +P('geometric',17,
     `<p>A new block is added to a blockchain every 10 minutes. Each block is won by your small mining pool with probability $0.01$, independently of all other blocks. (a) On average, how many blocks until the pool's first win, and how many hours is that? (b) What is the probability of no block for the pool in a whole day (144 blocks)? (c) The pool has gone 300 blocks without one. What is the expected number of further blocks until it finds one?</p>`,
     `<p>The number $T$ of blocks until the pool's first win is geometric($0.01$) (beat 11): $E[T]=\\frac1p$ and $P(T\\gt k)=(1-p)^k$. For (c), memorylessness (beat 12): $P(T\\gt s+t\\mid T\\gt s)=P(T\\gt t)$, so the remaining wait is geometric($p$) again.</p>`,
     `<p>(a) $E[T]=\\frac1{0.01}=100$ blocks $=1000$ minutes $\\approx16.7$ hours.</p>
     <p>(b) No block in 144 means 144 failures: $0.99^{144}\\approx0.235$. Nearly one day in four is empty, even though the average wait is well under a day — the long tail of beat 11, Step 5.</p>
     <p>(c) Still 100. The geometric is memoryless (beat 12): 300 failed blocks say nothing about the next ones, as long as the pool's share of the hashing power has not changed. A long drought is a reason to check that share, not to expect a block soon.</p>`)
-  +P('memorylessness',10,
+  +P('memorylessness',18,
     `<p>A trader's trades are independent, each winning with probability $0.5$. After 8 losses in a row he doubles his size because a win is “due”. (a) What is the probability that the next trade wins? (b) What is the expected number of trades until his next win? (c) What would make a long losing streak informative?</p>`,
     `<p>The wait $T$ for a win is geometric($0.5$). Beat 12: $P(T\\gt s+t\\mid T\\gt s)=P(T\\gt t)$ — after $s=8$ losses the remaining wait is geometric($0.5$) again, with mean $\\frac1p$.</p>`,
     `<p>(a) $0.5$. The next trade is independent of the first 8, so $P(\\text{win}_9\\mid 8\\text{ losses})=P(\\text{win}_9)=0.5$.</p>
     <p>(b) $\\frac1{0.5}=2$ trades, exactly as before the streak (beat 12, Step 2). Doubling the size changes the stakes, not the odds.</p>
     <p>(c) The streak is informative only if the independence or the $p=0.5$ assumption might be wrong — for example if the strategy might have stopped working. Then it is evidence about <em>that</em> hypothesis (Module 2's Bayes), but only once you name the alternative and its win rate: Bayes needs the likelihood of the evidence under each hypothesis. Say “broken” means winning only 30% of trades, and you gave it a 10% chance beforehand (prior odds $1:9$). The likelihood ratio of 8 losses is $\\frac{0.7^8}{0.5^8}=1.4^8\\approx14.8$, so the posterior odds are $\\frac19\\times14.8\\approx1.6$, and $P(\\text{broken}\\mid8\\text{ losses})\\approx\\frac{1.6}{2.6}\\approx0.62$ (Module 2's odds form). The streak should make you doubt the strategy — the opposite of “a win is due”.</p>`)
-  +P('Poisson',11,
+  +P('Poisson',19,
     `<p>A risk model says each trading day has a $0.27\\%$ chance of an extreme move (a “3-sigma” day: a move more than 3 standard deviations from the mean), independently of other days. (a) Over 250 days, what is the expected number of such days? (b) Under the model, what is the probability of 3 or more in a year? (c) Real markets often show 5 or more a year. What does that say about the model?</p>`,
     `<p>Many independent days, each with a small chance: the count is Poisson with $\\lambda=np=250\\times0.0027$ (beat 13), $P(X=k)=e^{-\\lambda}\\frac{\\lambda^k}{k!}$. For “3 or more”, use $1-[P(0)+P(1)+P(2)]$.</p>`,
     `<p>(a) $\\lambda=250\\times0.0027=0.675$.</p>
     <p>(b) $P(X\\ge3)=1-e^{-0.675}\\left(1+0.675+\\frac{0.675^2}2\\right)=1-0.5092\\times1.903\\approx0.031$. About one year in 32.</p>
     <p>(c) Under the model, 5 or more is far rarer still ($\\approx0.0007$, about one year in 1,500). Seeing it routinely means the model's probability for big moves is much too low (the tails are “fat”, Module 6), or the days are not independent — big moves cluster. The Poisson's mean = variance check from beat 13 would fail on the counts.</p>`)
-  +P('challenge — adding Poisson counts',12,
+  +P('challenge — adding Poisson counts',20,
     `<p>Let $X$ be the number of rejections a day from exchange A, Poisson($a$), and $Y$ the number from exchange B, Poisson($b$), with $X$ and $Y$ independent. Show that the total $Z=X+Y$ is Poisson($a+b$). Then: with $a=2$ and $b=3$ a day, what is $P(Z=0)$?</p>`,
     `<p>Split $\\{Z=n\\}$ into the disjoint pieces $\\{X=k,\\,Y=n-k\\}$, $k=0,\\dots,n$ (beat 8, Step 2), and use independence. Then multiply and divide by $n!$ and look for Module 1's binomial theorem.</p>`,
     `<p>$Z=n$ exactly when $X=k$ and $Y=n-k$ for one of $k=0,1,\\dots,n$; these pieces are disjoint, so their probabilities add, and independence factors each one:</p>
@@ -4026,35 +4071,6 @@ function p2_problems(){
     <div class="eqbox">$$P(Z=n)=e^{-(a+b)}\\frac{(a+b)^n}{n!},$$</div>
     <p>the Poisson($a+b$) pmf. It matches beat 13's picture: merging two sets of many rare chances is one larger set of many rare chances, whose mean is $a+b$ (beat 6).</p>
     <p>With $a=2$, $b=3$: $P(Z=0)=e^{-5}\\approx0.0067$.</p>`)
-  +`<h3 style="margin-top:22px">More practice</h3><p class="small">Five more problems on the ideas of Problems 1–5, in new settings.</p>`
-  +P('pmf and cdf',13,
-    `<p>Three servers run independently. Each one's lifetime $X$ (in days) has pmf $P(X=1)=0.1$, $P(X=2)=0.3$, $P(X=3)=0.4$, $P(X=4)=0.2$. The system goes down when the <em>first</em> server fails, at day $L=\\min(X_1,X_2,X_3)$. (a) For one server, find $P(X\\gt k)$ for $k=1,2,3$. (b) Find the pmf of $L$. (c) Compare $E[L]$ with $E[X]$.</p>`,
-    `<p>The earliest failure is after day $k$ exactly when all three servers last past day $k$: $\\{L\\gt k\\}=\\{X_1\\gt k\\}\\cap\\{X_2\\gt k\\}\\cap\\{X_3\\gt k\\}$. Then $P(L=k)=P(L\\gt k-1)-P(L\\gt k)$. This is Problem 1's idea with “$\\gt$” instead of “$\\le$”.</p>`,
-    `<p>(a) $P(X\\gt1)=0.9$, $P(X\\gt2)=0.6$, $P(X\\gt3)=0.2$ (add the pmf above $k$, or $1-F(k)$).</p>
-    <p>(b) By independence, $P(L\\gt k)=P(X\\gt k)^3$: $0.729$, $0.216$, $0.008$ for $k=1,2,3$ (and $P(L\\gt0)=1$). Differences give the pmf:</p>
-    <div class="eqbox">$$P(L=1)=1-0.729=0.271,\\quad P(L=2)=0.729-0.216=0.513,$$ $$P(L=3)=0.216-0.008=0.208,\\quad P(L=4)=0.008.$$</div>
-    <p>(c) $E[L]=0.271+2(0.513)+3(0.208)+4(0.008)=1.953$ days, against $E[X]=0.1+0.6+1.2+0.8=2.7$. Three servers in series fail sooner than one: the weakest link sets the lifetime.</p>`)
-  +P('expectation of a function',14,
-    `<p>A strategy's daily return $X$ is $+20\\%$ or $-10\\%$ with probability $\\frac12$ each, independently each day, and your wealth is multiplied by $1+X$ each day. (a) Find $E[X]$. (b) After $n$ days wealth is $(1+X_1)\\cdots(1+X_n)=e^{\\ln(1+X_1)+\\cdots+\\ln(1+X_n)}$. Over many days the average of the $\\ln(1+X_i)$ settles to $E[\\ln(1+X)]$ (beat 4: the mean is the long-run average), so wealth grows like $e^{\\,n\\,E[\\ln(1+X)]}$ and $E[\\ln(1+X)]$ is the growth rate per day. Compute it. (c) Compare it with $\\ln(1+E[X])$. Starting from wealth 1, what is the wealth after 100 days on a path with exactly 50 up days and 50 down days?</p>`,
-    `<p>(b) is $E[g(X)]$ with $g(x)=\\ln(1+x)$: apply $g$ to each value, then average (beat 5). Do not put $E[X]$ into $g$.</p>`,
-    `<p>(a) $E[X]=\\frac12(0.2)+\\frac12(-0.1)=0.05$: $+5\\%$ a day on average.</p>
-    <p>(b) $E[\\ln(1+X)]=\\frac12\\ln1.2+\\frac12\\ln0.9=\\frac12(0.1823)+\\frac12(-0.1054)\\approx0.0385$.</p>
-    <p>(c) $\\ln(1+E[X])=\\ln1.05\\approx0.0488$, larger. A path with 50 up days and 50 down days — the typical mix — ends at $1.2^{50}\\,0.9^{50}=e^{100\\times0.0385}\\approx47$ — not $1.05^{100}\\approx132$. The gap is the cost of volatility: a $-10\\%$ day needs more than a $+10\\%$ day to recover, so the average return overstates the growth you actually get. Again $E[g(X)]\\ne g(E[X])$.</p>`)
-  +P('variance and scaling',15,
-    `<p>(a) Daily temperature $C$ in °C has mean $20$ and standard deviation $5$. In °F it is $F=1.8C+32$. Find the mean, standard deviation and variance of $F$. (b) For any $X$ with mean $\\mu$ and standard deviation $\\sigma\\gt0$, let $Z=\\frac{X-\\mu}\\sigma$ (the <em>standardized</em> value, or z-score). Find $E[Z]$ and $\\text{SD}(Z)$.</p>`,
-    `<p>Beat 5: $E[aX+b]=aE[X]+b$ and $\\text{SD}(aX+b)=|a|\\,\\text{SD}(X)$. For (b), write $Z=\\frac1\\sigma X-\\frac\\mu\\sigma$, which is $aX+b$ with $a=\\frac1\\sigma$, $b=-\\frac\\mu\\sigma$.</p>`,
-    `<p>(a) Mean $1.8(20)+32=68$°F. SD $1.8\\times5=9$°F (the $+32$ shifts every day equally, so it adds no spread). Variance $9^2=81$.</p>
-    <p>(b) $E[Z]=\\frac1\\sigma\\mu-\\frac\\mu\\sigma=0$ and $\\text{SD}(Z)=\\frac1\\sigma\\cdot\\sigma=1$. Standardizing moves any variable to mean 0 and standard deviation 1; $Z$ measures “how many standard deviations from the mean” — the language of “3-sigma” in Problem 11, and the starting point of Module 4's normal distribution.</p>`)
-  +P('indicators and linearity',16,
-    `<p>30 people are in a room; birthdays are independent and uniform over 365 days. (a) What is the expected number of <em>pairs</em> of people who share a birthday? (b) What is the expected number of <em>different</em> birthdays among the 30?</p>`,
-    `<p>Write each count as a sum of indicators (beat 6). (a) One indicator per pair of people: “these two share a birthday”. (b) One indicator per day of the year: “at least one of the 30 has this birthday” — use the complement, “none of the 30 has it”.</p>`,
-    `<p>(a) There are $\\binom{30}2=435$ pairs, and a given pair shares a birthday with probability $\\frac1{365}$ (whatever the first person's birthday, the second matches it with that chance). By linearity, $E[\\text{shared pairs}]=435\\times\\frac1{365}\\approx1.19$. This is Module 1's birthday handshake count: 435 handshakes, each a $\\frac1{365}$ chance.</p>
-    <p>(b) A given day is nobody's birthday with probability $\\left(\\frac{364}{365}\\right)^{30}\\approx0.921$ (30 independent misses), so it is somebody's with probability $0.079$. Summing over 365 days: $E[\\text{different birthdays}]=365\\,(1-0.921)\\approx28.8$. On average, about 1.2 birthdays are “lost” to sharing — consistent with (a).</p>`)
-  +P('covariance and hedging',17,
-    `<p>A stock's daily return $X$ and a futures contract's daily return $Y$ each have variance 1, and $\\operatorname{Cov}(X,Y)=0.8$. (a) Find $\\operatorname{Var}(X+Y)$ and $\\operatorname{Var}(X-Y)$. (b) You hold the stock and sell $h$ units of the future, so your return is $X-hY$. Which $h$ makes the variance smallest, and what are that variance and standard deviation?</p>`,
-    `<p>Beat 7: $\\operatorname{Var}(X+Y)=\\operatorname{Var}X+\\operatorname{Var}Y+2\\operatorname{Cov}(X,Y)$. A constant in front scales the deviation, so $\\operatorname{Var}(hY)=h^2\\operatorname{Var}Y$ and $\\operatorname{Cov}(X,-hY)=-h\\operatorname{Cov}(X,Y)$ (see Problem 5's solution). For (b), set the derivative in $h$ to zero.</p>`,
-    `<p>(a) $\\operatorname{Var}(X+Y)=1+1+2(0.8)=3.6$ and $\\operatorname{Var}(X-Y)=1+1-2(0.8)=0.4$. Positive covariance makes the sum swing more and the difference swing less.</p>
-    <p>(b) $V(h)=\\operatorname{Var}(X)+h^2\\operatorname{Var}(Y)-2h\\operatorname{Cov}(X,Y)=1+h^2-1.6h$. $V'(h)=2h-1.6=0$ gives $h=0.8$ (and $V''=2\\gt0$, a minimum). Then $V(0.8)=1+0.64-1.28=0.36$, SD $0.6$. The hedge cuts the stock's daily swing by 40%; the rest is risk the future cannot remove. The best $h$ is $\\frac{\\operatorname{Cov}(X,Y)}{\\operatorname{Var}(Y)}$ — the same formula as a least-squares slope (Linear Algebra Module 3).</p>`)
   +`</div>`;
   setHints([]);unlock();
 }
@@ -4063,48 +4079,53 @@ function p2_problems(){
 function p3_recall(){recallFrom(`Module 4 moves from variables that take a list of values to variables that can land anywhere in a range — a return, a waiting time, a score. Everything carries over from Modules 1–3 with sums replaced by integrals: Module 1's density-as-area picture, and Module 3's cdf, expectation and variance. The calculus it leans on: the derivative as a limit and the chain rule, integrals and the FTC, substitution and improper integrals, and the polar change of variables (for the Gaussian).`,['p0','p1','p2','calc_c2','calc_c4','calc_c5','calc_c9'],RECALL_HINT);}
 
 function p3_cdf(){
-  stage.innerHTML=`<div class="card"><h2>Continuous variables: the cdf ramp and its slope</h2>
-    <p>Module 3's variables took a list of values, each with its own probability. A score, a waiting time or a return can land anywhere in a range, and then each exact value has probability $0$ — so a pmf says nothing. Module 3's cdf, $F(x)=P(X\\le x)$, still makes sense for any variable. What does it look like when the values fill a range, and how do we get Module 1's density from it?</p>
-    <p><b>The picture.</b> Two models each give a trade a score. Switch between scores from two dice (the larger of two rolls, divided by 6) and scores from two independent uniform draws on $[0,1]$ (the larger of the two). The curve is the cdf $F(x)$. Drag $x$; the gold segment is the secant over the small window $[x,x+h]$.</p>
+  stage.innerHTML=`<div class="card"><h2>Continuous variables: where a score lands</h2>
+    <p>Your model scores each trade by taking two independent signals, each a number anywhere in $[0,1]$, and keeping the larger: the score is $M=\\max(U_1,U_2)$. A score can be $0.6$, or $0.6013$, or any other number in between. Does any one exact score even have a positive chance? If not, Module 3's pmf, which listed each value's probability, says nothing here. <b>So how do you say where scores tend to land, and how do you compare one score with another?</b> This beat answers that, using Module 3's cdf.</p>
+    <p><b>The picture.</b> The curve is the cdf of the score, $F(x)=P(M\\le x)$: the chance the score is at most $x$. Drag $x$, and pick a window width $h$; the gold segment joins the curve at $x$ and at $x+h$. For contrast, switch to a score you already know how to handle — the larger of two dice, divided by 6, which takes only six values.</p>
     <canvas id="cvc4" width="640" height="300"></canvas>
     <div class="seg" id="segc4" style="margin-top:7px"></div>
-    <div class="ctrls" style="margin-top:6px"><span class="slabel" id="cxL">x = 0.60</span><input type="range" id="cx" min="0" max="0.95" step="0.01" value="0.6"></div>
+    <div class="ctrls" style="margin-top:6px"><span class="slabel" id="cxL">x = 0.60</span><input type="range" id="cx" min="0" max="0.95" step="0.001" value="0.6"></div>
     <div class="seg" id="segch" style="margin-top:7px"></div>
     <div class="readout"><div class="rdc"><div class="k">F(x)</div><div class="v" id="c1">—</div></div><div class="rdc"><div class="k">P(x &lt; M ≤ x+h)</div><div class="v" id="c2">—</div></div><div class="rdc"><div class="k">that ÷ h</div><div class="v" id="c3">—</div></div></div>
-    <p class="small">The dice cdf climbs in jumps; the uniform cdf climbs smoothly. Watch what the window's probability, and the probability divided by the window width, do as $h$ shrinks.</p>
-    <p>Work with the uniform scores. $U_1$ and $U_2$ are independent and uniform on $[0,1]$: the chance of landing in a piece of $[0,1]$ is that piece's length. The score is $M=\\max(U_1,U_2)$.</p>
-    ${gQ('cq',1,`What is $P(U_1\\le0.6)$?`,
-      `$U_1\\le0.6$ means landing in $[0,0.6]$, of length $0.6$. So $P(U_1\\le0.6)=0.6$, and in general $P(U\\le x)=x$ on $[0,1]$.`)}
-    ${gQ('cq',2,`What is $P(M\\le0.6)$? (Module 3, beat 3: the larger of independent copies is $\\le x$ exactly when every copy is.)`,
-      `$\\{M\\le0.6\\}=\\{U_1\\le0.6\\}\\cap\\{U_2\\le0.6\\}$, independent, so $P(M\\le0.6)=0.6\\times0.6=0.36$. In general $F(x)=x^2$ on $[0,1]$.`)}
-    ${gQ('cq',3,`What is $P(0.5\\lt M\\le0.6)$?`,
-      `$\\{M\\le0.6\\}$ is $\\{M\\le0.5\\}$ plus the disjoint piece $\\{0.5\\lt M\\le0.6\\}$, so $P(0.5\\lt M\\le0.6)=F(0.6)-F(0.5)=0.36-0.25=0.11$.`)}
-    ${gQ('cq',4,`Shrink the window: $P(0.6-h\\lt M\\le0.6)=0.36-(0.6-h)^2$. What does it tend to as $h\\to0$? That limit is $P(M=0.6)$.`,
-      `$0.36-(0.6-h)^2\\to0.36-0.36=0$. Every window around $0.6$ contains the single value $0.6$, so $P(M=0.6)$ is at most the window's probability, which goes to $0$. Hence $P(M=0.6)=0$.`)}
-    ${gQ('cq',5,`The window's probability goes to 0, but divide it by the width. Compute $\\frac{P(0.6\\lt M\\le0.61)}{0.01}$.`,
+    <p class="small">The dice score's cdf climbs in jumps; the signal score's climbs smoothly. Shrink $h$ and watch the window's probability, and the probability divided by $h$. In dice mode, set $x=0.666$, just below the jump at $\\frac46\\approx0.6667$, then shrink $h$: probability ÷ $h$ blows up — a staircase has no slope at its jumps.</p>
+    <p>Work out the answer to the question step by step. Each signal is uniform on $[0,1]$: the chance it lands in a piece of $[0,1]$ is that piece's length.</p>
+    ${gQ('cq',1,`Start with one signal. What is $P(U_1\\le0.6)$?`,
+      `$U_1\\le0.6$ means landing in $[0,0.6]$, of length $0.6$. So $P(U_1\\le0.6)=0.6$, and in general $P(U\\le x)=x$.`)}
+    ${gQ('cq',2,`Now the score. What is $P(M\\le0.6)$? (Module 3, beat 3: the larger of independent copies is $\\le x$ exactly when every copy is.)`,
+      `$\\{M\\le0.6\\}=\\{U_1\\le0.6\\}\\cap\\{U_2\\le0.6\\}$. The signals are independent — any event about $U_1$ is independent of any event about $U_2$ — so $P(M\\le0.6)=0.6\\times0.6=0.36$. In general the score's cdf is $F(x)=x^2$ on $[0,1]$.`)}
+    ${gQ('cq',3,`Where scores land: what is the chance the score falls in the window $(0.5,\\,0.6]$?`,
+      `$\\{M\\le0.6\\}$ is $\\{M\\le0.5\\}$ plus the separate piece $\\{0.5\\lt M\\le0.6\\}$, so $P(0.5\\lt M\\le0.6)=F(0.6)-F(0.5)=0.36-0.25=0.11$.`)}
+    ${gQ('cq',4,`Switch to the dice score for a moment. Its cdf is $P(\\text{larger roll}\\le k)=\\frac{k^2}{36}$ at $x=\\frac k6$. How big is its jump at $x=\\frac46$, that is $F(\\tfrac46)-F(\\tfrac36)$? Compare it with $P(\\text{larger roll}=4)$.`,
+      `$\\frac{16}{36}-\\frac9{36}=\\frac7{36}\\approx0.194$. And $P(\\text{larger roll}=4)=\\frac7{36}$ too: the 7 outcomes $(4,1),(4,2),(4,3),(4,4),(1,4),(2,4),(3,4)$. The jump <em>is</em> the probability of that value.`)}
+    ${gQ('cq',5,`Back to the signal score. What about the exact score $0.6$? Shrink a window that ends at $0.6$: $P(0.6-h\\lt M\\le0.6)=0.36-(0.6-h)^2$. What does this tend to as $h\\to0$?`,
+      `$0.36-(0.6-h)^2\\to0$. The exact score $0.6$ lies inside every one of these windows, so its probability is at most theirs, which goes to $0$: $P(M=0.6)=0$. Exact scores cannot be compared by their probabilities — they are all $0$.`)}
+    ${gQ('cq',6,`So compare windows of equal width instead, measuring probability <em>per unit width</em>. Compute $\\frac{P(0.6\\lt M\\le0.61)}{0.01}$.`,
       `$\\frac{0.61^2-0.6^2}{0.01}=\\frac{0.3721-0.36}{0.01}=1.21$. With $h=0.001$ it is $1.201$: it settles at $1.2$, the slope of $F(x)=x^2$ at $0.6$.`)}
+    ${gQ('cq',7,`Now compare two scores. With the same width $h=0.01$, compute $\\frac{P(0.9\\lt M\\le0.91)}{P(0.3\\lt M\\le0.31)}$: how many times as likely is the window near $0.9$?`,
+      `$\\frac{0.91^2-0.9^2}{0.31^2-0.3^2}=\\frac{0.0181}{0.0061}\\approx2.97$. Narrower windows push it to exactly $3=\\frac{2(0.9)}{2(0.3)}$, the ratio of the slopes.`)}
     ${gProg('cprog')}
     <div id="cdone" style="display:none">
-    <p style="margin-top:16px"><b>What you found.</b> The cdf of $M$ is $x^2$: it rises smoothly. Interval probabilities came from differences of $F$; a single value got probability $0$; and probability divided by a shrinking width settled to the slope of $F$, $1.2$ at $x=0.6$. The steps below show this holds for every such variable, and that the slope is Module 1's density.</p>
-    <p><b>Step 1: intervals from the cdf.</b> For any random variable, $\\{X\\le b\\}$ is $\\{X\\le a\\}$ together with the disjoint piece $\\{a\\lt X\\le b\\}$ (when $a\\lt b$), so their probabilities add:</p>
+    <p style="margin-top:16px"><b>What you found:</b> windows describe where the score lands, exact scores have probability 0, and scores are compared by probability per unit width, which settled to the cdf's slope. The steps below show this holds for any such variable.</p>
+    <p><b>Step 1: where scores land — windows from the cdf.</b> For any random variable and any $a\\lt b$, the event $\\{X\\le b\\}$ is $\\{X\\le a\\}$ together with the separate piece $\\{a\\lt X\\le b\\}$, so their probabilities add, and</p>
     <div class="eqbox">$$P(a\\lt X\\le b)=F(b)-F(a).$$</div>
-    <p>Problem 3 is $a=0.5$, $b=0.6$. This is Module 3, beat 3's running total, read backwards.</p>
-    <p><b>Step 2: single values.</b> Take the window $(x-h,x]$: $P(x-h\\lt X\\le x)=F(x)-F(x-h)$, and the single value $x$ lies in every such window. If $F$ has no jump at $x$, the difference goes to $0$ as $h\\to0$, so $P(X=x)=0$ (Problem 4). With the dice, $F$ jumps — at $x=\\frac46$ by $P(\\text{larger roll}=4)=\\frac7{36}$ — and the jump <em>is</em> the pmf. So the pmf lives in the jumps of $F$, and a variable whose $F$ has no jumps gives every single value probability $0$. One consequence: for such a variable, $P(a\\lt X\\le b)=P(a\\le X\\le b)$ — including or excluding an endpoint changes nothing.</p>
-    <p><b>Step 3: the density is the slope of the cdf.</b> Divide the probability of the window $(x,x+h]$ by its width:</p>
+    <p>Problem 3 was $a=0.5$, $b=0.6$. Nothing here needs a pmf: it is Module 3, beat 3's running total, read backwards.</p>
+    <p><b>Step 2: why exact scores tell you nothing.</b> Take the window $(x-h,x]$, of probability $F(x)-F(x-h)$, which contains the single value $x$. For the dice score, once $h$ is smaller than the gap to the next lower value, the window contains no possible value except $x$, so its probability is exactly $P(X=x)$: at $x=\\frac46$ that is the jump $\\frac7{36}$ (Problem 4). So a discrete variable's pmf is the list of its cdf's jumps. The signal score's $F$ has no jumps: the window's probability goes to $0$, and since it is at least $P(M=x)$, we get $P(M=x)=0$ for every $x$ (Problem 5). Probability $0$ does not mean impossible: some exact score occurs on every trade; no particular one has a positive chance.</p>
+    <p>Consequence — endpoints don't matter: $P(a\\le X\\le b)=P(X=a)+P(a\\lt X\\le b)=0+P(a\\lt X\\le b)$.</p>
+    <p><b>Step 3: comparing scores — probability per unit width.</b> To compare scores, compare equally short windows next to them. Divide the window's probability by its width and let the width shrink (a window on the left of $x$ gives the same limit wherever $F'$ exists, since the derivative is a two-sided limit — Calculus Module 3):</p>
     <div class="eqbox">$$\\frac{P(x\\lt X\\le x+h)}{h}=\\frac{F(x+h)-F(x)}{h}\\;\\longrightarrow\\;F'(x)\\qquad(h\\to0).$$</div>
-    <p>The left side is Module 1, beat 3's histogram bar — the share in a bin divided by the bin's width — and the right side is the difference quotient that defines the derivative (Calculus Module 3). So the curve the bars settled onto is the slope of the cdf. For $M$: $f(x)=F'(x)=2x$, and $f(0.6)=1.2$ (Problem 5).</p>
-    <div class="defn"><span class="dt">Continuous random variable and its density</span>A random variable $X$ is <b>continuous</b> if its cdf $F$ has no jumps and has a slope $f=F'$ (except perhaps at a few points). Then $f$ is the <b>probability density function</b> (pdf) of $X$: $$f(x)=F'(x)=\\lim_{h\\to0}\\frac{P(x\\lt X\\le x+h)}{h},$$ probability per unit length near $x$.</div>
-    <p><b>Step 4: back from the density to probabilities.</b> $F$ is an antiderivative of $f$, so the Fundamental Theorem (Calculus Module 5) turns Step 1 into an integral:</p>
+    <p>The right side is the difference quotient that defines the derivative (Calculus Module 3). So probability per unit width is the slope of the cdf. For the score: $f(x)=F'(x)=2x$ on $[0,1]$, so $f(0.6)=1.2$ (Problem 6). Outside $[0,1]$, $F$ is flat ($0$ to the left, $1$ to the right), so $f=0$ there. At $x=1$ the slope jumps from $2$ to $0$, so $F'(1)$ does not exist; the value of $f$ at a single point changes no area, so it doesn't matter.</p>
+    <div class="defn"><span class="dt">Continuous random variable and its density</span>A random variable $X$ is <b>continuous</b> if its cdf $F$ has no jumps and has a slope $f=F'$ (except perhaps at a few points). Then $f$ is the <b>probability density function</b> (pdf) of $X$: $$f(x)=F'(x)=\\lim_{h\\to0}\\frac{P(x\\lt X\\le x+h)}{h},$$ probability per unit width near $x$. A short window of width $h$ near $x$ has probability about $f(x)\\,h$.</div>
+    <p>This answers the question's second half. $f(0.9)=1.8$ and $f(0.3)=0.6$, so a short window near $0.9$ catches the score about $\\frac{1.8}{0.6}=3$ times as often as an equally short window near $0.3$ (Problem 7: $2.97$ at $h=0.01$, exactly 3 in the limit). A density value is not itself a probability — $f(0.9)=1.8$ is bigger than 1 — only $f(x)\\,h$ for a short window is. This is the curve Module 1, beat 3's histogram bars settled onto: each bar was a bin's share divided by the bin's width, the same quotient as above.</p>
+    <p><b>Step 4: consequence — back from the density to windows.</b> Since $f=F'$, $F$ is an antiderivative of $f$, and the Fundamental Theorem (Calculus Module 5) turns Step 1 into an integral:</p>
     <div class="eqbox">$$P(a\\lt X\\le b)=F(b)-F(a)=\\int_a^b f(x)\\,dx.$$</div>
-    <p>That is Module 1's rule “probability is area under the density”, now derived from the cdf. Check with $M$: $\\int_{0.5}^{0.6}2x\\,dx=0.6^2-0.5^2=0.11$ (Problem 3). Two properties follow from $F$: $f\\ge0$, because $F$ never decreases (it is a running total of probability); and $\\int_{-\\infty}^{\\infty}f=1$, because $F$ runs from 0 to 1.</p>
-    ${gAnchor(`The cdf is the bridge between the two kinds of variable. A discrete $X$ has a staircase cdf: flat between values, and a jump at each value $k$ of height $p_X(k)$ — the pmf is the list of jump heights. A continuous $X$ has a ramp: no jumps at all, and the steepness at $x$ is $f(x)$. In both cases $P(a\\lt X\\le b)=F(b)-F(a)$; summing the jumps between $a$ and $b$ becomes integrating the slope between $a$ and $b$ (Calculus Module 5's FTC).`)}
-    <p><b>What a density value means.</b> $f(x)$ is not a probability — $f(0.9)=1.8$ is larger than 1. It compares nearby chances: a short window of width $h$ near $x$ has probability about $f(x)\\,h$. So $f(0.9)=1.8$ and $f(0.3)=0.6$ say that $M$ lands near $0.9$ three times as often as near $0.3$.</p>
-    <div class="task"><b>Best of three signals</b>A model scores each trade as the best of three independent signals, each uniform on $[0,1]$. How many times more likely is the score to land in a narrow window around $0.9$ than in an equally narrow window around $0.5$? Enter a decimal.</div>
+    <p>(Where $F$ has a few points with no slope, like $x=1$ here, split $[a,b]$ at them and apply the theorem to each piece; $F$ has no jumps, so the pieces' differences add back up to $F(b)-F(a)$.) A window's probability is the area under the density over it — Module 1's rule, now derived. Check: $\\int_{0.5}^{0.6}2x\\,dx=0.6^2-0.5^2=0.11$ (Problem 3). Two properties follow: $f\\ge0$, because $F$ never decreases; and the total area is $F$'s full climb from $0$ to $1$ — for the score, splitting at $0$ and $1$: $0+\\int_0^1 2x\\,dx+0=1$.</p>
+    ${gAnchor(`Here an outcome is the pair of signals $\\omega=(u_1,u_2)$, so $\\Omega$ is the unit square, and “uniform and independent” makes probability equal to area — the dart on the square from Module 1, beat 3. The event $\\{M\\le x\\}$ is the set of pairs with both coordinates $\\le x$: the small square $[0,x]^2$, of area $x^2$. So $F(x)=x^2$ is literally an area in $\\Omega$, and the window $\\{0.5\\lt M\\le0.6\\}$ is the L-shaped strip between the squares of side $0.5$ and $0.6$. The single score $\\{M=0.6\\}$ is just the two edges of a square — a set of zero area.`)}
+    <div class="task"><b>A stronger model</b>Your model now takes the best of <em>three</em> independent signals, each uniform on $[0,1]$. How many times as likely is its score to land in a short window around $0.9$ than in an equally short window around $0.5$, in the limit as the windows shrink? Enter a decimal.</div>
     ${gateHTML('e.g. 2.5')}
     </div></div>`;
   const cv=document.getElementById('cvc4'),sx=document.getElementById('cx');let mode='u',h=0.01,done=false;
   const Fu=x=>x<=0?0:x>=1?1:x*x,Fd=x=>{const k=Math.floor(x*6+1e-9);return k<=0?0:k>=6?1:(k*k)/36;};
-  function draw(){const x=+sx.value,F=mode==='u'?Fu:Fd;p0Set('cxL','x = '+x.toFixed(2));
+  function draw(){const x=+sx.value,F=mode==='u'?Fu:Fd;p0Set('cxL','x = '+x.toFixed(3));
     const w=F(x+h)-F(x);p0Set('c1',F(x).toFixed(4));p0Set('c2',w.toFixed(4));p0Set('c3',(w/h).toFixed(3));
     const ctx=cv.getContext&&cv.getContext('2d');if(!ctx)return;ctx.clearRect(0,0,cv.width,cv.height);
     const L=50,R=620,T=16,B=262,X=v=>L+(R-L)*v,Y=v=>B-(B-T)*v;
@@ -4125,7 +4146,7 @@ function p3_cdf(){
   p0Seg('segc4',[['u','two uniforms (continuous)'],['d','two dice ÷ 6 (discrete)']],'u',v=>{mode=v;draw();});
   p0Seg('segch',[['0.1','window h = 0.1'],['0.01','h = 0.01'],['0.001','h = 0.001']],'0.01',v=>{h=+v;draw();});
   sx.oninput=draw;draw();
-  gWire('cq',[[1,0.6,0.001],[2,0.36,0.001],[3,0.11,0.001],[4,0,0.0005],[5,1.21,0.012]],'cprog','cdone',()=>{done=true;draw();});
+  gWire('cq',[[1,0.6,0.001],[2,0.36,0.001],[3,0.11,0.001],[4,7/36,0.002],[5,0,0.0005],[6,1.21,0.012],[7,0.0181/0.0061,0.02]],'cprog','cdone',()=>{done=true;draw();});
   const g=(0.9/0.5)**2;
   numChk(document.getElementById('gate'),g,()=>{addReveal(`<div class="rh">✓ ≈ 3.24</div>
     <p>The score $S$ is the best of three, so $F(x)=P(S\\le x)=x^3$ (all three $\\le x$, independent). Its density is the slope, $f(x)=F'(x)=3x^2$ (Step 3). A narrow window of width $h$ has probability about $f(x)\\,h$, so the ratio is</p>
